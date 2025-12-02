@@ -76,19 +76,13 @@
 </head>
 <body class="w-full h-[100dvh] flex flex-col overflow-hidden">
 
-    <!-- 상단 헤더 (심플) -->
-    <header class="flex-none pt-safe px-6 pb-2 z-20 flex justify-between items-center bg-[#F2F4F6]">
-        <div class="flex items-center gap-1.5 opacity-0 animate-[fadeIn_0.5s_0.5s_forwards]">
-            <span class="text-xl font-bold text-main tracking-tight">Enjoy</span>
-        </div>
-        <!-- 알림 버튼 삭제됨 -->
-    </header>
+    <!-- 상단 헤더 삭제됨 -->
 
-    <!-- 메인 컨텐츠 -->
-    <main class="flex-1 overflow-y-auto scrollbar-hide px-5 pt-2 pb-32 w-full max-w-md mx-auto relative">
+    <!-- 메인 컨텐츠 (pt-safe 적용으로 상단 여백 확보) -->
+    <main class="flex-1 overflow-y-auto scrollbar-hide px-5 pt-safe pb-32 w-full max-w-md mx-auto relative">
         
         <!-- 👋 상단 인사말 (배경 이모티콘 우측 배치) -->
-        <div class="mb-6 mt-2 fade-in-up relative h-24 flex flex-col justify-center overflow-visible">
+        <div class="mb-6 mt-4 fade-in-up relative h-24 flex flex-col justify-center overflow-visible">
             <!-- 배경 이모티콘 (우측 배치: right-0) -->
             <div id="bg-emoji" class="bg-emoji absolute right-0 bottom-[-10px] text-[80px] opacity-20 select-none pointer-events-none z-0 transform translate-x-2">
                 <!-- 자바스크립트로 이모티콘 주입 -->
@@ -217,8 +211,6 @@
             </button>
         </div>
 
-        <!-- 엔조이 프라임 배너 삭제됨 -->
-
         <div class="mt-8 text-center pb-8">
             <button class="text-xs text-sub underline hover:text-gray-600">화면 편집하기</button>
             <p class="text-[10px] text-gray-300 mt-4">© 2024 Enjoy Corp.</p>
@@ -228,12 +220,6 @@
     <!-- 하단 플로팅 메뉴 (초-투명 리얼 글래스) -->
     <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-auto">
         <!-- 메인 알약 메뉴 -->
-        <!-- 
-             bg-white/5: 흰색 기운을 거의 뺌 (매우 투명)
-             backdrop-blur-xl: 블러는 유지하여 유리 질감 표현
-             border-white/20: 테두리도 더 얇고 투명하게
-             shadow-[...]: 그림자로 입체감만 살림
-        -->
         <div class="flex items-center bg-white/5 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.1)] border border-white/20 rounded-full p-1 gap-1 ring-1 ring-white/10">
             
             <!-- 1. 홈 (활성화 상태) -->
