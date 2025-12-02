@@ -33,12 +33,12 @@
             border: 1px solid rgba(255, 255, 255, 0.6);
             border-radius: 24px;
             box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04); 
-            transition: transform 0.1s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.1s, filter 0.1s;
+            transition: transform 0.1s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.1s;
             cursor: pointer;
             overflow: hidden;
             position: relative;
+            touch-action: manipulation;
         }
-        /* 클릭(터치) 효과: 크기 축소 + 밝기 조절 */
         .toss-card:active {
             transform: scale(0.96);
             box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
@@ -53,8 +53,13 @@
             border: 1px solid rgba(255, 255, 255, 0.6);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
             border-radius: 24px;
+            transition: transform 0.1s;
         }
-        
+        .glass-card:active {
+            transform: scale(0.98);
+            background: rgba(255, 255, 255, 0.5);
+        }
+
         /* 미납자용 파스텔 레드 블록 */
         .glass-card-unpaid {
             background: rgba(254, 226, 226, 0.6);
@@ -90,7 +95,6 @@
             right: 0;
             bottom: -10px;
             z-index: 0;
-            /* 터치 이벤트 통과 */
             pointer-events: none; 
         }
 
@@ -106,7 +110,7 @@
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="w-full h-[100dvh] flex flex-col overflow-hidden bg-gradient-to-br from-[#F2F4F6] via-[#E8ECF2] to-[#DEE2E6]">
+<body class="w-full h-[100dvh] flex flex-col overflow-hidden bg-gradient-to-br from-[#F2F4F6] via-[#E8ECF2] to-[#DEE2E6]" ontouchstart="">
 
     <!-- 메인 컨텐츠 (홈 화면) -->
     <main id="home-screen" class="flex-1 overflow-y-auto scrollbar-hide px-5 pt-safe pb-24 w-full max-w-md mx-auto relative min-h-full">
@@ -123,12 +127,12 @@
 
         <!-- 섹션 1: 자산/주식 -->
         <div class="toss-card p-6 mb-4 fade-in-up delay-100 group" onclick="window.haptic(); window.checkStock()">
-            <div class="flex justify-between items-center mb-6">
+            <div class="flex justify-between items-center mb-6 pointer-events-none">
                 <h2 class="text-xl font-bold text-main">엔조이 증권</h2>
                 <i class="fa-solid fa-chevron-right text-sub text-xs group-hover:translate-x-1 transition-transform"></i>
             </div>
             
-            <div class="flex items-center justify-between relative z-10 pb-2">
+            <div class="flex items-center justify-between relative z-10 pb-2 pointer-events-none">
                 <div class="flex items-center gap-4">
                     <div class="w-12 h-12 rounded-full bg-blue-50/80 flex items-center justify-center text-blue-500 text-xl shadow-sm">
                         <i class="fa-solid fa-chart-line"></i>
@@ -227,7 +231,6 @@
             </button>
         </div>
 
-        <!-- 하단 문구 삭제됨 -->
         <div class="pb-8"></div>
     </main>
 
@@ -236,9 +239,9 @@
         <header class="flex-none pt-safe px-6 pb-4 flex justify-between items-center bg-white/30 backdrop-blur-md border-b border-white/20 z-10 sticky top-0">
             <h2 class="text-2xl font-bold text-main drop-shadow-sm">일정</h2>
             <div class="flex gap-2">
-                <button onclick="window.haptic(); window.changeMonth(-1)" class="w-8 h-8 rounded-full bg-white/40 hover:bg-white/60 backdrop-blur-sm flex items-center justify-center text-gray-700 shadow-sm transition-colors"><i class="fa-solid fa-chevron-left"></i></button>
+                <button onclick="window.haptic(); window.changeMonth(-1)" class="w-8 h-8 rounded-full bg-white/40 hover:bg-white/60 backdrop-blur-sm flex items-center justify-center text-gray-700 shadow-sm transition-colors active:scale-90"><i class="fa-solid fa-chevron-left"></i></button>
                 <span id="cal-title" class="text-lg font-bold text-main tabular-nums flex items-center drop-shadow-sm">2024.05</span>
-                <button onclick="window.haptic(); window.changeMonth(1)" class="w-8 h-8 rounded-full bg-white/40 hover:bg-white/60 backdrop-blur-sm flex items-center justify-center text-gray-700 shadow-sm transition-colors"><i class="fa-solid fa-chevron-right"></i></button>
+                <button onclick="window.haptic(); window.changeMonth(1)" class="w-8 h-8 rounded-full bg-white/40 hover:bg-white/60 backdrop-blur-sm flex items-center justify-center text-gray-700 shadow-sm transition-colors active:scale-90"><i class="fa-solid fa-chevron-right"></i></button>
             </div>
         </header>
 
@@ -264,7 +267,6 @@
                     </button>
                 </div>
                 <div id="event-list" class="space-y-3"></div>
-                <!-- 하단 문구 삭제됨 -->
             </div>
         </div>
     </div>
@@ -300,12 +302,11 @@
                     </div>
                 </div>
                 <div id="dues-list" class="space-y-3"></div>
-                <!-- 하단 문구 삭제됨 -->
             </div>
         </div>
     </div>
 
-    <!-- 하단 플로팅 메뉴 (드래그 인터랙션 적용) -->
+    <!-- 하단 플로팅 메뉴 -->
     <nav id="bottom-nav" class="fixed bottom-3 left-1/2 -translate-x-1/2 z-50 w-auto touch-pan-x select-none cursor-grab active:cursor-grabbing">
         <div class="flex items-center bg-white/10 backdrop-blur-[4px] backdrop-saturate-[180%] shadow-[0_8px_32px_0_rgba(31,38,135,0.15)] border border-white/20 rounded-full p-1.5 gap-1 ring-1 ring-white/30 relative">
             
@@ -450,6 +451,25 @@
         window.haptic = function() {
             if (navigator.vibrate) navigator.vibrate(10);
         }
+        
+        // 인사말 함수 (전역 할당)
+        window.setGreeting = function() {
+            const hour = new Date().getHours();
+            const msgEl = document.getElementById('time-msg');
+            const emojiEl = document.getElementById('bg-emoji');
+            let msg = '', emoji = '';
+            
+            if (hour >= 0 && hour < 5) { msg = '고요한 새벽이네요 🌙'; emoji = '🌌'; }
+            else if (hour >= 5 && hour < 9) { msg = '상쾌한 아침이에요 ☀️'; emoji = '🌅'; }
+            else if (hour >= 9 && hour < 12) { msg = '활기찬 오전 보내세요 ☘️'; emoji = '🌤️'; }
+            else if (hour >= 12 && hour < 14) { msg = '맛있는 점심 드세요 🍱'; emoji = '🍽️'; }
+            else if (hour >= 14 && hour < 18) { msg = '나른한 오후, 힘내세요 ☕️'; emoji = '🥐'; }
+            else if (hour >= 18 && hour < 22) { msg = '편안한 저녁 되세요 🌆'; emoji = '🍷'; }
+            else { msg = '오늘 하루도 수고했어요 🌙'; emoji = '✨'; }
+            
+            if(msgEl) msgEl.innerHTML = msg;
+            if(emojiEl) emojiEl.innerHTML = emoji;
+        }
 
         // --- UI & Logic Functions ---
         
@@ -529,7 +549,7 @@
         // Modal Helpers
         window.closeModal = (id) => { document.getElementById(id).classList.add('hidden'); document.getElementById(id).classList.remove('flex'); };
         
-        // 팝업창 기능 (여행, 준비중) - 전역 할당
+        // 팝업창 기능 수정
         window.showTravelModal = () => {
              const modal = document.getElementById('common-modal');
              document.getElementById('modal-title').innerText = 'Coming Soon';
@@ -577,10 +597,11 @@
         const memberColors = { '홍박사': { bg: 'bg-blue-100/80', text: 'text-blue-600', char: '홍' }, '류짱': { bg: 'bg-purple-100/80', text: 'text-purple-600', char: '류' }, '오스틴': { bg: 'bg-emerald-100/80', text: 'text-emerald-600', char: '오' }, '전시기': { bg: 'bg-orange-100/80', text: 'text-orange-600', char: '전' }, '지노': { bg: 'bg-indigo-100/80', text: 'text-indigo-600', char: '지' }, '성원제': { bg: 'bg-pink-100/80', text: 'text-pink-600', char: '성' } };
         window.renderDues = function(month) { const list = document.getElementById('dues-list'); const title = document.getElementById('dues-month-title'); if(!list) return; title.innerText = `${month}월 기준`; list.innerHTML = ''; let records = []; if (window.meetingData && window.meetingData.records) { records = window.meetingData.records[month] || []; } if (records.length === 0) { list.innerHTML = `<div class="text-center py-8 text-gray-400 text-xs">내역이 없습니다.</div>`; return; } records.forEach((m, i) => { const c = memberColors[m.name] || { bg: 'bg-gray-100', text: 'text-gray-600', char: '?' }; const isPaid = m.status === 'paid'; const cardClass = isPaid ? 'glass-card' : 'glass-card-unpaid'; const amtClass = isPaid ? 'text-blue-500' : 'text-red-500'; const penalty = m.penalty ? `<p class="text-[10px] text-red-500 font-bold mt-1">⚠️ ${m.penalty}</p>` : ''; const badge = m.isLeader ? `<span class="ml-1 bg-yellow-100 text-yellow-700 text-[10px] px-1 rounded border border-yellow-200">회장 👑</span>` : ''; list.innerHTML += `<div class="${cardClass} p-4 flex justify-between items-center animate-[fadeInUp_0.3s_ease-out]" style="animation-delay: ${i*0.05}s"><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full ${c.bg} flex items-center justify-center text-sm font-bold ${c.text}">${c.char}</div><div><div class="flex items-center"><p class="text-sm font-bold text-main">${m.name}</p>${badge}</div><p class="text-xs text-gray-500">${isPaid ? '납부 완료' : '미납'}</p>${penalty}</div></div><span class="text-sm font-bold ${amtClass}">${isPaid ? m.amount.toLocaleString()+'원' : '미납'}</span></div>`; }); };
         window.renderCalendar = function(year, month) { const grid = document.getElementById('calendar-grid'); const title = document.getElementById('cal-title'); const list = document.getElementById('event-list'); if(!grid) return; title.innerText = `${year}.${String(month + 1).padStart(2, '0')}`; grid.innerHTML = ''; list.innerHTML = ''; const firstDay = new Date(year, month, 1).getDay(); const lastDate = new Date(year, month + 1, 0).getDate(); const events = getMergedEvents(year, month + 1); for(let i=0; i<firstDay; i++) grid.innerHTML += `<div></div>`; let hasEvents = false; let renderedLongTermEvents = new Set(); for(let i=1; i<=lastDate; i++) { const dKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`; const dayEvts = events[dKey]; const isToday = (i === new Date().getDate() && month === new Date().getMonth() && year === new Date().getFullYear()); let dots = ''; if(dayEvts) { hasEvents = true; dayEvts.forEach(e => { let c = 'bg-blue-500'; if(e.type === 'dues') c = 'bg-emerald-500'; else if(e.type === 'bday') c = 'bg-orange-400'; else if(e.type === 'meet') c = 'bg-purple-500'; else if(e.type === 'anniv') c = 'bg-red-500'; else if(e.type === 'personal') c = 'bg-gray-400'; else if(e.type === 'personal_dot') c = 'bg-gray-300'; dots += `<div class="w-1.5 h-1.5 rounded-full ${c}"></div>`; }); } grid.innerHTML += `<div class="h-14 flex flex-col items-center pt-1 rounded-xl hover:bg-white/20 transition-colors ${isToday ? 'bg-white/50 font-bold text-blue-600 shadow-sm' : 'text-gray-700'}"><span class="text-sm">${i}</span><div class="flex gap-0.5 mt-1 flex-wrap justify-center px-1">${dots}</div></div>`; if(dayEvts) { dayEvts.forEach(e => { if(e.type === 'anniv' && month === 5) { if(!renderedLongTermEvents.has('anniv_6')) { renderedLongTermEvents.add('anniv_6'); list.innerHTML = `<div class="glass-card p-5 flex items-center gap-4 mb-2 animate-[fadeInUp_0.3s_ease-out]"><div class="w-12 h-12 rounded-full bg-white/70 flex items-center justify-center text-2xl shrink-0 shadow-sm text-red-500"><i class="fa-solid fa-cake-candles"></i></div><div><p class="text-xs text-red-500/80 mb-0.5 font-bold">6월 1일 ~ 6월 30일</p><p class="text-lg font-bold text-red-600">${e.title}</p><p class="text-xs text-red-500/80 mt-1">한 달 내내 축하해요!</p></div></div>` + list.innerHTML; } } else if(e.type === 'personal') { if(!renderedLongTermEvents.has(e.title)) { renderedLongTermEvents.add(e.title); list.innerHTML += `<div class="glass-card p-5 flex items-center gap-4 animate-[fadeInUp_0.3s_ease-out]"><div class="w-12 h-12 rounded-full bg-white/70 flex items-center justify-center text-xl shrink-0 shadow-sm text-gray-500"><i class="fa-solid fa-house-user"></i></div><div><p class="text-xs text-gray-500 mb-0.5 font-bold">12.23 ~ 01.23</p><p class="text-base font-bold text-gray-800">${e.title}</p><p class="text-xs text-gray-500 mt-0.5">장기 일정입니다</p></div></div>`; } } else if(e.type === 'personal_dot') { } else { let icon = 'fa-check text-gray-500', bg = 'bg-gray-100'; if(e.type === 'dues') { icon = 'fa-coins text-emerald-500'; bg = 'bg-emerald-100'; } else if(e.type === 'bday') { icon = 'fa-cake-candles text-orange-500'; bg = 'bg-orange-100'; } else if(e.type === 'meet') { icon = 'fa-suitcase text-purple-500'; bg = 'bg-purple-100'; } else if(e.type === 'school') { icon = 'fa-school text-blue-500'; bg = 'bg-blue-100'; } const dateStr = `${month + 1}월 ${i}일`; list.innerHTML += `<div class="glass-card p-4 flex items-center gap-4 animate-[fadeInUp_0.3s_ease-out]"><div class="w-12 h-12 rounded-full ${bg} flex items-center justify-center text-xl shadow-sm"><i class="fa-solid ${icon}"></i></div><div><p class="text-xs text-gray-500 font-bold">${dateStr} · ${e.time}</p><p class="text-base font-bold text-gray-800">${e.title}</p></div></div>`; } }); } } if(!hasEvents) list.innerHTML = `<div class="text-center py-10 text-gray-400"><p class="text-sm">일정이 없어요</p></div>`; };
-        function getMergedEvents(year, month) { const events = {}; const keyPrefix = `${year}-${String(month).padStart(2, '0')}`; const duesDay = '06'; events[`${keyPrefix}-${duesDay}`] = (events[`${keyPrefix}-${duesDay}`] || []).concat([{ type: 'dues', title: '회비 납부일 💰', time: '15,000원' }]); const birthdays = { '01-02': '전시기 생일 🎂', '03-22': '지노 생일 🎂', '04-01': '오스틴 생일 🎂', '06-05': '홍박사 생일 🎂', '06-12': '류짱 생일 🎂', '10-15': '성원제 생일 🎂' }; Object.entries(birthdays).forEach(([d, t]) => { const [m, day] = d.split('-'); if (parseInt(m) === month) { const k = `${keyPrefix}-${day}`; events[k] = (events[k] || []).concat([{ type: 'bday', title: t, time: '하루 종일' }]); } }); if(month===6) { const last = new Date(year, month, 0).getDate(); const anniv = year - 2024; for(let i=1; i<=last; i++) { const k = `${keyPrefix}-${String(i).padStart(2,'0')}`; events[k] = (events[k]||[]).concat([{type:'anniv', title:`엔조이 ${anniv}주년 🎉`, time:'하루종일'}]); } } if (year === 2025 && month === 12) { events[`${keyPrefix}-12`] = (events[`${keyPrefix}-12`]||[]).concat([{type:'school', title:'우송대 종강', time:'일정'}]); events[`${keyPrefix}-20`] = (events[`${keyPrefix}-20`]||[]).concat([{type:'school', title:'안동대 종강', time:'일정'}]); } if (year === 2025 && month === 2) { ['05', '06', '07'].forEach(day => { const k = `${keyPrefix}-${day}`; events[k] = (events[k]||[]).concat([{type:'meet', title:'경북칠곡, 대구 여행 🚅', time:'정기모임'}]); }); } if (year === 2025 && month === 8) { ['29', '30'].forEach(day => { const k = `${keyPrefix}-${day}`; events[k] = (events[k]||[]).concat([{type:'meet', title:'진주 여행 🏰', time:'정기모임'}]); }); } const lastDay = new Date(year, month, 0).getDate(); for(let i=1; i<=lastDay; i++) { const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(i).padStart(2, '0')}`; const currentDate = new Date(dateStr); const sanghoonStart = new Date('2025-12-23'); const sanghoonEnd = new Date('2026-01-23'); if (currentDate >= sanghoonStart && currentDate <= sanghoonEnd) { if(i===1 || currentDate.getTime() === sanghoonStart.getTime()) { events[dateStr] = (events[dateStr]||[]).concat([{type:'personal', title:'상훈이 개인 일정 🏠', time:'장기 일정'}]); } else { events[dateStr] = (events[dateStr]||[]).concat([{type:'personal_dot', title:'상훈이 개인 일정', time:''}]); } } } if (window.dynamicEvents) { Object.keys(window.dynamicEvents).forEach(k => { const [dy, dm, dd] = k.split('-').map(Number); if (dy === year && dm === month) { const list = window.dynamicEvents[k]; if(Array.isArray(list)) events[k] = (events[k] || []).concat(list); } }); } return events; }
+        function getMergedEvents(year, month) { const events = {}; const keyPrefix = `${year}-${String(month).padStart(2, '0')}`; const duesDay = '06'; events[`${keyPrefix}-${duesDay}`] = (events[`${keyPrefix}-${duesDay}`] || []).concat([{ type: 'dues', title: '회비 납부일 💰', time: '15,000원' }]); const birthdays = { '01-02': '전시기 생일 🎂', '03-22': '지노 생일 🎂', '04-01': '오스틴 생일 🎂', '06-05': '홍박사 생일 🎂', '06-12': '류짱 생일 🎂', '10-15': '성원제 생일 🎂' }; Object.entries(birthdays).forEach(([d, t]) => { const [m, day] = d.split('-'); if (parseInt(m) === month) { const k = `${keyPrefix}-${day}`; events[k] = (events[k] || []).concat([{ type: 'bday', title: t, time: '하루 종일' }]); } }); if(month===6) { const last = new Date(year, month, 0).getDate(); const anniv = year - 2024; for(let i=1; i<=last; i++) { const k = `${keyPrefix}-${String(i).padStart(2,'0')}`; events[k] = (events[k]||[]).concat([{type:'anniv', title:`엔조이 ${anniv}주년 🎉`, time:'하루종일'}]); } } if (year === 2025 && month === 12) { events[`${keyPrefix}-12`] = (events[`${keyPrefix}-12`]||[]).concat([{type:'school', title:'우송대(전시기) 종강', time:'일정'}]); events[`${keyPrefix}-20`] = (events[`${keyPrefix}-20`]||[]).concat([{type:'school', title:'안동대(성원제) 종강', time:'일정'}]); } if (year === 2025 && month === 2) { ['05', '06', '07'].forEach(day => { const k = `${keyPrefix}-${day}`; events[k] = (events[k]||[]).concat([{type:'meet', title:'경북칠곡, 대구 여행 🚅', time:'정기모임'}]); }); } if (year === 2025 && month === 8) { ['29', '30'].forEach(day => { const k = `${keyPrefix}-${day}`; events[k] = (events[k]||[]).concat([{type:'meet', title:'진주 여행 🏰', time:'정기모임'}]); }); } const lastDay = new Date(year, month, 0).getDate(); for(let i=1; i<=lastDay; i++) { const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(i).padStart(2, '0')}`; const currentDate = new Date(dateStr); const sanghoonStart = new Date('2025-12-23'); const sanghoonEnd = new Date('2026-01-23'); if (currentDate >= sanghoonStart && currentDate <= sanghoonEnd) { if(i===1 || currentDate.getTime() === sanghoonStart.getTime()) { events[dateStr] = (events[dateStr]||[]).concat([{type:'personal', title:'상훈이 개인 일정 🏠', time:'장기 일정'}]); } else { events[dateStr] = (events[dateStr]||[]).concat([{type:'personal_dot', title:'상훈이 개인 일정', time:''}]); } } } if (window.dynamicEvents) { Object.keys(window.dynamicEvents).forEach(k => { const [dy, dm, dd] = k.split('-').map(Number); if (dy === year && dm === month) { const list = window.dynamicEvents[k]; if(Array.isArray(list)) events[k] = (events[k] || []).concat(list); } }); } return events; }
         function createEmptyMonthData() { const members = ['홍박사', '류짱', '오스틴', '전시기', '지노', '성원제']; return members.map(name => ({ name: name, status: 'unpaid', amount: 0, isLeader: name === '전시기' })); }
         window.openAddScheduleModal = () => { document.getElementById('schedule-add-modal').classList.remove('hidden'); document.getElementById('schedule-add-modal').classList.add('flex'); };
-        window.checkStock = () => {};
+        // 수정: 엔조이 증권 링크 직접 연결
+        window.checkStock = () => { window.location.href = "https://won429.github.io/enjoystock/"; };
         window.goToMusic = () => window.location.href = "https://won429.github.io/enjoy/";
         window.playGame = () => window.location.href = "https://won429.github.io/enjoygame/";
 
@@ -588,32 +609,7 @@
         window.goSchedule = () => { window.activeTabIndex = 1; window.updateTabUI(1); }
         window.goMeeting = () => { window.activeTabIndex = 2; window.updateTabUI(2); }
         window.changeMonth = (delta) => { window.viewMonth += delta; if (window.viewMonth < 0) { window.viewYear--; window.viewMonth = 11; } else if (window.viewMonth > 11) { window.viewYear++; window.viewMonth = 0; } window.renderCalendar(window.viewYear, window.viewMonth); }
-        
-        // 인사말 로직 (복구됨)
-        window.setGreeting = function() {
-            const hour = new Date().getHours();
-            const msgEl = document.getElementById('time-msg');
-            const emojiEl = document.getElementById('bg-emoji');
-            let msg = '', emoji = '';
-            
-            if (hour >= 0 && hour < 5) { msg = '고요한 새벽이네요 🌙'; emoji = '🌌'; }
-            else if (hour >= 5 && hour < 9) { msg = '상쾌한 아침이에요 ☀️'; emoji = '🌅'; }
-            else if (hour >= 9 && hour < 12) { msg = '활기찬 오전 보내세요 ☘️'; emoji = '🌤️'; }
-            else if (hour >= 12 && hour < 14) { msg = '맛있는 점심 드세요 🍱'; emoji = '🍽️'; }
-            else if (hour >= 14 && hour < 18) { msg = '나른한 오후, 힘내세요 ☕️'; emoji = '🥐'; }
-            else if (hour >= 18 && hour < 22) { msg = '편안한 저녁 되세요 🌆'; emoji = '🍷'; }
-            else { msg = '오늘 하루도 수고했어요 🌙'; emoji = '✨'; }
-            
-            if(msgEl) msgEl.innerHTML = msg;
-            if(emojiEl) emojiEl.innerHTML = emoji;
-        }
-
-        window.onload = () => { 
-            setTimeout(() => { document.getElementById('startup-modal').classList.remove('hidden'); document.getElementById('startup-modal').classList.add('flex'); }, 500); 
-            window.setGreeting(); // 인사말 실행
-            window.renderCalendar(window.viewYear, window.viewMonth); 
-            window.updateTabUI(0); 
-        };
+        window.onload = () => { setTimeout(() => { document.getElementById('startup-modal').classList.remove('hidden'); document.getElementById('startup-modal').classList.add('flex'); }, 500); window.setGreeting(); window.renderCalendar(window.viewYear, window.viewMonth); window.updateTabUI(0); };
         
         // CONFIGS & INIT
         const stockConfig = { apiKey: "AIzaSyABn9xi7a-3LyLpvS6HT03gJUGTlQkgHmk", authDomain: "enjoystock.firebaseapp.com", projectId: "enjoystock", storageBucket: "enjoystock.firebasestorage.app", messagingSenderId: "981969177924", appId: "1:981969177924:web:51b0093a0d1b001ead9b11" };
