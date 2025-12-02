@@ -225,21 +225,21 @@
         </div>
     </main>
 
-    <!-- 하단 플로팅 메뉴 (강화된 리얼 글래스 모피즘) -->
+    <!-- 하단 플로팅 메뉴 (초-투명 리얼 글래스) -->
     <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-auto">
         <!-- 메인 알약 메뉴 -->
         <!-- 
-             bg-white/10: 투명도 대폭 증가 (더 투명하게)
-             backdrop-blur-xl: 블러 효과 강화 (뒤에 콘텐츠가 뭉개져 보이도록)
-             border-white/30: 유리의 두께감 표현을 위한 얇은 테두리
-             shadow-lg: 붕 떠있는 느낌
+             bg-white/5: 흰색 기운을 거의 뺌 (매우 투명)
+             backdrop-blur-xl: 블러는 유지하여 유리 질감 표현
+             border-white/20: 테두리도 더 얇고 투명하게
+             shadow-[...]: 그림자로 입체감만 살림
         -->
-        <div class="flex items-center bg-white/10 backdrop-blur-2xl shadow-[0_8px_32px_0_rgba(31,38,135,0.1)] border border-white/30 rounded-full p-1 gap-1 ring-1 ring-white/20">
+        <div class="flex items-center bg-white/5 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.1)] border border-white/20 rounded-full p-1 gap-1 ring-1 ring-white/10">
             
             <!-- 1. 홈 (활성화 상태) -->
             <button class="relative px-5 py-2 rounded-full transition-all duration-300 group min-w-[64px]">
-                <!-- 활성화 배경 (반투명 화이트 + 자체 블러) -->
-                <div class="absolute inset-0 bg-white/50 shadow-[inset_0_1px_1px_rgba(255,255,255,0.6)] rounded-full backdrop-blur-md"></div>
+                <!-- 활성화 배경도 투명도 높임 (유리 안의 유리 느낌) -->
+                <div class="absolute inset-0 bg-white/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.3)] rounded-full backdrop-blur-md"></div>
                 <!-- 아이콘 및 텍스트 -->
                 <div class="relative z-10 flex flex-col items-center gap-0.5">
                     <i class="fa-solid fa-house text-base text-[#191F28] drop-shadow-sm"></i>
@@ -250,8 +250,8 @@
             <!-- 2. 모임통장 (비활성화 상태) -->
             <button onclick="alert('모임통장 기능은 준비 중이에요!')" class="relative px-5 py-2 rounded-full transition-all duration-300 group min-w-[64px] hover:bg-white/10">
                 <div class="relative z-10 flex flex-col items-center gap-0.5">
-                    <i class="fa-solid fa-users text-base text-[#4E5968] group-hover:text-gray-800 transition-colors"></i>
-                    <span class="text-[10px] font-medium text-[#4E5968] group-hover:text-gray-800 transition-colors">모임통장</span>
+                    <i class="fa-solid fa-users text-base text-[#4E5968] group-hover:text-gray-800 transition-colors drop-shadow-sm"></i>
+                    <span class="text-[10px] font-medium text-[#4E5968] group-hover:text-gray-800 transition-colors drop-shadow-sm">모임통장</span>
                 </div>
             </button>
 
