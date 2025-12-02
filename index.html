@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Enjoy - Toss Style</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- 폰트 및 아이콘 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" type="text/css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        @font-face {
+            font-family: 'TossFaceFontMac';
+            src: url('https://cdn.jsdelivr.net/gh/toss/tossface/dist/tossface-font-mac.css');
+        }
+
+        body { 
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+            background-color: #F2F4F6; /* 토스 시그니처 배경색 */
+            color: #191F28; /* 토스 블랙 */
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* 토스 스타일 카드 */
+        .toss-card {
+            background: #FFFFFF;
+            border-radius: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04); 
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s;
+            cursor: pointer;
+            overflow: hidden;
+            position: relative;
+        }
+        .toss-card:active {
+            transform: scale(0.96);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
+        }
+
+        /* 텍스트 컬러 시스템 */
+        .text-main { color: #191F28; }
+        .text-sub { color: #8B95A1; }
+        .text-blue { color: #3182F6; } /* 토스 블루 */
+        .text-red { color: #F04452; } /* 토스 레드 */
+
+        /* 애니메이션 */
+        .fade-in-up { animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; transform: translateY(20px); }
+        @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+        
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+
+        /* 스크롤바 숨김 */
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .pt-safe { padding-top: max(20px, env(safe-area-inset-top)); }
+        .pb-safe-area { padding-bottom: env(safe-area-inset-bottom); } 
+        
+        /* 가격 등락 색상 (애니메이션용) */
+        .price-up { color: #F04452 !important; transition: color 0.3s; }
+        .price-down { color: #3182F6 !important; transition: color 0.3s; }
+
+        /* 배경 이모티콘 애니메이션 */
+        @keyframes floatEmoji {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
+        }
+        .bg-emoji {
+            animation: floatEmoji 6s ease-in-out infinite;
+            filter: blur(0px); 
+        }
+    </style>
+</head>
+<body class="w-full h-[100dvh] flex flex-col overflow-hidden">
+
+    <!-- 상단 헤더 (심플) -->
+    <header class="flex-none pt-safe px-6 pb-2 z-20 flex justify-between items-center bg-[#F2F4F6]">
+        <div class="flex items-center gap-1.5 opacity-0 animate-[fadeIn_0.5s_0.5s_forwards]">
+            <span class="text-xl font-bold text-main tracking-tight">Enjoy</span>
+        </div>
+        <!-- 알림 버튼 삭제됨 -->
+    </header>
+
+    <!-- 메인 컨텐츠 -->
+    <main class="flex-1 overflow-y-auto scrollbar-hide px-5 pt-2 pb-safe w-full max-w-md mx-auto relative">
+        
+        <!-- 👋 상단 인사말 (배경 이모티콘 우측 배치) -->
+        <div class="mb-6 mt-2 fade-in-up relative h-24 flex flex-col justify-center overflow-visible">
+            <!-- 배경 이모티콘 (우측 배치: right-0) -->
+            <div id="bg-emoji" class="bg-emoji absolute right-0 bottom-[-10px] text-[80px] opacity-20 select-none pointer-events-none z-0 transform translate-x-2">
+                <!-- 자바스크립트로 이모티콘 주입 -->
+            </div>
+
+            <!-- 텍스트 (상대 위치, z-index 높음) -->
+            <div class="relative z-10">
+                <h1 class="text-2xl font-bold text-main leading-tight mb-1">
+                    엔조이 여러분,
+                </h1>
+                <p id="time-msg" class="text-2xl font-bold text-main leading-tight opacity-90">
+                    <!-- 자바스크립트로 멘트 주입 -->
+                </p>
+            </div>
+        </div>
+
+        <!-- 섹션 1: 자산/주식 (수정됨: 투자내역 삭제, 주식명 변경) -->
+        <div class="toss-card p-6 mb-4 fade-in-up delay-100 group" onclick="checkStock()">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold text-main">엔조이 증권</h2>
+                <i class="fa-solid fa-chevron-right text-sub text-xs group-hover:translate-x-1 transition-transform"></i>
+            </div>
+            
+            <div class="flex items-center justify-between relative z-10 pb-2">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center text-blue-500 text-xl shadow-sm">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <!-- '내 주식' -> '엔조이'로 변경 -->
+                            <p class="text-sm font-medium text-sub">엔조이</p> 
+                            <span id="market-badge" class="hidden text-[10px] font-bold bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded-md">마감</span>
+                        </div>
+                        <div class="flex items-end gap-2">
+                            <h3 id="ticker-price" class="text-2xl font-bold text-main tabular-nums tracking-tight">Loading...</h3>
+                            <span id="ticker-change" class="text-sm font-medium text-sub mb-1 tabular-nums">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 배경 차트 (은은하게) -->
+            <div class="absolute bottom-0 right-0 w-[60%] h-[50%] opacity-20 pointer-events-none">
+                 <svg id="mini-chart" width="100%" height="100%" preserveAspectRatio="none" class="overflow-visible">
+                    <defs>
+                        <linearGradient id="chart-grad" x1="0" x2="0" y1="0" y2="1">
+                            <stop offset="0%" stop-color="#3182F6" stop-opacity="0.5"/>
+                            <stop offset="100%" stop-color="#3182F6" stop-opacity="0"/>
+                        </linearGradient>
+                    </defs>
+                    <path id="chart-fill" d="" fill="url(#chart-grad)"></path>
+                    <polyline id="chart-line" points="" fill="none" stroke="#3182F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></polyline>
+                 </svg>
+            </div>
+            
+            <!-- 투자 내역 보러가기 삭제됨 -->
+        </div>
+
+        <!-- 섹션 2: 엔조이 서비스 (계층형 레이아웃) -->
+        <h3 class="text-lg font-bold text-main mb-3 px-1 fade-in-up delay-200">엔조이 서비스</h3>
+        
+        <!-- 1. 메인 서비스 (음악) - 가로로 넓게 강조 -->
+        <div class="mb-3 fade-in-up delay-200">
+            <button onclick="goToMusic()" class="toss-card w-full p-6 flex flex-row-reverse items-center justify-between group overflow-hidden relative h-32 bg-[#E8F3FF]">
+                <!-- 아이콘 영역 -->
+                <div class="relative z-10 w-16 h-16 rounded-full bg-white/60 backdrop-blur-sm shadow-sm flex items-center justify-center text-blue-500 text-3xl group-hover:scale-110 transition-transform duration-300">
+                    <i class="fa-solid fa-headphones"></i>
+                </div>
+                
+                <!-- 텍스트 영역 -->
+                <div class="relative z-10 text-left flex-1 pr-4">
+                    <div class="flex items-center gap-1.5 mb-1.5">
+                        <span class="text-[10px] font-bold text-blue-500 bg-white/80 px-1.5 py-0.5 rounded-md">TODAY</span>
+                        <span class="w-1 h-1 rounded-full bg-blue-500"></span>
+                        <span class="text-[10px] font-medium text-blue-400">음악</span>
+                    </div>
+                    <h4 class="text-xl font-bold text-main leading-tight mb-1">오늘의 추천<br>플레이리스트</h4>
+                </div>
+            </button>
+        </div>
+
+        <!-- 2. 서브 서비스 (게임, 여행) - 2열 그리드 -->
+        <div class="grid grid-cols-2 gap-3 mb-3 fade-in-up delay-200">
+            <!-- 게임 -->
+            <button onclick="playGame()" class="toss-card p-5 h-44 flex flex-col justify-between text-left group bg-[#FFF0F0] hover:bg-[#FFE5E5] transition-colors">
+                <div class="w-full flex justify-between items-start">
+                    <div class="w-12 h-12 rounded-[18px] bg-white/60 flex items-center justify-center text-[#FF6B6B] text-xl group-hover:rotate-12 transition-transform duration-300 shadow-sm">
+                        <i class="fa-solid fa-dice"></i>
+                    </div>
+                    <span class="bg-[#FF6B6B] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-md tracking-tight">NEW</span>
+                </div>
+                <div>
+                    <h4 class="text-lg font-bold text-main mb-1">복불복</h4>
+                    <p class="text-xs text-[#FF6B6B]/80 font-medium leading-snug">오늘 나의<br>운세는?</p>
+                </div>
+            </button>
+
+            <!-- 여행 -->
+            <button onclick="showTravelModal()" class="toss-card p-5 h-44 flex flex-col justify-between text-left group bg-[#E3FAEB] hover:bg-[#D1F7DE] transition-colors">
+                <div class="w-full flex justify-start">
+                    <div class="w-12 h-12 rounded-[18px] bg-white/60 flex items-center justify-center text-[#00C77D] text-xl group-hover:scale-110 transition-transform duration-300 shadow-sm">
+                        <i class="fa-solid fa-plane-departure"></i>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-lg font-bold text-main mb-1">여행 기록</h4>
+                    <p class="text-xs text-[#00C77D]/80 font-medium leading-snug">지난 추억을<br>떠올려봐요</p>
+                </div>
+            </button>
+        </div>
+
+        <!-- 3. 기타 (준비 중) - 슬림한 하단 배너 -->
+        <div class="mb-6 fade-in-up delay-200">
+            <button onclick="showSecretModal()" class="w-full h-14 bg-white rounded-2xl px-5 flex items-center justify-between shadow-sm active:scale-[0.98] transition-transform">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center text-xs">
+                        <i class="fa-solid fa-lock"></i>
+                    </div>
+                    <span class="text-sm font-medium text-gray-500">새로운 기능 준비 중</span>
+                </div>
+                <div class="text-xs text-gray-300 font-medium flex items-center gap-1">
+                    Comming Soon <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                </div>
+            </button>
+        </div>
+
+        <!-- 기존 섹션 3: 리스트 메뉴 삭제됨 -->
+
+        <!-- 하단 배너 -->
+        <div class="bg-blue-500 rounded-2xl p-5 text-white fade-in-up delay-300 flex justify-between items-center cursor-pointer active:scale-98 transition-transform shadow-lg shadow-blue-500/20 group mb-8" onclick="alert('광고 아님!')">
+            <div>
+                <p class="font-bold text-lg group-hover:translate-x-1 transition-transform">엔조이 프라임</p>
+                <p class="text-blue-100 text-xs mt-1">지금 가입하면 혜택이 펑펑 🎉</p>
+            </div>
+            <div class="bg-white/20 p-2 rounded-full backdrop-blur-sm group-hover:rotate-12 transition-transform duration-500">
+                <i class="fa-solid fa-gift text-2xl text-white"></i>
+            </div>
+        </div>
+
+        <div class="mt-8 text-center pb-8">
+            <button class="text-xs text-sub underline hover:text-gray-600">화면 편집하기</button>
+            <p class="text-[10px] text-gray-300 mt-4">© 2024 Enjoy Corp.</p>
+        </div>
+    </main>
+
+    <!-- 모달: 업데이트 (토스 스타일) -->
+    <div id="startup-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center px-6">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-xs shadow-2xl scale-in text-center relative overflow-hidden">
+            <h3 class="text-xl font-bold text-main mb-3 mt-2">반가워요! 👋</h3>
+            <p class="text-[#4E5968] text-sm mb-8 leading-relaxed">
+                이제 홈 화면에서 <span class="text-blue-500 font-bold">실시간 주가</span>를<br>한눈에 확인할 수 있어요.
+            </p>
+            <div class="flex gap-3">
+                <button onclick="closeModal('startup-modal')" class="flex-1 bg-[#F2F4F6] text-[#4E5968] font-bold py-3.5 rounded-xl hover:bg-gray-200 transition-colors">
+                    나중에
+                </button>
+                <button onclick="closeModal('startup-modal')" class="flex-1 bg-[#3182F6] text-white font-bold py-3.5 rounded-xl hover:bg-blue-600 transition-colors shadow-md shadow-blue-500/20">
+                    확인했어요
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 모달: 공통 -->
+    <div id="common-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center px-6">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-xs shadow-2xl scale-in text-center">
+            <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-500 text-xl" id="modal-icon-bg">
+                <i id="modal-icon" class=""></i>
+            </div>
+            <h3 class="text-lg font-bold text-main mb-2" id="modal-title">제목</h3>
+            <p class="text-[#4E5968] text-sm mb-6 leading-relaxed break-keep" id="modal-desc">내용</p>
+            <button onclick="closeModal('common-modal')" class="w-full bg-[#3182F6] text-white font-bold py-3.5 rounded-xl hover:bg-blue-600 transition-colors shadow-md shadow-blue-500/20">
+                확인
+            </button>
+        </div>
+    </div>
+
+    <!-- 🔥 FIREBASE 연동 🔥 -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyABn9xi7a-3LyLpvS6HT03gJUGTlQkgHmk",
+            authDomain: "enjoystock.firebaseapp.com",
+            projectId: "enjoystock",
+            storageBucket: "enjoystock.firebasestorage.app",
+            messagingSenderId: "981969177924",
+            appId: "1:981969177924:web:51b0093a0d1b001ead9b11"
+        };
+
+        const DATA_PATH = ['artifacts', 'enjoy-stock-live', 'public', 'data', 'stock_data', 'enjoy_ticker'];
+        
+        const priceEl = document.getElementById('ticker-price');
+        const changeEl = document.getElementById('ticker-change');
+        const polyline = document.getElementById('chart-line');
+        const pathFill = document.getElementById('chart-fill');
+        const svg = document.getElementById('mini-chart');
+        const marketBadge = document.getElementById('market-badge');
+        
+        const MARKET_START = 8 * 60; 
+        const MARKET_END = 23 * 60 + 30;
+
+        function checkMarketStatus(manualPause) {
+            const now = new Date();
+            const curr = now.getHours() * 60 + now.getMinutes();
+            const isOpen = (curr >= MARKET_START && curr < MARKET_END) && !manualPause;
+            
+            if (!isOpen) {
+                marketBadge.classList.remove('hidden');
+                marketBadge.innerText = manualPause ? "일시정지" : "마감";
+            } else {
+                marketBadge.classList.add('hidden');
+            }
+        }
+
+        function drawChart(history, basePrice) {
+            if (!svg || !history || history.length === 0) return;
+            const w = svg.clientWidth || 64;
+            const h = svg.clientHeight || 32;
+            
+            let min = Math.min(...history, basePrice);
+            let max = Math.max(...history, basePrice);
+            const pad = (max - min) * 0.1 || 10;
+            min -= pad; max += pad;
+            const range = max - min;
+
+            const pts = history.map((val, i) => {
+                const x = (i / (history.length - 1)) * w;
+                const y = h - ((val - min) / range) * h;
+                return `${x},${y}`;
+            }).join(' ');
+
+            polyline.setAttribute('points', pts);
+            pathFill.setAttribute('d', `M ${pts} L ${w},${h} L 0,${h} Z`);
+        }
+
+        function updateUI(data) {
+            if (!data) return;
+
+            const { currentPrice, basePrice, history, manualPause } = data;
+            const base = basePrice || 12000;
+
+            // 1. 상태 업데이트
+            checkMarketStatus(manualPause);
+
+            // 2. 가격 표시
+            priceEl.innerText = currentPrice.toLocaleString() + "원";
+            
+            // 3. 등락 표시
+            const diff = currentPrice - base;
+            const rate = ((diff / base) * 100).toFixed(1);
+            const sign = diff > 0 ? '+' : '';
+            
+            // 네온 색상 적용
+            const redColor = '#F04452'; // Toss Red
+            const blueColor = '#3182F6'; // Toss Blue
+            const glowClass = 'text-glow';
+
+            if (diff > 0) {
+                priceEl.className = `text-2xl font-bold tabular-nums tracking-tight text-red-500 price-up`;
+                changeEl.className = "text-sm font-bold tabular-nums text-red-500 mb-0.5";
+                changeEl.innerText = `${sign}${rate}%`;
+                polyline.setAttribute('stroke', redColor);
+                // 그라데이션 업데이트 (Red)
+                svg.querySelector('stop:first-child').setAttribute('stop-color', redColor);
+                svg.querySelector('stop:last-child').setAttribute('stop-color', redColor);
+            } else if (diff < 0) {
+                priceEl.className = `text-2xl font-bold tabular-nums tracking-tight text-blue-500 price-down`;
+                changeEl.className = "text-sm font-bold tabular-nums text-blue-500 mb-0.5";
+                changeEl.innerText = `${rate}%`;
+                polyline.setAttribute('stroke', blueColor);
+                // 그라데이션 업데이트 (Blue)
+                svg.querySelector('stop:first-child').setAttribute('stop-color', blueColor);
+                svg.querySelector('stop:last-child').setAttribute('stop-color', blueColor);
+            } else {
+                changeEl.className = "text-sm font-bold tabular-nums text-gray-400 mb-0.5";
+                changeEl.innerText = "0.0%";
+                polyline.setAttribute('stroke', '#B0B8C1');
+            }
+
+            // 4. 차트
+            if (history) drawChart(history, base);
+        }
+
+        async function init() {
+            try {
+                const app = initializeApp(firebaseConfig);
+                const auth = getAuth(app);
+                const db = getFirestore(app);
+                
+                await signInAnonymously(auth).catch(() => {});
+                
+                onSnapshot(doc(db, ...DATA_PATH), (docSnap) => {
+                    if (docSnap.exists()) updateUI(docSnap.data());
+                });
+            } catch(e) { console.error(e); }
+        }
+        init();
+    </script>
+
+    <!-- 일반 스크립트 -->
+    <script>
+        const LINKS = {
+            music: "https://won429.github.io/enjoy/",
+            stock: "https://won429.github.io/enjoystock/",
+            game: "https://won429.github.io/enjoygame/"
+        };
+
+        function showModal(id, title, desc, iconClass, iconColorClass) {
+            const modal = document.getElementById(id);
+            if(title) {
+                document.getElementById('modal-title').innerText = title;
+                document.getElementById('modal-desc').innerHTML = desc;
+                const iconBg = document.getElementById('modal-icon-bg');
+                const icon = document.getElementById('modal-icon');
+                icon.className = iconClass;
+                // 아이콘 배경색 커스텀
+                if(iconColorClass) {
+                    iconBg.className = `w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 text-xl ${iconColorClass}`;
+                } else {
+                    iconBg.className = "w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-500 text-xl";
+                }
+            }
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+        
+        function closeModal(id) {
+            const modal = document.getElementById(id);
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function goToMusic() { if (LINKS.music) window.location.href = LINKS.music; }
+        function checkStock() { if (LINKS.stock) window.location.href = LINKS.stock; }
+        function playGame() { if (LINKS.game) window.location.href = LINKS.game; }
+
+        function showTravelModal() {
+            showModal('common-modal', 'Coming Soon', '여행 기록 서비스는<br>현재 준비 중이에요 ✈️', 'fa-solid fa-plane', 'bg-emerald-50 text-emerald-500');
+        }
+        function showSecretModal() {
+            showModal('common-modal', '다음 서비스는?', '어떤 기능이 추가될까요?<br>기대해 주세요! 🎁', 'fa-solid fa-lock', 'bg-gray-100 text-gray-400');
+        }
+
+        // 👋 시간대별 서브 멘트 설정 (배경 이모티콘 우측)
+        function setGreeting() {
+            const hour = new Date().getHours();
+            const msgEl = document.getElementById('time-msg');
+            const emojiEl = document.getElementById('bg-emoji');
+            let msg = '';
+            let emoji = '';
+
+            if (hour >= 5 && hour < 12) {
+                msg = '좋은 아침이에요! 상쾌한 하루 시작하세요';
+                emoji = '☀️';
+            } else if (hour >= 12 && hour < 14) {
+                msg = '맛있는 점심 드셨나요? 오후도 파이팅!';
+                emoji = '🍱';
+            } else if (hour >= 14 && hour < 18) {
+                msg = '나른한 오후네요, 조금만 더 힘내요!';
+                emoji = '☕️';
+            } else if (hour >= 18 && hour < 22) {
+                msg = '오늘 하루 고생하셨어요. 편안한 저녁 되세요';
+                emoji = '🌙';
+            } else {
+                msg = '밤이 깊었어요. 좋은 꿈 꾸세요';
+                emoji = '✨';
+            }
+            msgEl.innerHTML = msg;
+            emojiEl.innerHTML = emoji;
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            setGreeting(); // 시간대별 멘트 설정
+            
+            setTimeout(() => {
+                const startModal = document.getElementById('startup-modal');
+                startModal.classList.remove('hidden');
+                startModal.classList.add('flex');
+            }, 500);
+        });
+    </script>
+</body>
+</html>
