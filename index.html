@@ -33,14 +33,16 @@
             border: 1px solid rgba(255, 255, 255, 0.6);
             border-radius: 24px;
             box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04); 
-            transition: transform 0.1s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.1s;
+            transition: transform 0.1s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.1s, filter 0.1s;
             cursor: pointer;
             overflow: hidden;
             position: relative;
         }
+        /* 클릭(터치) 효과: 크기 축소 + 밝기 조절 */
         .toss-card:active {
             transform: scale(0.96);
             box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
+            filter: brightness(0.95);
         }
 
         /* 일정/모임 화면용 유리 카드 */
@@ -52,7 +54,7 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
             border-radius: 24px;
         }
-
+        
         /* 미납자용 파스텔 레드 블록 */
         .glass-card-unpaid {
             background: rgba(254, 226, 226, 0.6);
@@ -88,6 +90,8 @@
             right: 0;
             bottom: -10px;
             z-index: 0;
+            /* 터치 이벤트 통과 */
+            pointer-events: none; 
         }
 
         /* 하단 메뉴 인디케이터 애니메이션 */
@@ -109,10 +113,11 @@
         
         <!-- 👋 상단 인사말 -->
         <div class="mb-6 mt-4 fade-in-up relative h-24 flex flex-col justify-center overflow-visible">
-            <div id="bg-emoji" class="bg-emoji text-[80px] opacity-20 select-none pointer-events-none transform translate-x-2"></div>
+            <!-- 배경 이모티콘 -->
+            <div id="bg-emoji" class="bg-emoji text-[80px] opacity-20 select-none transform translate-x-2"></div>
             <div class="relative z-10">
                 <h1 class="text-2xl font-bold text-main leading-tight mb-1">엔조이 여러분,</h1>
-                <p id="time-msg" class="text-2xl font-bold text-main leading-tight opacity-90">안녕하세요!</p>
+                <p id="time-msg" class="text-2xl font-bold text-main leading-tight opacity-90"></p>
             </div>
         </div>
 
@@ -167,9 +172,7 @@
                 </div>
                 <div class="relative z-10 text-left flex-1 pr-4">
                     <div class="flex items-center gap-1.5 mb-1.5">
-                        <span class="text-[10px] font-bold text-blue-500 bg-white/70 px-1.5 py-0.5 rounded-md">TODAY</span>
-                        <span class="w-1 h-1 rounded-full bg-blue-500"></span>
-                        <span class="text-[10px] font-medium text-blue-400">음악</span>
+                        <span class="text-[10px] font-bold text-blue-500 bg-white/70 px-1.5 py-0.5 rounded-md">MUSIC</span>
                     </div>
                     <h4 class="text-xl font-bold text-main leading-tight mb-1">엔조이 브이로그 속<br>음악 듣기</h4>
                 </div>
@@ -224,10 +227,8 @@
             </button>
         </div>
 
-        <div class="mt-8 text-center pb-8">
-            <button class="text-xs text-sub underline hover:text-gray-600" onclick="window.haptic()">화면 편집하기</button>
-            <p class="text-[10px] text-gray-400 mt-4">© 2024 Enjoy Corp.</p>
-        </div>
+        <!-- 하단 문구 삭제됨 -->
+        <div class="pb-8"></div>
     </main>
 
     <!-- 📅 일정 화면 -->
@@ -263,10 +264,7 @@
                     </button>
                 </div>
                 <div id="event-list" class="space-y-3"></div>
-                <div class="mt-8 text-center pb-8">
-                    <button class="text-xs text-sub underline hover:text-gray-600" onclick="window.haptic()">일정 추가 요청하기</button>
-                    <p class="text-[10px] text-gray-400 mt-4">© 2024 Enjoy Corp.</p>
-                </div>
+                <!-- 하단 문구 삭제됨 -->
             </div>
         </div>
     </div>
@@ -302,15 +300,12 @@
                     </div>
                 </div>
                 <div id="dues-list" class="space-y-3"></div>
-                <div class="mt-8 text-center pb-8">
-                    <button class="text-xs text-sub underline hover:text-gray-600" onclick="window.haptic()">내역 조회 문제 해결</button>
-                    <p class="text-[10px] text-gray-400 mt-4">© 2024 Enjoy Corp.</p>
-                </div>
+                <!-- 하단 문구 삭제됨 -->
             </div>
         </div>
     </div>
 
-    <!-- 하단 플로팅 메뉴 -->
+    <!-- 하단 플로팅 메뉴 (드래그 인터랙션 적용) -->
     <nav id="bottom-nav" class="fixed bottom-3 left-1/2 -translate-x-1/2 z-50 w-auto touch-pan-x select-none cursor-grab active:cursor-grabbing">
         <div class="flex items-center bg-white/10 backdrop-blur-[4px] backdrop-saturate-[180%] shadow-[0_8px_32px_0_rgba(31,38,135,0.15)] border border-white/20 rounded-full p-1.5 gap-1 ring-1 ring-white/30 relative">
             
@@ -528,13 +523,13 @@
             else if (relativeX < btnWidth * 2) targetIndex = 1;
             else targetIndex = 2;
             window.updateTabUI(targetIndex);
-            window.haptic(); // 드래그 놓고 탭 이동 시 진동
+            window.haptic(); 
         });
 
         // Modal Helpers
         window.closeModal = (id) => { document.getElementById(id).classList.add('hidden'); document.getElementById(id).classList.remove('flex'); };
         
-        // 팝업창 기능 수정
+        // 팝업창 기능 (여행, 준비중) - 전역 할당
         window.showTravelModal = () => {
              const modal = document.getElementById('common-modal');
              document.getElementById('modal-title').innerText = 'Coming Soon';
@@ -595,7 +590,7 @@
         window.changeMonth = (delta) => { window.viewMonth += delta; if (window.viewMonth < 0) { window.viewYear--; window.viewMonth = 11; } else if (window.viewMonth > 11) { window.viewYear++; window.viewMonth = 0; } window.renderCalendar(window.viewYear, window.viewMonth); }
         
         // 인사말 로직 (복구됨)
-        function setGreeting() {
+        window.setGreeting = function() {
             const hour = new Date().getHours();
             const msgEl = document.getElementById('time-msg');
             const emojiEl = document.getElementById('bg-emoji');
@@ -615,7 +610,7 @@
 
         window.onload = () => { 
             setTimeout(() => { document.getElementById('startup-modal').classList.remove('hidden'); document.getElementById('startup-modal').classList.add('flex'); }, 500); 
-            setGreeting(); // 인사말 실행
+            window.setGreeting(); // 인사말 실행
             window.renderCalendar(window.viewYear, window.viewMonth); 
             window.updateTabUI(0); 
         };
