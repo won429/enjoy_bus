@@ -88,24 +88,15 @@
 </head>
 <body class="w-full h-[100dvh] flex flex-col overflow-hidden bg-[#E5E8EB]">
 
-    <!-- 메인 컨텐츠 (pt-safe 적용으로 상단 여백 확보) -->
+    <!-- 메인 컨텐츠 -->
     <main id="home-screen" class="flex-1 overflow-y-auto scrollbar-hide px-5 pt-safe pb-32 w-full max-w-md mx-auto relative bg-[#F2F4F6] min-h-full shadow-xl transition-transform duration-300">
         
-        <!-- 👋 상단 인사말 (배경 이모티콘 우측 배치) -->
+        <!-- 👋 상단 인사말 -->
         <div class="mb-6 mt-4 fade-in-up relative h-24 flex flex-col justify-center overflow-visible">
-            <!-- 배경 이모티콘 (우측 배치: right-0) -->
-            <div id="bg-emoji" class="bg-emoji absolute right-0 bottom-[-10px] text-[80px] opacity-20 select-none pointer-events-none z-0 transform translate-x-2">
-                <!-- 자바스크립트로 이모티콘 주입 -->
-            </div>
-
-            <!-- 텍스트 (상대 위치, z-index 높음) -->
+            <div id="bg-emoji" class="bg-emoji absolute right-0 bottom-[-10px] text-[80px] opacity-20 select-none pointer-events-none z-0 transform translate-x-2"></div>
             <div class="relative z-10">
-                <h1 class="text-2xl font-bold text-main leading-tight mb-1">
-                    엔조이 여러분,
-                </h1>
-                <p id="time-msg" class="text-2xl font-bold text-main leading-tight opacity-90">
-                    <!-- 자바스크립트로 멘트 주입 -->
-                </p>
+                <h1 class="text-2xl font-bold text-main leading-tight mb-1">엔조이 여러분,</h1>
+                <p id="time-msg" class="text-2xl font-bold text-main leading-tight opacity-90"></p>
             </div>
         </div>
 
@@ -220,11 +211,9 @@
         </div>
     </main>
 
-    <!-- 하단 플로팅 메뉴 (드래그/스와이프 가능) -->
+    <!-- 하단 플로팅 메뉴 -->
     <nav id="bottom-nav" class="fixed bottom-3 left-1/2 -translate-x-1/2 z-50 w-auto touch-pan-x select-none">
         <div class="flex items-center bg-white/10 backdrop-blur-[4px] backdrop-saturate-[180%] shadow-[0_8px_32px_0_rgba(31,38,135,0.15)] border border-white/20 rounded-full p-1.5 gap-1 ring-1 ring-white/30">
-            
-            <!-- 1. 홈 -->
             <button onclick="goHome()" class="relative px-5 py-2 rounded-full transition-all duration-300 group min-w-[64px]" id="nav-home">
                 <div class="absolute inset-0 bg-white/40 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8)] rounded-full backdrop-blur-[2px]" id="nav-home-bg"></div>
                 <div class="relative z-10 flex flex-col items-center gap-0.5">
@@ -232,8 +221,6 @@
                     <span class="text-[10px] font-bold text-[#191F28] drop-shadow-sm">홈</span>
                 </div>
             </button>
-
-            <!-- 2. 일정 -->
             <button onclick="goSchedule()" class="relative px-5 py-2 rounded-full transition-all duration-300 group min-w-[64px] hover:bg-white/10" id="nav-calendar">
                 <div class="absolute inset-0 bg-white/40 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8)] rounded-full backdrop-blur-[2px] hidden" id="nav-calendar-bg"></div>
                 <div class="relative z-10 flex flex-col items-center gap-0.5">
@@ -241,8 +228,6 @@
                     <span class="text-[10px] font-medium text-[#4E5968] group-hover:text-gray-900 transition-colors drop-shadow-sm">일정</span>
                 </div>
             </button>
-
-            <!-- 3. 모임통장 -->
             <button onclick="goMeeting()" class="relative px-5 py-2 rounded-full transition-all duration-300 group min-w-[64px] hover:bg-white/10" id="nav-meeting">
                 <div class="relative z-10 flex flex-col items-center gap-0.5">
                     <i class="fa-solid fa-users text-base text-[#4E5968] group-hover:text-gray-900 transition-colors drop-shadow-sm"></i>
@@ -252,9 +237,8 @@
         </div>
     </nav>
 
-    <!-- 📅 일정 화면 (홈화면과 동일 크기) -->
+    <!-- 📅 일정 화면 -->
     <div id="schedule-screen" class="fixed top-0 bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md z-40 bg-[#F2F4F6] hidden flex-col overflow-hidden shadow-2xl transition-transform duration-300 translate-x-full">
-        <!-- 헤더 -->
         <header class="flex-none pt-safe px-6 pb-4 flex justify-between items-center bg-white">
             <h2 class="text-2xl font-bold text-main">일정</h2>
             <div class="flex gap-2">
@@ -264,10 +248,8 @@
             </div>
         </header>
 
-        <!-- 캘린더 영역 -->
         <div class="flex-1 overflow-y-auto scrollbar-hide">
             <div class="bg-white pb-6 rounded-b-[32px] shadow-sm mb-4">
-                <!-- 요일 헤더 -->
                 <div class="grid grid-cols-7 text-center mb-2 px-4">
                     <div class="text-xs text-red-500 font-medium py-2">일</div>
                     <div class="text-xs text-sub font-medium py-2">월</div>
@@ -277,26 +259,17 @@
                     <div class="text-xs text-sub font-medium py-2">금</div>
                     <div class="text-xs text-sub font-medium py-2">토</div>
                 </div>
-                
-                <!-- 날짜 그리드 -->
-                <div id="calendar-grid" class="grid grid-cols-7 text-center px-4 gap-y-1">
-                    <!-- JS로 날짜 생성 -->
-                </div>
+                <div id="calendar-grid" class="grid grid-cols-7 text-center px-4 gap-y-1"></div>
             </div>
 
-            <!-- 하단 일정 리스트 -->
             <div class="px-5 pb-32">
                 <h3 class="text-lg font-bold text-main mb-3" id="selected-date-title">이달의 일정</h3>
-                
-                <!-- 일정 아이템들이 여기에 추가됨 -->
-                <div id="event-list" class="space-y-3">
-                    <!-- JS로 렌더링 -->
-                </div>
+                <div id="event-list" class="space-y-3"></div>
             </div>
         </div>
     </div>
 
-    <!-- 모달들 및 스크립트 -->
+    <!-- 모달들 -->
     <div id="startup-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center px-6">
         <div class="bg-white rounded-3xl p-6 w-full max-w-xs shadow-2xl scale-in text-center relative overflow-hidden">
             <h3 class="text-xl font-bold text-main mb-3 mt-2">반가워요! 👋</h3>
@@ -304,26 +277,18 @@
                 이제 홈 화면에서 <span class="text-blue-500 font-bold">실시간 주가</span>를<br>한눈에 확인할 수 있어요.
             </p>
             <div class="flex gap-3">
-                <button onclick="closeModal('startup-modal')" class="flex-1 bg-[#F2F4F6] text-[#4E5968] font-bold py-3.5 rounded-xl hover:bg-gray-200 transition-colors">
-                    나중에
-                </button>
-                <button onclick="closeModal('startup-modal')" class="flex-1 bg-[#3182F6] text-white font-bold py-3.5 rounded-xl hover:bg-blue-600 transition-colors shadow-md shadow-blue-500/20">
-                    확인했어요
-                </button>
+                <button onclick="closeModal('startup-modal')" class="flex-1 bg-[#F2F4F6] text-[#4E5968] font-bold py-3.5 rounded-xl hover:bg-gray-200 transition-colors">나중에</button>
+                <button onclick="closeModal('startup-modal')" class="flex-1 bg-[#3182F6] text-white font-bold py-3.5 rounded-xl hover:bg-blue-600 transition-colors shadow-md shadow-blue-500/20">확인했어요</button>
             </div>
         </div>
     </div>
 
     <div id="common-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center px-6">
         <div class="bg-white rounded-3xl p-6 w-full max-w-xs shadow-2xl scale-in text-center">
-            <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-500 text-xl" id="modal-icon-bg">
-                <i id="modal-icon" class=""></i>
-            </div>
+            <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-500 text-xl" id="modal-icon-bg"><i id="modal-icon" class=""></i></div>
             <h3 class="text-lg font-bold text-main mb-2" id="modal-title">제목</h3>
             <p class="text-[#4E5968] text-sm mb-6 leading-relaxed break-keep" id="modal-desc">내용</p>
-            <button onclick="closeModal('common-modal')" class="w-full bg-[#3182F6] text-white font-bold py-3.5 rounded-xl hover:bg-blue-600 transition-colors shadow-md shadow-blue-500/20">
-                확인
-            </button>
+            <button onclick="closeModal('common-modal')" class="w-full bg-[#3182F6] text-white font-bold py-3.5 rounded-xl hover:bg-blue-600 transition-colors shadow-md shadow-blue-500/20">확인</button>
         </div>
     </div>
 
@@ -333,15 +298,7 @@
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyABn9xi7a-3LyLpvS6HT03gJUGTlQkgHmk",
-            authDomain: "enjoystock.firebaseapp.com",
-            projectId: "enjoystock",
-            storageBucket: "enjoystock.firebasestorage.app",
-            messagingSenderId: "981969177924",
-            appId: "1:981969177924:web:51b0093a0d1b001ead9b11"
-        };
-
+        const firebaseConfig = { apiKey: "AIzaSyABn9xi7a-3LyLpvS6HT03gJUGTlQkgHmk", authDomain: "enjoystock.firebaseapp.com", projectId: "enjoystock", storageBucket: "enjoystock.firebasestorage.app", messagingSenderId: "981969177924", appId: "1:981969177924:web:51b0093a0d1b001ead9b11" };
         const DATA_PATH = ['artifacts', 'enjoy-stock-live', 'public', 'data', 'stock_data', 'enjoy_ticker'];
         const priceEl = document.getElementById('ticker-price');
         const changeEl = document.getElementById('ticker-change');
@@ -349,19 +306,13 @@
         const pathFill = document.getElementById('chart-fill');
         const svg = document.getElementById('mini-chart');
         const marketBadge = document.getElementById('market-badge');
-        const MARKET_START = 8 * 60; 
-        const MARKET_END = 23 * 60 + 30;
+        const MARKET_START = 8 * 60; const MARKET_END = 23 * 60 + 30;
 
         function checkMarketStatus(manualPause) {
             const now = new Date();
             const curr = now.getHours() * 60 + now.getMinutes();
             const isOpen = (curr >= MARKET_START && curr < MARKET_END) && !manualPause;
-            if (!isOpen) {
-                marketBadge.classList.remove('hidden');
-                marketBadge.innerText = manualPause ? "일시정지" : "마감";
-            } else {
-                marketBadge.classList.add('hidden');
-            }
+            if (!isOpen) { marketBadge.classList.remove('hidden'); marketBadge.innerText = manualPause ? "일시정지" : "마감"; } else { marketBadge.classList.add('hidden'); }
         }
 
         function drawChart(history, basePrice) {
@@ -437,7 +388,6 @@
             game: "https://won429.github.io/enjoygame/"
         };
 
-        // 📅 Calendar Logic
         const today = new Date();
         const currentYear = today.getFullYear();
         const currentMonth = today.getMonth() + 1;
@@ -461,7 +411,6 @@
                 '06-12': '류짱 생일 🎂',
                 '10-15': '성원제 생일 🎂'
             };
-
             Object.entries(birthdays).forEach(([dateStr, title]) => {
                 const [bMonth, bDay] = dateStr.split('-');
                 if (parseInt(bMonth) === month) {
@@ -471,12 +420,10 @@
             });
 
             // 3. 6월 전체: 엔조이 N주년의 달
-            // 기준: 2024년 창립 -> 2025년 1주년, 2026년 2주년...
             if (month === 6) {
                 const anniversary = year - 2024;
-                // n주년 타이틀 생성
                 let title = `엔조이 ${anniversary}주년의 달 🎉`;
-                if (anniversary <= 0) title = "엔조이 창립의 달 🎉"; // 2024년 이전
+                if (anniversary <= 0) title = "엔조이 창립의 달 🎉"; 
 
                 const lastDay = new Date(year, month, 0).getDate(); 
                 for(let i=1; i<=lastDay; i++) {
@@ -488,35 +435,27 @@
 
             // 4. 종강 일정 (12월)
             if (month === 12) {
-                // 12일: 우송대(전시기) 종강
                 let key = `${keyPrefix}-12`;
                 events[key] = (events[key] || []).concat([{ type: 'school', title: '우송대(전시기) 종강 🏫', time: '일정' }]);
-                
-                // 20일: 안동대(성원제) 종강
                 key = `${keyPrefix}-20`;
                 events[key] = (events[key] || []).concat([{ type: 'school', title: '안동대(성원제) 종강 🏫', time: '일정' }]);
             }
 
             // 5. 상훈이 개인 일정 (2025-12-23 ~ 2026-01-23)
-            // 반복문으로 해당 월의 날짜가 범위에 속하는지 체크
             const lastDay = new Date(year, month, 0).getDate();
             for(let i=1; i<=lastDay; i++) {
                 const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
                 const currentDate = new Date(dateStr);
-                
-                // 범위 설정
                 const sanghoonStart = new Date('2025-12-23');
                 const sanghoonEnd = new Date('2026-01-23');
                 
                 if (currentDate >= sanghoonStart && currentDate <= sanghoonEnd) {
-                    // 개인 일정 추가
                     const existing = events[dateStr] || [];
                     events[dateStr] = existing.concat([{ type: 'personal', title: '상훈이 개인 일정 🏠', time: '하루 종일' }]);
                 }
             }
 
-            // 6. 기존 여행 일정 (연도 무관하게 2월, 8월에 표시된다면 아래 로직 유지)
-            // (만약 특정 연도만 원하시면 year 체크를 추가하세요)
+            // 6. 기존 여행
             if (month === 2) {
                 ['05', '06', '07'].forEach(day => {
                     const key = `${keyPrefix}-${day}`;
@@ -535,19 +474,15 @@
 
         let viewYear = today.getFullYear();
         let viewMonth = today.getMonth(); // 0-based
-
         let activeTabIndex = 0; 
         
         function updateTabUI(index) {
             const homeBg = document.getElementById('nav-home-bg');
             const calBg = document.getElementById('nav-calendar-bg');
-            
             homeBg.classList.add('hidden');
             calBg.classList.add('hidden');
-
             if (index === 0) homeBg.classList.remove('hidden');
             if (index === 1) calBg.classList.remove('hidden');
-            
             const scheduleScreen = document.getElementById('schedule-screen');
             if (index === 1) {
                 scheduleScreen.classList.remove('hidden');
@@ -565,29 +500,14 @@
             }
         }
 
-        function goHome() {
-            activeTabIndex = 0;
-            updateTabUI(0);
-        }
-
-        function goSchedule() {
-            activeTabIndex = 1;
-            updateTabUI(1);
-        }
-
-        function goMeeting() {
-            alert('모임통장 기능은 준비 중이에요! 💰');
-        }
+        function goHome() { activeTabIndex = 0; updateTabUI(0); }
+        function goSchedule() { activeTabIndex = 1; updateTabUI(1); }
+        function goMeeting() { alert('모임통장 기능은 준비 중이에요! 💰'); }
 
         function changeMonth(delta) {
             viewMonth += delta;
-            if (viewMonth < 0) {
-                viewYear--;
-                viewMonth = 11;
-            } else if (viewMonth > 11) {
-                viewYear++;
-                viewMonth = 0;
-            }
+            if (viewMonth < 0) { viewYear--; viewMonth = 11; } 
+            else if (viewMonth > 11) { viewYear++; viewMonth = 0; }
             renderCalendar(viewYear, viewMonth);
         }
 
@@ -604,12 +524,11 @@
             const lastDate = new Date(year, month + 1, 0).getDate();
             const events = getMockEvents(year, month + 1);
 
-            for (let i = 0; i < firstDay; i++) {
-                grid.innerHTML += `<div></div>`;
-            }
+            for (let i = 0; i < firstDay; i++) { grid.innerHTML += `<div></div>`; }
 
             let hasEvents = false;
             let shownMonthlyEvent = false;
+            let shownPersonalEvent = false; // 상훈이 개인 일정 중복 방지
 
             for (let i = 1; i <= lastDate; i++) {
                 const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
@@ -624,9 +543,8 @@
                         if (evt.type === 'anniv') color = 'bg-red-500';
                         else if (evt.type === 'bday') color = 'bg-orange-400';
                         else if (evt.type === 'dues') color = 'bg-emerald-500';
-                        else if (evt.type === 'school') color = 'bg-purple-500'; // 종강 등 학교 일정
-                        else if (evt.type === 'personal') color = 'bg-gray-500'; // 개인 일정
-                        
+                        else if (evt.type === 'school') color = 'bg-purple-500';
+                        else if (evt.type === 'personal') color = 'bg-gray-400';
                         dotHtml += `<div class="w-1.5 h-1.5 rounded-full ${color}"></div>`;
                     });
                 }
@@ -639,16 +557,13 @@
                     <span class="text-sm ${isToday ? 'text-blue-600' : 'text-main'}">${i}</span>
                     <div class="flex gap-0.5 mt-1 flex-wrap justify-center px-1">${dotHtml}</div>
                 `;
-                
                 grid.appendChild(dayEl);
 
                 if (dayEvents) {
                     dayEvents.forEach(evt => {
-                        // 6월 주년 이벤트는 상단 1회 표시
+                        // 1. 엔조이 주년: 한 번만 표시
                         if (evt.type === 'anniv' && month === 5) {
                             if (!shownMonthlyEvent) {
-                                // N주년 타이틀 동적 생성 (위에서 전달받은 title 사용)
-                                const annivTitle = evt.title; 
                                 eventList.innerHTML = `
                                     <div class="toss-card p-5 flex items-center gap-4 bg-red-50 border border-red-100 mb-2">
                                         <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center text-2xl shrink-0 shadow-sm text-red-500">
@@ -656,14 +571,34 @@
                                         </div>
                                         <div>
                                             <p class="text-xs text-red-400 mb-0.5">6월 1일 ~ 6월 30일</p>
-                                            <p class="text-lg font-bold text-red-500">${annivTitle}</p>
+                                            <p class="text-lg font-bold text-red-500">${evt.title}</p>
                                             <p class="text-xs text-red-400 mt-1">한 달 내내 축하해요!</p>
                                         </div>
                                     </div>
                                 ` + eventList.innerHTML;
                                 shownMonthlyEvent = true;
                             }
-                        } else {
+                        } 
+                        // 2. 상훈이 개인 일정: 한 번만 표시 (연속된 일정 처리)
+                        else if (evt.type === 'personal') {
+                            if (!shownPersonalEvent) {
+                                eventList.innerHTML += `
+                                    <div class="toss-card p-5 flex items-center gap-4 bg-gray-50 border border-gray-100 animate-[fadeInUp_0.3s_ease-out]">
+                                        <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center text-xl shrink-0 shadow-sm text-gray-500">
+                                            <i class="fa-solid fa-house-user"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs text-sub mb-0.5">25.12.23 ~ 26.01.23</p>
+                                            <p class="text-base font-bold text-main">${evt.title}</p>
+                                            <p class="text-xs text-gray-400 mt-0.5">장기 일정입니다</p>
+                                        </div>
+                                    </div>
+                                `;
+                                shownPersonalEvent = true;
+                            }
+                        }
+                        // 3. 나머지 일정: 개별 표시
+                        else {
                             let icon = 'fa-suitcase-rolling text-blue-500';
                             let bgColor = 'bg-blue-50';
                             
@@ -676,13 +611,9 @@
                             } else if (evt.type === 'school') {
                                 icon = 'fa-school text-purple-500';
                                 bgColor = 'bg-purple-50';
-                            } else if (evt.type === 'personal') {
-                                icon = 'fa-house-user text-gray-500';
-                                bgColor = 'bg-gray-100';
                             }
 
                             const dateStr = `${month + 1}월 ${i}일`;
-                            
                             eventList.innerHTML += `
                                 <div class="toss-card p-5 flex items-center gap-4 animate-[fadeInUp_0.3s_ease-out]">
                                     <div class="w-12 h-12 rounded-full ${bgColor} flex items-center justify-center text-xl shrink-0">
@@ -698,34 +629,13 @@
                     });
                 }
             }
-            
             if (!hasEvents) {
-                eventList.innerHTML = `
-                    <div class="text-center py-10 text-gray-300">
-                        <i class="fa-regular fa-calendar-xmark text-4xl mb-3"></i>
-                        <p class="text-sm">이달의 일정이 없어요</p>
-                    </div>
-                `;
+                eventList.innerHTML = `<div class="text-center py-10 text-gray-300"><i class="fa-regular fa-calendar-xmark text-4xl mb-3"></i><p class="text-sm">이달의 일정이 없어요</p></div>`;
             }
         }
-
-        renderCalendar(viewYear, viewMonth);
         
-        function closeModal(id) {
-            const modal = document.getElementById(id);
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        }
-
-        function goToMusic() { if (LINKS.music) window.location.href = LINKS.music; }
-        function checkStock() { if (LINKS.stock) window.location.href = LINKS.stock; }
-        function playGame() { if (LINKS.game) window.location.href = LINKS.game; }
-        function showTravelModal() {
-            showModal('common-modal', 'Coming Soon', '여행 기록 서비스는<br>현재 준비 중이에요 ✈️', 'fa-solid fa-plane', 'bg-emerald-50 text-emerald-500');
-        }
-        function showSecretModal() {
-            showModal('common-modal', '다음 서비스는?', '어떤 기능이 추가될까요?<br>기대해 주세요! 🎁', 'fa-solid fa-lock', 'bg-gray-100 text-gray-400');
-        }
+        renderCalendar(viewYear, viewMonth);
+        function closeModal(id) { const modal = document.getElementById(id); modal.classList.add('hidden'); modal.classList.remove('flex'); }
         function showModal(id, title, desc, iconClass, iconColorClass) {
             const modal = document.getElementById(id);
             if(title) {
@@ -734,64 +644,40 @@
                 const iconBg = document.getElementById('modal-icon-bg');
                 const icon = document.getElementById('modal-icon');
                 icon.className = iconClass;
-                if(iconColorClass) {
-                    iconBg.className = `w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 text-xl ${iconColorClass}`;
-                } else {
-                    iconBg.className = "w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-500 text-xl";
-                }
+                if(iconColorClass) iconBg.className = `w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 text-xl ${iconColorClass}`;
+                else iconBg.className = "w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-500 text-xl";
             }
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
+            modal.classList.remove('hidden'); modal.classList.add('flex');
         }
-
+        function goToMusic() { if (LINKS.music) window.location.href = LINKS.music; }
+        function checkStock() { if (LINKS.stock) window.location.href = LINKS.stock; }
+        function playGame() { if (LINKS.game) window.location.href = LINKS.game; }
+        function showTravelModal() { showModal('common-modal', 'Coming Soon', '여행 기록 서비스는<br>현재 준비 중이에요 ✈️', 'fa-solid fa-plane', 'bg-emerald-50 text-emerald-500'); }
+        function showSecretModal() { showModal('common-modal', '다음 서비스는?', '어떤 기능이 추가될까요?<br>기대해 주세요! 🎁', 'fa-solid fa-lock', 'bg-gray-100 text-gray-400'); }
         function setGreeting() {
             const hour = new Date().getHours();
             const msgEl = document.getElementById('time-msg');
             const emojiEl = document.getElementById('bg-emoji');
             let msg = '', emoji = '';
-
             if (hour >= 5 && hour < 12) { msg = '좋은 아침이에요! 상쾌한 하루 시작하세요'; emoji = '☀️'; }
             else if (hour >= 12 && hour < 14) { msg = '맛있는 점심 드셨나요? 오후도 파이팅!'; emoji = '🍱'; }
             else if (hour >= 14 && hour < 18) { msg = '나른한 오후네요, 조금만 더 힘내요!'; emoji = '☕️'; }
             else if (hour >= 18 && hour < 22) { msg = '오늘 하루 고생하셨어요. 편안한 저녁 되세요'; emoji = '🌙'; }
             else { msg = '밤이 깊었어요. 좋은 꿈 꾸세요'; emoji = '✨'; }
-            
-            msgEl.innerHTML = msg;
-            emojiEl.innerHTML = emoji;
+            msgEl.innerHTML = msg; emojiEl.innerHTML = emoji;
         }
-
         window.addEventListener('DOMContentLoaded', () => {
             setGreeting(); 
-            setTimeout(() => {
-                const startModal = document.getElementById('startup-modal');
-                startModal.classList.remove('hidden');
-                startModal.classList.add('flex');
-            }, 500);
-
+            setTimeout(() => { const startModal = document.getElementById('startup-modal'); startModal.classList.remove('hidden'); startModal.classList.add('flex'); }, 500);
             const nav = document.getElementById('bottom-nav');
-            let startX = 0;
-            let startY = 0;
-
-            nav.addEventListener('touchstart', (e) => {
-                startX = e.touches[0].clientX;
-                startY = e.touches[0].clientY;
-            }, {passive: true});
-
+            let startX = 0; let startY = 0;
+            nav.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; startY = e.touches[0].clientY; }, {passive: true});
             nav.addEventListener('touchend', (e) => {
-                const endX = e.changedTouches[0].clientX;
-                const endY = e.changedTouches[0].clientY;
-                const diffX = endX - startX;
-                const diffY = endY - startY;
-
+                const endX = e.changedTouches[0].clientX; const endY = e.changedTouches[0].clientY;
+                const diffX = endX - startX; const diffY = endY - startY;
                 if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 30) {
-                    if (diffX > 0) {
-                        if (activeTabIndex === 1) goHome();
-                        else if (activeTabIndex === 2) goSchedule();
-                    } 
-                    else {
-                        if (activeTabIndex === 0) goSchedule();
-                        else if (activeTabIndex === 1) goMeeting();
-                    }
+                    if (diffX > 0) { if (activeTabIndex === 1) goHome(); else if (activeTabIndex === 2) goSchedule(); } 
+                    else { if (activeTabIndex === 0) goSchedule(); else if (activeTabIndex === 1) goMeeting(); }
                 }
             });
         });
