@@ -85,7 +85,7 @@
     </header>
 
     <!-- 메인 컨텐츠 -->
-    <main class="flex-1 overflow-y-auto scrollbar-hide px-5 pt-2 pb-safe w-full max-w-md mx-auto relative">
+    <main class="flex-1 overflow-y-auto scrollbar-hide px-5 pt-2 pb-32 w-full max-w-md mx-auto relative">
         
         <!-- 👋 상단 인사말 (배경 이모티콘 우측 배치) -->
         <div class="mb-6 mt-2 fade-in-up relative h-24 flex flex-col justify-center overflow-visible">
@@ -144,8 +144,6 @@
                     <polyline id="chart-line" points="" fill="none" stroke="#3182F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></polyline>
                  </svg>
             </div>
-            
-            <!-- 투자 내역 보러가기 삭제됨 -->
         </div>
 
         <!-- 섹션 2: 엔조이 서비스 (계층형 레이아웃) -->
@@ -166,7 +164,8 @@
                         <span class="w-1 h-1 rounded-full bg-blue-500"></span>
                         <span class="text-[10px] font-medium text-blue-400">음악</span>
                     </div>
-                    <h4 class="text-xl font-bold text-main leading-tight mb-1">오늘의 추천<br>플레이리스트</h4>
+                    <!-- 수정됨: 엔조이 브이로그 속 음악 듣기 -->
+                    <h4 class="text-xl font-bold text-main leading-tight mb-1">엔조이 브이로그 속<br>음악 듣기</h4>
                 </div>
             </button>
         </div>
@@ -182,8 +181,10 @@
                     <span class="bg-[#FF6B6B] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-md tracking-tight">NEW</span>
                 </div>
                 <div>
-                    <h4 class="text-lg font-bold text-main mb-1">복불복</h4>
-                    <p class="text-xs text-[#FF6B6B]/80 font-medium leading-snug">오늘 나의<br>운세는?</p>
+                    <!-- 수정됨: 엔조이 복불복 -->
+                    <h4 class="text-lg font-bold text-main mb-1">엔조이 복불복</h4>
+                    <!-- 수정됨: 엔조이의 운명은? -->
+                    <p class="text-xs text-[#FF6B6B]/80 font-medium leading-snug">엔조이의<br>운명은?</p>
                 </div>
             </button>
 
@@ -216,24 +217,46 @@
             </button>
         </div>
 
-        <!-- 기존 섹션 3: 리스트 메뉴 삭제됨 -->
-
-        <!-- 하단 배너 -->
-        <div class="bg-blue-500 rounded-2xl p-5 text-white fade-in-up delay-300 flex justify-between items-center cursor-pointer active:scale-98 transition-transform shadow-lg shadow-blue-500/20 group mb-8" onclick="alert('광고 아님!')">
-            <div>
-                <p class="font-bold text-lg group-hover:translate-x-1 transition-transform">엔조이 프라임</p>
-                <p class="text-blue-100 text-xs mt-1">지금 가입하면 혜택이 펑펑 🎉</p>
-            </div>
-            <div class="bg-white/20 p-2 rounded-full backdrop-blur-sm group-hover:rotate-12 transition-transform duration-500">
-                <i class="fa-solid fa-gift text-2xl text-white"></i>
-            </div>
-        </div>
+        <!-- 엔조이 프라임 배너 삭제됨 -->
 
         <div class="mt-8 text-center pb-8">
             <button class="text-xs text-sub underline hover:text-gray-600">화면 편집하기</button>
             <p class="text-[10px] text-gray-300 mt-4">© 2024 Enjoy Corp.</p>
         </div>
     </main>
+
+    <!-- 하단 플로팅 메뉴 (강화된 리얼 글래스 모피즘) -->
+    <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-auto">
+        <!-- 메인 알약 메뉴 -->
+        <!-- 
+             bg-white/10: 투명도 대폭 증가 (더 투명하게)
+             backdrop-blur-xl: 블러 효과 강화 (뒤에 콘텐츠가 뭉개져 보이도록)
+             border-white/30: 유리의 두께감 표현을 위한 얇은 테두리
+             shadow-lg: 붕 떠있는 느낌
+        -->
+        <div class="flex items-center bg-white/10 backdrop-blur-2xl shadow-[0_8px_32px_0_rgba(31,38,135,0.1)] border border-white/30 rounded-full p-1 gap-1 ring-1 ring-white/20">
+            
+            <!-- 1. 홈 (활성화 상태) -->
+            <button class="relative px-5 py-2 rounded-full transition-all duration-300 group min-w-[64px]">
+                <!-- 활성화 배경 (반투명 화이트 + 자체 블러) -->
+                <div class="absolute inset-0 bg-white/50 shadow-[inset_0_1px_1px_rgba(255,255,255,0.6)] rounded-full backdrop-blur-md"></div>
+                <!-- 아이콘 및 텍스트 -->
+                <div class="relative z-10 flex flex-col items-center gap-0.5">
+                    <i class="fa-solid fa-house text-base text-[#191F28] drop-shadow-sm"></i>
+                    <span class="text-[10px] font-bold text-[#191F28] drop-shadow-sm">홈</span>
+                </div>
+            </button>
+
+            <!-- 2. 모임통장 (비활성화 상태) -->
+            <button onclick="alert('모임통장 기능은 준비 중이에요!')" class="relative px-5 py-2 rounded-full transition-all duration-300 group min-w-[64px] hover:bg-white/10">
+                <div class="relative z-10 flex flex-col items-center gap-0.5">
+                    <i class="fa-solid fa-users text-base text-[#4E5968] group-hover:text-gray-800 transition-colors"></i>
+                    <span class="text-[10px] font-medium text-[#4E5968] group-hover:text-gray-800 transition-colors">모임통장</span>
+                </div>
+            </button>
+
+        </div>
+    </nav>
 
     <!-- 모달: 업데이트 (토스 스타일) -->
     <div id="startup-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center px-6">
