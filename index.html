@@ -95,6 +95,24 @@
             border: 1px solid rgba(254, 202, 202, 0.5);
             border-radius: 16px;
         }
+        
+        /* 면제권 카드 스타일 */
+        .glass-card-ticket {
+            background: rgba(240, 253, 244, 0.5);
+            backdrop-filter: blur(12px) saturate(120%);
+            -webkit-backdrop-filter: blur(12px) saturate(120%);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 8px 24px rgba(34, 197, 94, 0.08);
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+        .glass-card-ticket::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 4px; height: 100%;
+            background: #22C55E;
+        }
 
         .text-main { color: #191F28; }
         .text-sub { color: #6B7684; }
@@ -306,7 +324,7 @@
         <div class="flex-1 overflow-y-auto scrollbar-hide px-5 pt-4">
             
             <!-- 계좌 카드 -->
-            <div class="glass-card p-6 mb-4 relative overflow-hidden group">
+            <div class="glass-card p-5 mb-4 relative overflow-hidden group">
                 <div class="absolute -right-6 -top-6 w-32 h-32 bg-blue-400/20 rounded-full blur-2xl pointer-events-none"></div>
                 <div class="flex justify-between items-start mb-1">
                     <div class="flex items-center gap-2">
@@ -314,21 +332,37 @@
                         <span class="text-sm font-bold text-gray-600">엔조이 회비</span>
                     </div>
                 </div>
-                <div class="mt-8 mb-4">
+                <div class="mt-6 mb-2">
                     <h3 id="total-balance" class="text-3xl font-bold text-main tabular-nums tracking-tight">448,999원</h3>
                 </div>
             </div>
             
-            <!-- 부과금 대상자 섹션 -->
-            <div id="penalty-section" class="hidden mb-4 animate-[fadeInUp_0.3s_ease-out]">
-                <div class="glass-card-penalty p-3.5">
-                    <div class="flex justify-between items-center mb-2 pl-1">
+            <!-- 현황 그리드 (부과금 / 면제권) -->
+            <div class="grid grid-cols-2 gap-3 mb-4">
+                <!-- 부과금 대상자 박스 (정사각형 형태) -->
+                <div class="glass-card-penalty p-4 flex flex-col h-40">
+                    <div class="flex justify-between items-start mb-2">
                         <h3 class="text-xs font-bold text-red-500 flex items-center gap-1.5">
-                            <i class="fa-solid fa-bell animate-pulse"></i> 부과금 대상자
+                            <i class="fa-solid fa-bell animate-pulse"></i> 부과금 대상자 현황
                         </h3>
-                        <span class="text-[9px] bg-red-100 text-red-500 px-2 py-0.5 rounded-full font-medium border border-red-200">1일 갱신</span>
+                        <span class="text-[9px] bg-red-100 text-red-500 px-1.5 py-0.5 rounded-full font-medium">NEW</span>
                     </div>
-                    <div id="penalty-list" class="space-y-2"></div>
+                    <div id="penalty-list-mini" class="flex-1 overflow-y-auto scrollbar-hide space-y-1.5">
+                        <!-- JS로 렌더링 -->
+                        <div class="h-full flex items-center justify-center text-xs text-red-300">없음</div>
+                    </div>
+                </div>
+
+                <!-- 부과금 면제권 박스 -->
+                <div class="glass-card-ticket p-4 flex flex-col h-40 relative">
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="text-xs font-bold text-emerald-600 flex items-center gap-1.5">
+                            <i class="fa-solid fa-ticket"></i> 면제권 대상자 현황
+                        </h3>
+                    </div>
+                    <div id="ticket-list-mini" class="flex-1 overflow-y-auto scrollbar-hide space-y-1.5">
+                         <!-- JS로 렌더링 -->
+                    </div>
                 </div>
             </div>
 
@@ -395,9 +429,13 @@
                     <label class="block text-xs text-gray-500 font-bold mb-1">총 회비 잔액</label>
                     <input type="number" id="admin-total-balance" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 font-bold text-lg text-main focus:outline-none focus:border-blue-500 transition-colors" placeholder="금액 입력">
                 </div>
-                <div>
+                <div class="mb-6">
                     <label class="block text-xs text-gray-500 font-bold mb-2">멤버별 납부 상태</label>
                     <div id="admin-member-list" class="space-y-2"></div>
+                </div>
+                <div>
+                    <label class="block text-xs text-emerald-600 font-bold mb-2">면제권 관리</label>
+                    <div id="admin-ticket-list" class="space-y-2"></div>
                 </div>
             </div>
             <div class="mt-4 pt-4 border-t border-gray-100">
@@ -530,18 +568,63 @@
             const modal = document.getElementById('admin-modal'); modal.classList.remove('hidden'); modal.classList.add('flex'); 
             document.getElementById('admin-month-title').innerText = `${window.currentDuesMonth}월`; 
             document.getElementById('admin-total-balance').value = window.meetingData.totalBalance || 0; 
+            
+            // 멤버 납부 상태 렌더링
             const list = document.getElementById('admin-member-list'); list.innerHTML = ''; 
             if (!window.meetingData.records[window.currentDuesMonth]) window.meetingData.records[window.currentDuesMonth] = createEmptyMonthData(); 
             const records = window.meetingData.records[window.currentDuesMonth]; 
             records.forEach((m, i) => { const isPaid = m.status === 'paid'; list.innerHTML += `<div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl"><span class="font-bold text-sm text-main">${m.name}</span><div class="flex items-center gap-2"><input type="number" id="edit-amt-${i}" class="w-20 text-right text-xs p-1 border rounded" value="${m.amount}"><button onclick="window.togglePay(${i})" class="text-xs font-bold px-3 py-1.5 rounded-lg transition-colors ${isPaid ? 'bg-blue-100 text-blue-600' : 'bg-red-100 text-red-600'}">${isPaid ? '납부' : '미납'}</button></div></div>`; }); 
+            
+            // 면제권 관리 렌더링 (기본값 처리 추가)
+            const ticketList = document.getElementById('admin-ticket-list'); ticketList.innerHTML = '';
+            const members = ['홍박사', '류짱', '오스틴', '전시기', '지노', '성원제'];
+            const exemptions = window.meetingData.exemptions || { '류짱': 1, '성원제': 1, '전시기': 1 };
+            members.forEach((name, i) => {
+                const count = exemptions[name] || 0;
+                ticketList.innerHTML += `<div class="flex items-center justify-between p-3 bg-emerald-50 rounded-xl"><span class="font-bold text-sm text-main">${name}</span><div class="flex items-center gap-2"><button onclick="window.updateExemption('${name}', -1)" class="w-7 h-7 rounded-full bg-white text-emerald-600 flex items-center justify-center font-bold shadow-sm active:scale-90">-</button><span id="admin-ticket-${name}" class="font-bold text-sm w-4 text-center">${count}</span><button onclick="window.updateExemption('${name}', 1)" class="w-7 h-7 rounded-full bg-white text-emerald-600 flex items-center justify-center font-bold shadow-sm active:scale-90">+</button></div></div>`;
+            });
         };
         
+        window.updateExemption = function(name, delta) {
+            const el = document.getElementById(`admin-ticket-${name}`);
+            let val = parseInt(el.innerText);
+            val += delta;
+            if(val < 0) val = 0;
+            el.innerText = val;
+            
+            if(!window.meetingData.exemptions) window.meetingData.exemptions = { '류짱': 1, '성원제': 1, '전시기': 1 };
+            window.meetingData.exemptions[name] = val;
+        }
+
         window.togglePay = function(idx) { const records = window.meetingData.records[window.currentDuesMonth]; if(records && records[idx]) { const m = records[idx]; if(m.status === 'paid') { m.status = 'unpaid'; m.amount = 0; } else { m.status = 'paid'; m.amount = 15000; } const row = document.getElementById('admin-member-list').children[idx]; row.querySelector('input').value = m.amount; const btn = row.querySelector('button'); btn.className = `text-xs font-bold px-3 py-1.5 rounded-lg transition-colors ${m.status === 'paid' ? 'bg-blue-100 text-blue-600' : 'bg-red-100 text-red-600'}`; btn.innerText = m.status === 'paid' ? '납부' : '미납'; } };
-        window.saveAdminData = async function() { if (!window.meetingData || !window.meetingDb) { alert("DB 연결 안됨"); return; } const bal = parseInt(document.getElementById('admin-total-balance').value) || 0; window.meetingData.totalBalance = bal; const records = window.meetingData.records[window.currentDuesMonth]; if(records) { records.forEach((m, i) => { const val = document.getElementById(`edit-amt-${i}`).value; m.amount = parseInt(val) || 0; }); } try { await window.setDoc(window.doc(window.meetingDb, ...window.MEETING_PATH), window.meetingData); alert('저장 완료! ✅'); window.closeModal('admin-modal'); } catch (e) { console.error(e); alert('저장 실패'); } };
+        window.saveAdminData = async function() { 
+            if (!window.meetingData || !window.meetingDb) { alert("DB 연결 안됨"); return; } 
+            const bal = parseInt(document.getElementById('admin-total-balance').value) || 0; 
+            window.meetingData.totalBalance = bal; 
+            const records = window.meetingData.records[window.currentDuesMonth]; 
+            if(records) { records.forEach((m, i) => { const val = document.getElementById(`edit-amt-${i}`).value; m.amount = parseInt(val) || 0; }); } 
+            
+            // 면제권 데이터는 updateExemption에서 실시간으로 객체에 반영됨
+            if(!window.meetingData.exemptions) window.meetingData.exemptions = { '류짱': 1, '성원제': 1, '전시기': 1 };
+
+            try { await window.setDoc(window.doc(window.meetingDb, ...window.MEETING_PATH), window.meetingData); alert('저장 완료! ✅'); window.closeModal('admin-modal'); } catch (e) { console.error(e); alert('저장 실패'); } 
+        };
         window.saveScheduleToFirebase = async function() { if (!window.meetingDb) { alert('DB 연결 확인 중...'); return; } const category = document.getElementById('add-sch-category').value; const date = document.getElementById('add-sch-date').value; const time = document.getElementById('add-sch-time').value || '하루 종일'; const title = document.getElementById('add-sch-title').value; const editKey = document.getElementById('sch-edit-date-key').value; const editIdx = document.getElementById('sch-edit-index').value; const isEdit = (editKey && editIdx !== ''); if (!date || !title) { alert('날짜와 내용을 입력해주세요.'); return; } const newEvent = { type: category, title: title, time: time }; try { if(isEdit) { const docSnap = await window.getDoc(window.doc(window.meetingDb, ...window.SCHEDULE_PATH)); if(docSnap.exists()) { const data = docSnap.data(); if(editKey !== date) { const oldList = data[editKey]; if(oldList) { oldList.splice(editIdx, 1); if(oldList.length === 0) delete data[editKey]; else data[editKey] = oldList; } const newList = data[date] || []; newList.push(newEvent); data[date] = newList; } else { const list = data[date]; if(list) { list[editIdx] = newEvent; } } await window.setDoc(window.doc(window.meetingDb, ...window.SCHEDULE_PATH), data); } } else { await window.setDoc(window.doc(window.meetingDb, ...window.SCHEDULE_PATH), { [date]: window.arrayUnion(newEvent) }, { merge: true }); } alert(isEdit ? '수정되었습니다!' : '등록되었습니다!'); window.closeModal('schedule-modal'); } catch (e) { console.error(e); alert('처리 실패'); } };
         window.deleteSchedule = async function() { if(!confirm('정말 삭제하시겠습니까?')) return; const dateKey = document.getElementById('sch-edit-date-key').value; const index = document.getElementById('sch-edit-index').value; try { const docSnap = await window.getDoc(window.doc(window.meetingDb, ...window.SCHEDULE_PATH)); if(docSnap.exists()) { const data = docSnap.data(); const list = data[dateKey]; if(list) { list.splice(index, 1); if(list.length === 0) delete data[dateKey]; else data[dateKey] = list; await window.setDoc(window.doc(window.meetingDb, ...window.SCHEDULE_PATH), data); alert('삭제되었습니다.'); window.closeModal('schedule-modal'); } } } catch(e) { console.error(e); alert('삭제 실패'); } }
         window.changeDuesMonth = function(delta) { window.currentDuesMonth += delta; if (window.currentDuesMonth < 1) window.currentDuesMonth = 1; if (window.currentDuesMonth > 12) window.currentDuesMonth = 12; window.renderDues(window.currentDuesMonth); }
-        window.updateMeetingUI = function(data) { window.meetingData = data; const balanceEl = document.getElementById('total-balance'); if (balanceEl) balanceEl.innerText = (data.totalBalance || 0).toLocaleString() + "원"; window.renderDues(window.currentDuesMonth); };
+        
+        // [Modified] updateMeetingUI to handle default exemptions
+        window.updateMeetingUI = function(data) { 
+            window.meetingData = data; 
+            // 데이터 없을 시 기본값 주입 (요청사항 반영)
+            if (!window.meetingData.exemptions) {
+                window.meetingData.exemptions = { '류짱': 1, '성원제': 1, '전시기': 1 };
+            }
+            const balanceEl = document.getElementById('total-balance'); 
+            if (balanceEl) balanceEl.innerText = (data.totalBalance || 0).toLocaleString() + "원"; 
+            window.renderDues(window.currentDuesMonth); 
+        };
+        
         window.openAddScheduleModal = () => { document.getElementById('sch-modal-title').innerText = '일정 추가'; document.getElementById('sch-delete-btn').classList.add('hidden'); document.getElementById('sch-save-btn').innerText = '등록하기'; document.getElementById('sch-edit-date-key').value = ''; document.getElementById('sch-edit-index').value = ''; document.getElementById('add-sch-title').value = ''; document.getElementById('add-sch-time').value = ''; document.getElementById('add-sch-date').value = ''; document.getElementById('schedule-modal').classList.remove('hidden'); document.getElementById('schedule-modal').classList.add('flex'); };
         window.openEditScheduleModal = (dateStr, index) => { if (!dateStr) { window.openAddScheduleModal(); return; } document.getElementById('sch-modal-title').innerText = '일정 수정'; document.getElementById('sch-delete-btn').classList.remove('hidden'); document.getElementById('sch-save-btn').innerText = '수정하기'; document.getElementById('sch-edit-date-key').value = dateStr; document.getElementById('sch-edit-index').value = index; const list = window.dynamicEvents[dateStr]; if(list && list[index]) { const event = list[index]; document.getElementById('add-sch-category').value = event.type; document.getElementById('add-sch-date').value = dateStr; document.getElementById('add-sch-time').value = event.time; document.getElementById('add-sch-title').value = event.title; } document.getElementById('schedule-modal').classList.remove('hidden'); document.getElementById('schedule-modal').classList.add('flex'); };
         window.checkStock = () => { window.location.href = "stock.html"; };
@@ -555,30 +638,79 @@
 
         // Data Helpers
         function createEmptyMonthData() { const members = ['홍박사', '류짱', '오스틴', '전시기', '지노', '성원제']; return members.map(name => ({ name: name, status: 'unpaid', amount: 0, isLeader: name === '전시기' })); }
-        function getInitialMeetingData() { return { totalBalance: 448999, records: { 10: [ { name: '오스틴', status: 'unpaid', amount: 0 }, { name: '홍박사', status: 'paid', amount: 15000 }, { name: '류짱', status: 'paid', amount: 15000 }, { name: '전시기', status: 'paid', amount: 15000, isLeader: true }, { name: '지노', status: 'paid', amount: 15000 }, { name: '성원제', status: 'paid', amount: 15000 } ], 11: [ { name: '홍박사', status: 'paid', amount: 15000 }, { name: '류짱', status: 'paid', amount: 16000 }, { name: '오스틴', status: 'paid', amount: 15000 }, { name: '전시기', status: 'paid', amount: 15000, isLeader: true }, { name: '지노', status: 'paid', amount: 15000 }, { name: '성원제', status: 'paid', amount: 15000 } ], 12: [ { name: '홍박사', status: 'paid', amount: 15000 }, { name: '류짱', status: 'unpaid', amount: 0 }, { name: '오스틴', status: 'unpaid', amount: 0 }, { name: '전시기', status: 'unpaid', amount: 0, isLeader: true }, { name: '지노', status: 'unpaid', amount: 0 }, { name: '성원제', status: 'unpaid', amount: 0 } ] } }; }
+        function getInitialMeetingData() { 
+            return { 
+                totalBalance: 448999, 
+                exemptions: { '류짱': 1, '성원제': 1, '전시기': 1 },
+                records: { 
+                    10: [ { name: '오스틴', status: 'unpaid', amount: 0, penalty: '미납부로 인한 부과금 10,000원 발생' }, { name: '홍박사', status: 'paid', amount: 15000 }, { name: '류짱', status: 'paid', amount: 15000 }, { name: '전시기', status: 'paid', amount: 15000, isLeader: true }, { name: '지노', status: 'paid', amount: 15000 }, { name: '성원제', status: 'paid', amount: 15000 } ], 
+                    11: [ { name: '홍박사', status: 'paid', amount: 15000 }, { name: '류짱', status: 'paid', amount: 16000 }, { name: '오스틴', status: 'paid', amount: 15000 }, { name: '전시기', status: 'paid', amount: 15000, isLeader: true }, { name: '지노', status: 'paid', amount: 15000 }, { name: '성원제', status: 'paid', amount: 15000 } ], 
+                    12: [ { name: '홍박사', status: 'paid', amount: 15000 }, { name: '류짱', status: 'unpaid', amount: 0 }, { name: '오스틴', status: 'unpaid', amount: 0 }, { name: '전시기', status: 'unpaid', amount: 0, isLeader: true }, { name: '지노', status: 'unpaid', amount: 0 }, { name: '성원제', status: 'unpaid', amount: 0 } ] 
+                } 
+            }; 
+        }
         
         const memberColors = { '홍박사': { bg: 'bg-blue-100/80', text: 'text-blue-600', char: '홍' }, '류짱': { bg: 'bg-purple-100/80', text: 'text-purple-600', char: '류' }, '오스틴': { bg: 'bg-emerald-100/80', text: 'text-emerald-600', char: '오' }, '전시기': { bg: 'bg-orange-100/80', text: 'text-orange-600', char: '전' }, '지노': { bg: 'bg-indigo-100/80', text: 'text-indigo-600', char: '지' }, '성원제': { bg: 'bg-pink-100/80', text: 'text-pink-600', char: '성' } };
         
-        window.checkAndRenderPenalty = function() {
-            const penaltyList = document.getElementById('penalty-list'); const penaltySection = document.getElementById('penalty-section'); if(!penaltyList) return;
-            const now = new Date(); const currentRealMonth = now.getMonth() + 1; let targetMonth = currentRealMonth - 1; if(targetMonth === 0) targetMonth = 12;
-            if (!window.meetingData || !window.meetingData.records) return;
-            let html = ''; let hasPenalty = false;
-            for(let m=1; m < currentRealMonth; m++) {
-                const records = window.meetingData.records[m] || [];
-                records.forEach(mem => {
-                    if(mem.status === 'unpaid') {
-                         hasPenalty = true; const total = 15000 + 10000;
-                         html += `<div class="glass-item-penalty p-2.5 flex justify-between items-center mb-1.5"><div class="flex items-center gap-2"><span class="text-[10px] bg-red-100 text-red-500 px-1.5 py-0.5 rounded font-bold">${m}월 미납</span><div><p class="text-xs font-bold text-main">${mem.name}</p><p class="text-[9px] text-red-400 leading-none">미납+부과금</p></div></div><div class="text-right"><span class="text-sm font-bold text-red-500">${total.toLocaleString()}원</span></div></div>`;
-                    }
-                });
+        window.renderMeetingStatus = function() {
+            // 부과금 렌더링
+            const penaltyListMini = document.getElementById('penalty-list-mini');
+            const ticketListMini = document.getElementById('ticket-list-mini');
+            
+            if (!penaltyListMini || !ticketListMini) return;
+            
+            // 1. 부과금 로직
+            const now = new Date(); const currentRealMonth = now.getMonth() + 1;
+            let htmlPenalty = ''; let hasPenalty = false;
+            
+            if (window.meetingData && window.meetingData.records) {
+                for(let m=1; m < currentRealMonth; m++) {
+                    const records = window.meetingData.records[m] || [];
+                    records.forEach(mem => {
+                        if(mem.status === 'unpaid') {
+                             hasPenalty = true; 
+                             htmlPenalty += `
+                             <div class="flex flex-col mb-2 border-b border-red-100/50 pb-2 last:border-0 last:mb-0 last:pb-0">
+                                <div class="flex items-center justify-between mb-1">
+                                    <div class="flex items-center gap-1.5">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-red-500"></div>
+                                        <span class="text-xs font-bold text-main">${mem.name}</span>
+                                    </div>
+                                    <span class="text-[10px] text-red-500 font-medium">${m}월 미납</span>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-[9px] text-gray-400 tracking-tight">15,000(원금) + 10,000(부과금) =</p>
+                                    <p class="text-[10px] font-bold text-red-500">25,000원</p>
+                                </div>
+                             </div>`;
+                        }
+                    });
+                }
             }
-            if (hasPenalty) { penaltyList.innerHTML = html; penaltySection.classList.remove('hidden'); } else { penaltySection.classList.add('hidden'); }
+            if (!hasPenalty) htmlPenalty = `<div class="h-full flex items-center justify-center text-xs text-red-300">없음</div>`;
+            penaltyListMini.innerHTML = htmlPenalty;
+
+            // 2. 면제권 로직
+            let htmlTicket = '';
+            // Fix: Use defaults if missing in fetched data
+            const exemptions = window.meetingData.exemptions || { '류짱': 1, '성원제': 1, '전시기': 1 };
+            let hasTicket = false;
+            for (const [name, count] of Object.entries(exemptions)) {
+                if (count > 0) {
+                    hasTicket = true;
+                    htmlTicket += `<div class="flex items-center justify-between"><div class="flex items-center gap-1.5"><div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div><span class="text-xs font-bold text-main">${name}</span></div><span class="text-[10px] bg-emerald-100 text-emerald-600 px-1.5 rounded font-bold">${count}개</span></div>`;
+                }
+            }
+            if (!hasTicket) htmlTicket = `<div class="h-full flex items-center justify-center text-xs text-emerald-300/80">없음</div>`;
+            ticketListMini.innerHTML = htmlTicket;
         }
 
         window.renderDues = function(month) {
             const list = document.getElementById('dues-list'); const title = document.getElementById('dues-month-title'); if(!list) return; title.innerText = `${month}월 기준`; list.innerHTML = '';
-            if(window.activeTabIndex === 2) window.checkAndRenderPenalty();
+            
+            // 탭이 모임통장일 때 현황판 업데이트
+            if(window.activeTabIndex === 2) window.renderMeetingStatus();
+            
             let records = []; if (window.meetingData && window.meetingData.records) { records = window.meetingData.records[month] || []; }
             if (records.length === 0) { list.innerHTML = `<div class="text-center py-8 text-gray-400 text-xs">내역이 없습니다.</div>`; return; }
             records.forEach((m, i) => {
@@ -586,6 +718,9 @@
                 list.innerHTML += `<div class="${cardClass} p-4 flex justify-between items-center animate-[fadeInUp_0.3s_ease-out]" style="animation-delay: ${i*0.05}s"><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full ${c.bg} flex items-center justify-center text-sm font-bold ${c.text}">${c.char}</div><div><div class="flex items-center"><p class="text-sm font-bold text-main">${m.name}</p>${badge}</div><p class="text-xs text-gray-500">${isPaid ? '납부 완료' : '미납'}</p>${penalty}</div></div><span class="text-sm font-bold ${amtClass}">${isPaid ? m.amount.toLocaleString()+'원' : '미납'}</span></div>`;
             });
         };
+        
+        // 기존 checkAndRenderPenalty 함수는 renderMeetingStatus로 대체되었으므로 제거하거나 비워둠
+        window.checkAndRenderPenalty = function() {}; 
 
         window.getHolidays = function(y, m) {
             const e = {}; const p = `${y}-${String(m).padStart(2,'0')}`;
@@ -784,6 +919,7 @@
         function getInitialMeetingData() {
             return {
                 totalBalance: 448999,
+                exemptions: { '류짱': 1, '성원제': 1, '전시기': 1 },
                 records: {
                     10: [ { name: '오스틴', status: 'unpaid', amount: 0, penalty: '미납부로 인한 부과금 10,000원 발생' }, { name: '홍박사', status: 'paid', amount: 15000 }, { name: '류짱', status: 'paid', amount: 15000 }, { name: '전시기', status: 'paid', amount: 15000, isLeader: true }, { name: '지노', status: 'paid', amount: 15000 }, { name: '성원제', status: 'paid', amount: 15000 } ],
                     11: [ { name: '홍박사', status: 'paid', amount: 15000 }, { name: '류짱', status: 'paid', amount: 16000 }, { name: '오스틴', status: 'paid', amount: 15000 }, { name: '전시기', status: 'paid', amount: 15000, isLeader: true }, { name: '지노', status: 'paid', amount: 15000 }, { name: '성원제', status: 'paid', amount: 15000 } ],
