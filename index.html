@@ -381,6 +381,25 @@
         </div>
     </div>
 
+    <!-- 🌐 내부 브라우저 (앱 내 웹뷰 느낌) -->
+    <div id="browser-screen" class="hidden fixed inset-0 z-[100] flex-col bg-white">
+        <header class="flex-none pt-safe px-4 h-14 flex items-center justify-between bg-white border-b border-gray-100 z-10 relative">
+            <div class="w-8"></div> <!-- 좌측 여백 균형용 -->
+            <h3 id="browser-title" class="font-bold text-lg text-main truncate px-2">서비스</h3>
+            <button onclick="window.haptic(); window.closeBrowser()" class="w-8 h-8 flex items-center justify-center text-gray-800 hover:bg-gray-100 rounded-full transition-colors active:scale-90">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </header>
+        <div class="flex-1 relative w-full h-full bg-gray-50">
+            <!-- 로딩 인디케이터 -->
+            <div id="browser-loader" class="absolute inset-0 flex items-center justify-center text-blue-500 z-0">
+                <i class="fa-solid fa-circle-notch fa-spin text-2xl"></i>
+            </div>
+            <!-- iframe -->
+            <iframe id="internal-browser-frame" class="w-full h-full border-0 relative z-10 bg-transparent" allow="autoplay; encrypted-media" onload="document.getElementById('browser-loader').style.display='none'"></iframe>
+        </div>
+    </div>
+
     <!-- 하단 플로팅 메뉴 -->
     <nav id="bottom-nav" class="fixed bottom-3 left-1/2 -translate-x-1/2 z-50 w-auto touch-pan-x select-none cursor-grab active:cursor-grabbing">
         <div class="flex items-center bg-white/10 backdrop-blur-[4px] backdrop-saturate-[180%] shadow-[0_8px_32px_0_rgba(31,38,135,0.15)] border border-white/20 rounded-full p-1.5 gap-1 ring-1 ring-white/30 relative">
@@ -542,6 +561,41 @@
         window.closeModal = (id) => { document.getElementById(id).classList.add('hidden'); document.getElementById(id).classList.remove('flex'); };
         window.showModal = (id) => { document.getElementById(id).classList.remove('hidden'); document.getElementById(id).classList.add('flex'); };
         
+        // 내부 브라우저 제어 함수
+        window.openBrowser = function(url, title) {
+            const screen = document.getElementById('browser-screen');
+            const frame = document.getElementById('internal-browser-frame');
+            const titleEl = document.getElementById('browser-title');
+            const loader = document.getElementById('browser-loader');
+            
+            // UI 세팅
+            titleEl.innerText = title;
+            loader.style.display = 'flex'; // 로딩 표시
+            frame.src = url;
+            
+            // 화면 표시 (슬라이드 애니메이션 효과를 위해 클래스 조정 가능)
+            screen.classList.remove('hidden');
+            screen.classList.add('flex');
+            
+            // 하단 탭 숨기기 (몰입감을 위해)
+            document.getElementById('bottom-nav').classList.add('hidden');
+        };
+
+        window.closeBrowser = function() {
+            const screen = document.getElementById('browser-screen');
+            const frame = document.getElementById('internal-browser-frame');
+            
+            // 화면 숨기기
+            screen.classList.add('hidden');
+            screen.classList.remove('flex');
+            
+            // iframe 초기화 (소리 재생 중단 등을 위해)
+            frame.src = '';
+            
+            // 하단 탭 다시 보이기
+            document.getElementById('bottom-nav').classList.remove('hidden');
+        };
+
         window.setGreeting = function() {
             const hour = new Date().getHours();
             const msgEl = document.getElementById('time-msg');
@@ -628,9 +682,12 @@
         window.openAddScheduleModal = () => { document.getElementById('sch-modal-title').innerText = '일정 추가'; document.getElementById('sch-delete-btn').classList.add('hidden'); document.getElementById('sch-save-btn').innerText = '등록하기'; document.getElementById('sch-edit-date-key').value = ''; document.getElementById('sch-edit-index').value = ''; document.getElementById('add-sch-title').value = ''; document.getElementById('add-sch-time').value = ''; document.getElementById('add-sch-date').value = ''; document.getElementById('schedule-modal').classList.remove('hidden'); document.getElementById('schedule-modal').classList.add('flex'); };
         window.openEditScheduleModal = (dateStr, index) => { if (!dateStr) { window.openAddScheduleModal(); return; } document.getElementById('sch-modal-title').innerText = '일정 수정'; document.getElementById('sch-delete-btn').classList.remove('hidden'); document.getElementById('sch-save-btn').innerText = '수정하기'; document.getElementById('sch-edit-date-key').value = dateStr; document.getElementById('sch-edit-index').value = index; const list = window.dynamicEvents[dateStr]; if(list && list[index]) { const event = list[index]; document.getElementById('add-sch-category').value = event.type; document.getElementById('add-sch-date').value = dateStr; document.getElementById('add-sch-time').value = event.time; document.getElementById('add-sch-title').value = event.title; } document.getElementById('schedule-modal').classList.remove('hidden'); document.getElementById('schedule-modal').classList.add('flex'); };
         window.checkStock = () => { window.location.href = "stock.html"; };
-        window.goToMusic = () => window.location.href = "https://won429.github.io/enjoy/";
+        
+        // 링크 연결 방식 변경 (iframe 사용)
+        window.goToMusic = () => window.openBrowser("https://won429.github.io/enjoy/", "엔조이 뮤직");
         window.playGame = () => window.location.href = "game.html";
-        window.goToTravel = () => window.location.href = "https://won429.github.io/enjoy_trip/"; 
+        window.goToTravel = () => window.openBrowser("https://won429.github.io/enjoy_trip/", "여행 기록");
+        
         window.goHome = () => { window.activeTabIndex = 0; window.updateTabUI(0); }
         window.goSchedule = () => { window.activeTabIndex = 1; window.updateTabUI(1); }
         window.goMeeting = () => { window.activeTabIndex = 2; window.updateTabUI(2); }
