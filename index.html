@@ -381,22 +381,23 @@
         </div>
     </div>
 
-    <!-- 🌐 내부 브라우저 (앱 내 웹뷰 느낌) -->
+    <!-- 🌐 내부 브라우저 (앱 내 웹뷰 느낌 - 헤더 제거 및 전체화면) -->
     <div id="browser-screen" class="hidden fixed inset-0 z-[100] flex-col bg-white">
-        <header class="flex-none pt-safe px-4 h-14 flex items-center justify-between bg-white border-b border-gray-100 z-10 relative">
-            <div class="w-8"></div> <!-- 좌측 여백 균형용 -->
-            <h3 id="browser-title" class="font-bold text-lg text-main truncate px-2">서비스</h3>
-            <button onclick="window.haptic(); window.closeBrowser()" class="w-8 h-8 flex items-center justify-center text-gray-800 hover:bg-gray-100 rounded-full transition-colors active:scale-90">
-                <i class="fa-solid fa-xmark text-xl"></i>
-            </button>
-        </header>
-        <div class="flex-1 relative w-full h-full bg-gray-50">
+        <!-- iframe Container (Full Screen) -->
+        <div class="flex-1 relative w-full h-full bg-white">
             <!-- 로딩 인디케이터 -->
-            <div id="browser-loader" class="absolute inset-0 flex items-center justify-center text-blue-500 z-0">
+            <div id="browser-loader" class="absolute inset-0 flex items-center justify-center text-blue-500 z-0 bg-white">
                 <i class="fa-solid fa-circle-notch fa-spin text-2xl"></i>
             </div>
+            
             <!-- iframe -->
             <iframe id="internal-browser-frame" class="w-full h-full border-0 relative z-10 bg-transparent" allow="autoplay; encrypted-media" onload="document.getElementById('browser-loader').style.display='none'"></iframe>
+            
+            <!-- 플로팅 닫기 버튼 (하단 중앙) -->
+            <button onclick="window.haptic(); window.closeBrowser()" class="absolute bottom-8 left-1/2 -translate-x-1/2 z-50 px-5 py-2.5 bg-black/60 backdrop-blur-md text-white rounded-full flex items-center gap-2 shadow-lg active:scale-95 transition-all hover:bg-black/70 ring-1 ring-white/20">
+                <i class="fa-solid fa-xmark"></i>
+                <span class="text-xs font-bold">닫기</span>
+            </button>
         </div>
     </div>
 
@@ -562,14 +563,12 @@
         window.showModal = (id) => { document.getElementById(id).classList.remove('hidden'); document.getElementById(id).classList.add('flex'); };
         
         // 내부 브라우저 제어 함수
-        window.openBrowser = function(url, title) {
+        window.openBrowser = function(url) {
             const screen = document.getElementById('browser-screen');
             const frame = document.getElementById('internal-browser-frame');
-            const titleEl = document.getElementById('browser-title');
             const loader = document.getElementById('browser-loader');
             
             // UI 세팅
-            titleEl.innerText = title;
             loader.style.display = 'flex'; // 로딩 표시
             frame.src = url;
             
@@ -683,10 +682,10 @@
         window.openEditScheduleModal = (dateStr, index) => { if (!dateStr) { window.openAddScheduleModal(); return; } document.getElementById('sch-modal-title').innerText = '일정 수정'; document.getElementById('sch-delete-btn').classList.remove('hidden'); document.getElementById('sch-save-btn').innerText = '수정하기'; document.getElementById('sch-edit-date-key').value = dateStr; document.getElementById('sch-edit-index').value = index; const list = window.dynamicEvents[dateStr]; if(list && list[index]) { const event = list[index]; document.getElementById('add-sch-category').value = event.type; document.getElementById('add-sch-date').value = dateStr; document.getElementById('add-sch-time').value = event.time; document.getElementById('add-sch-title').value = event.title; } document.getElementById('schedule-modal').classList.remove('hidden'); document.getElementById('schedule-modal').classList.add('flex'); };
         window.checkStock = () => { window.location.href = "stock.html"; };
         
-        // 링크 연결 방식 변경 (iframe 사용)
-        window.goToMusic = () => window.openBrowser("https://won429.github.io/enjoy/", "엔조이 뮤직");
+        // 링크 연결 방식 변경 (iframe 사용 - 타이틀 인자 제거)
+        window.goToMusic = () => window.openBrowser("https://won429.github.io/enjoy/");
         window.playGame = () => window.location.href = "game.html";
-        window.goToTravel = () => window.openBrowser("https://won429.github.io/enjoy_trip/", "여행 기록");
+        window.goToTravel = () => window.openBrowser("https://won429.github.io/enjoy_trip/");
         
         window.goHome = () => { window.activeTabIndex = 0; window.updateTabUI(0); }
         window.goSchedule = () => { window.activeTabIndex = 1; window.updateTabUI(1); }
