@@ -545,8 +545,8 @@
         window.openEditScheduleModal = (dateStr, index) => { if (!dateStr) { window.openAddScheduleModal(); return; } document.getElementById('sch-modal-title').innerText = '일정 수정'; document.getElementById('sch-delete-btn').classList.remove('hidden'); document.getElementById('sch-save-btn').innerText = '수정하기'; document.getElementById('sch-edit-date-key').value = dateStr; document.getElementById('sch-edit-index').value = index; const list = window.dynamicEvents[dateStr]; if(list && list[index]) { const event = list[index]; document.getElementById('add-sch-category').value = event.type; document.getElementById('add-sch-date').value = dateStr; document.getElementById('add-sch-time').value = event.time; document.getElementById('add-sch-title').value = event.title; } document.getElementById('schedule-modal').classList.remove('hidden'); document.getElementById('schedule-modal').classList.add('flex'); };
         window.checkStock = () => { window.location.href = "https://won429.github.io/enjoystock/"; };
         window.goToMusic = () => window.location.href = "https://won429.github.io/enjoy/";
-        window.playGame = () => window.location.href = "https://won429.github.io/enjoygame/";
-        window.goToTravel = () => window.location.href = "https://won429.github.io/enjoy_trip/"; // Added
+        window.playGame = () => window.location.href = "game.html";
+        window.goToTravel = () => window.location.href = "https://won429.github.io/enjoy_trip/"; 
         window.goHome = () => { window.activeTabIndex = 0; window.updateTabUI(0); }
         window.goSchedule = () => { window.activeTabIndex = 1; window.updateTabUI(1); }
         window.goMeeting = () => { window.activeTabIndex = 2; window.updateTabUI(2); }
