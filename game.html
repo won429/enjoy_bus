@@ -121,14 +121,21 @@
         function updateNavState(screenId) {
             const navHome = document.getElementById('nav-home');
             const navMembers = document.getElementById('nav-members');
+            const mainNav = document.getElementById('main-nav'); // 하단 메뉴 컨테이너
             
             navHome.classList.replace('opacity-100', 'opacity-40');
             navMembers.classList.replace('opacity-100', 'opacity-40');
 
-            if (screenId === 'screen-game-menu' || screenId.startsWith('screen-car') || screenId.startsWith('screen-chore') || screenId.startsWith('screen-trip')) {
+            // 하단 메뉴 표시 조건: 홈 또는 멤버 화면일 때만 표시
+            if (screenId === 'screen-game-menu') {
                 navHome.classList.replace('opacity-40', 'opacity-100');
+                mainNav.classList.remove('hidden');
             } else if (screenId === 'screen-members') {
                 navMembers.classList.replace('opacity-40', 'opacity-100');
+                mainNav.classList.remove('hidden');
+            } else {
+                // 게임 화면 등에서는 숨김
+                mainNav.classList.add('hidden');
             }
         }
 
@@ -411,7 +418,7 @@
                     <button onclick="switchScreen('screen-chore-game');" class="btn-scale bg-[#FFF0F0] rounded-[26px] p-5 text-left h-[160px] flex flex-col justify-between relative overflow-hidden group shadow-sm">
                         <div class="flex justify-between items-start z-10">
                             <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm text-[#F04452]">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L12 3Z"/></svg>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
                             </div>
                         </div>
                         <div class="z-10">
@@ -589,7 +596,7 @@
         </div>
 
         <!-- 하단 네비게이션 -->
-        <div class="absolute bottom-6 left-1/2 transform -translate-x-1/2 glass-nav rounded-full px-8 py-3 flex items-center gap-10 z-50">
+        <div id="main-nav" class="absolute bottom-6 left-1/2 transform -translate-x-1/2 glass-nav rounded-full px-8 py-3 flex items-center gap-10 z-50">
             <button id="nav-home" onclick="switchScreen('screen-game-menu')" class="flex flex-col items-center gap-1 opacity-100 transition-opacity">
                 <svg class="text-[#333D4B]" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
                 <span class="text-[10px] font-bold text-[#333D4B]">홈</span>
@@ -673,7 +680,6 @@
             admin: { resets: { car: 0, chore: 0, trip: 0 }, unlimited: false }
         };
         let localTimestamps = { car: 0, chore: 0, trip: 0 };
-        let lastBannerResetTimes = { car: 0, chore: 0, trip: 0 }; 
         let isFirstLoad = true;
 
         const setupFirestoreListener = () => {
@@ -767,45 +773,46 @@
             }
             updateUnlimitedUI(admin.unlimited);
 
-            // 2. Reset Banners (Granular)
-            checkAndShowResetBanner('car', resets.car, '🚗 차량 배치가 초기화되었습니다!', 'bg-blue-600');
-            checkAndShowResetBanner('chore', resets.chore, '🧹 당번이 초기화되었습니다!', 'bg-green-600');
-            checkAndShowResetBanner('trip', resets.trip, '✈️ 여행지가 초기화되었습니다!', 'bg-purple-600');
+            // 2. Persistent Reset Banners Logic (State-based)
+            // 배너가 보여야 하는 조건: (마지막 리셋 시간) > (마지막 게임 플레이 시간)
+            // 즉, 리셋 이후에 아직 게임을 하지 않았을 때만 배너를 표시합니다.
+            
+            const carResetTime = resets.car || 0;
+            const carPlayTime = data.car?.timestamp || 0;
+            updatePersistentBanner('car', carResetTime > carPlayTime, '🚗 차량 배치가 초기화되었습니다!', 'bg-blue-600');
+
+            const choreResetTime = resets.chore || 0;
+            const chorePlayTime = data.chore?.timestamp || 0;
+            updatePersistentBanner('chore', choreResetTime > chorePlayTime, '🧹 당번이 초기화되었습니다!', 'bg-green-600');
+
+            const tripResetTime = resets.trip || 0;
+            const tripPlayTime = data.trip?.timestamp || 0;
+            updatePersistentBanner('trip', tripResetTime > tripPlayTime, '✈️ 여행지가 초기화되었습니다!', 'bg-purple-600');
         }
 
-        function checkAndShowResetBanner(key, serverTs, msg, color) {
-            if (serverTs > lastBannerResetTimes[key]) {
-                // 새로운 리셋 감지
-                lastBannerResetTimes[key] = serverTs;
-                if (!isFirstLoad) { // 첫 로드 시에는 리셋 배너 띄우지 않음 (UX)
-                    showTemporaryBanner(key, msg, color);
-                }
-            }
-        }
-
-        function showTemporaryBanner(key, msg, color) {
+        function updatePersistentBanner(key, shouldShow, msg, color) {
             const container = document.getElementById('notification-container');
             const id = `noti-reset-${key}`;
             let el = document.getElementById(id);
-            if (el) el.remove();
-            
-            el = createNotification(id, msg, color);
-            container.appendChild(el);
-            
-            // 3초 후 사라짐
-            setTimeout(() => {
-                if (el && el.parentNode) {
+
+            if (shouldShow) {
+                if (!el) {
+                    el = createNotification(id, msg, color);
+                    container.appendChild(el);
+                }
+            } else {
+                if (el) {
                     el.classList.remove('slide-down');
                     el.classList.add('slide-up');
-                    setTimeout(() => el.remove(), 400);
+                    setTimeout(() => { if(el && el.parentNode) el.remove(); }, 300);
                 }
-            }, 3000);
+            }
         }
 
         function createNotification(id, text, colorClass) {
             const el = document.createElement('div');
             el.id = id;
-            el.className = `${colorClass} text-white px-6 py-3 rounded-b-xl shadow-lg flex items-center gap-3 pointer-events-auto mb-2 slide-down font-bold text-sm justify-center`;
+            el.className = `${colorClass} text-white px-6 py-3 rounded-b-xl shadow-lg flex items-center gap-3 pointer-events-auto mb-2 slide-down font-bold text-sm justify-center transition-all duration-300`;
             const span = document.createElement('span');
             span.textContent = text;
             el.appendChild(span);
@@ -840,8 +847,6 @@
             if (!confirm(`${type === 'car' ? '차량' : type === 'chore' ? '당번' : '여행'} 게임을 초기화하시겠습니까?`)) return;
             try {
                 const docRef = doc(db, 'games', 'random_enjoy_state'); 
-                const currentAdmin = globalState.admin || { unlimited: false, resets: {} };
-                const currentResets = currentAdmin.resets || { car: 0, chore: 0, trip: 0 };
                 
                 // 해당 게임 데이터 리셋 및 리셋 타임스탬프 갱신
                 let updateData = {
