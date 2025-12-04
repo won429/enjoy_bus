@@ -635,7 +635,7 @@
             
             // 면제권 관리 렌더링 (기본값 처리 추가)
             const ticketList = document.getElementById('admin-ticket-list'); ticketList.innerHTML = '';
-            const members = ['홍박사', '류짱', '오스틴', '전시기', '지노', '성원제'];
+            const members = ['홍박사', '류짱', '오스틴', '전시기', '이진누', '성원제'];
             const exemptions = window.meetingData.exemptions || { '류짱': 1, '성원제': 1, '전시기': 1 };
             members.forEach((name, i) => {
                 const count = exemptions[name] || 0;
@@ -671,10 +671,24 @@
         window.deleteSchedule = async function() { if(!confirm('정말 삭제하시겠습니까?')) return; const dateKey = document.getElementById('sch-edit-date-key').value; const index = document.getElementById('sch-edit-index').value; try { const docSnap = await window.getDoc(window.doc(window.meetingDb, ...window.SCHEDULE_PATH)); if(docSnap.exists()) { const data = docSnap.data(); const list = data[dateKey]; if(list) { list.splice(index, 1); if(list.length === 0) delete data[dateKey]; else data[dateKey] = list; await window.setDoc(window.doc(window.meetingDb, ...window.SCHEDULE_PATH), data); alert('삭제되었습니다.'); window.closeModal('schedule-modal'); } } } catch(e) { console.error(e); alert('삭제 실패'); } }
         window.changeDuesMonth = function(delta) { window.currentDuesMonth += delta; if (window.currentDuesMonth < 1) window.currentDuesMonth = 1; if (window.currentDuesMonth > 12) window.currentDuesMonth = 12; window.renderDues(window.currentDuesMonth); }
         
-        // [Modified] updateMeetingUI to handle default exemptions
+        // [Modified] updateMeetingUI: DB 데이터 마이그레이션 (지노 -> 이진누 자동 변환)
         window.updateMeetingUI = function(data) { 
+            // 1. 기존 데이터 내 '지노'를 '이진누'로 실시간 변환
+            if (data.records) {
+                Object.keys(data.records).forEach(month => {
+                    data.records[month].forEach(member => {
+                        if (member.name === '지노') member.name = '이진누';
+                    });
+                });
+            }
+            if (data.exemptions && data.exemptions['지노'] !== undefined) {
+                data.exemptions['이진누'] = (data.exemptions['이진누'] || 0) + data.exemptions['지노'];
+                delete data.exemptions['지노'];
+            }
+
             window.meetingData = data; 
-            // 데이터 없을 시 기본값 주입 (요청사항 반영)
+            
+            // 데이터 없을 시 기본값 주입
             if (!window.meetingData.exemptions) {
                 window.meetingData.exemptions = { '류짱': 1, '성원제': 1, '전시기': 1 };
             }
@@ -698,20 +712,20 @@
         window.changeMonth = (delta) => { window.viewMonth += delta; if (window.viewMonth < 0) { window.viewYear--; window.viewMonth = 11; } else if (window.viewMonth > 11) { window.viewYear++; window.viewMonth = 0; } window.renderCalendar(window.viewYear, window.viewMonth); }
 
         // Data Helpers
-        function createEmptyMonthData() { const members = ['홍박사', '류짱', '오스틴', '전시기', '지노', '성원제']; return members.map(name => ({ name: name, status: 'unpaid', amount: 0, isLeader: name === '전시기' })); }
+        function createEmptyMonthData() { const members = ['홍박사', '류짱', '오스틴', '전시기', '이진누', '성원제']; return members.map(name => ({ name: name, status: 'unpaid', amount: 0, isLeader: name === '전시기' })); }
         function getInitialMeetingData() { 
             return { 
                 totalBalance: 448999, 
                 exemptions: { '류짱': 1, '성원제': 1, '전시기': 1 },
                 records: { 
-                    10: [ { name: '오스틴', status: 'unpaid', amount: 0, penalty: '미납부로 인한 부과금 10,000원 발생' }, { name: '홍박사', status: 'paid', amount: 15000 }, { name: '류짱', status: 'paid', amount: 15000 }, { name: '전시기', status: 'paid', amount: 15000, isLeader: true }, { name: '지노', status: 'paid', amount: 15000 }, { name: '성원제', status: 'paid', amount: 15000 } ], 
-                    11: [ { name: '홍박사', status: 'paid', amount: 15000 }, { name: '류짱', status: 'paid', amount: 16000 }, { name: '오스틴', status: 'paid', amount: 15000 }, { name: '전시기', status: 'paid', amount: 15000, isLeader: true }, { name: '지노', status: 'paid', amount: 15000 }, { name: '성원제', status: 'paid', amount: 15000 } ], 
-                    12: [ { name: '홍박사', status: 'paid', amount: 15000 }, { name: '류짱', status: 'unpaid', amount: 0 }, { name: '오스틴', status: 'unpaid', amount: 0 }, { name: '전시기', status: 'unpaid', amount: 0, isLeader: true }, { name: '지노', status: 'unpaid', amount: 0 }, { name: '성원제', status: 'unpaid', amount: 0 } ] 
+                    10: [ { name: '오스틴', status: 'unpaid', amount: 0, penalty: '미납부로 인한 부과금 10,000원 발생' }, { name: '홍박사', status: 'paid', amount: 15000 }, { name: '류짱', status: 'paid', amount: 15000 }, { name: '전시기', status: 'paid', amount: 15000, isLeader: true }, { name: '이진누', status: 'paid', amount: 15000 }, { name: '성원제', status: 'paid', amount: 15000 } ], 
+                    11: [ { name: '홍박사', status: 'paid', amount: 15000 }, { name: '류짱', status: 'paid', amount: 16000 }, { name: '오스틴', status: 'paid', amount: 15000 }, { name: '전시기', status: 'paid', amount: 15000, isLeader: true }, { name: '이진누', status: 'paid', amount: 15000 }, { name: '성원제', status: 'paid', amount: 15000 } ], 
+                    12: [ { name: '홍박사', status: 'paid', amount: 15000 }, { name: '류짱', status: 'unpaid', amount: 0 }, { name: '오스틴', status: 'unpaid', amount: 0 }, { name: '전시기', status: 'unpaid', amount: 0, isLeader: true }, { name: '이진누', status: 'unpaid', amount: 0 }, { name: '성원제', status: 'unpaid', amount: 0 } ] 
                 } 
             }; 
         }
         
-        const memberColors = { '홍박사': { bg: 'bg-blue-100/80', text: 'text-blue-600', char: '홍' }, '류짱': { bg: 'bg-purple-100/80', text: 'text-purple-600', char: '류' }, '오스틴': { bg: 'bg-emerald-100/80', text: 'text-emerald-600', char: '오' }, '전시기': { bg: 'bg-orange-100/80', text: 'text-orange-600', char: '전' }, '지노': { bg: 'bg-indigo-100/80', text: 'text-indigo-600', char: '지' }, '성원제': { bg: 'bg-pink-100/80', text: 'text-pink-600', char: '성' } };
+        const memberColors = { '홍박사': { bg: 'bg-blue-100/80', text: 'text-blue-600', char: '홍' }, '류짱': { bg: 'bg-purple-100/80', text: 'text-purple-600', char: '류' }, '오스틴': { bg: 'bg-emerald-100/80', text: 'text-emerald-600', char: '오' }, '전시기': { bg: 'bg-orange-100/80', text: 'text-orange-600', char: '전' }, '이진누': { bg: 'bg-indigo-100/80', text: 'text-indigo-600', char: '이' }, '성원제': { bg: 'bg-pink-100/80', text: 'text-pink-600', char: '성' } };
         
         window.renderMeetingStatus = function() {
             // 부과금 렌더링
@@ -719,6 +733,9 @@
             const ticketListMini = document.getElementById('ticket-list-mini');
             
             if (!penaltyListMini || !ticketListMini) return;
+
+            // [추가된 안전장치] 데이터가 아직 로드되지 않았으면 초기값 사용
+            if (!window.meetingData) window.meetingData = getInitialMeetingData();
             
             // 1. 부과금 로직
             const now = new Date(); const currentRealMonth = now.getMonth() + 1;
@@ -769,6 +786,9 @@
         window.renderDues = function(month) {
             const list = document.getElementById('dues-list'); const title = document.getElementById('dues-month-title'); if(!list) return; title.innerText = `${month}월 기준`; list.innerHTML = '';
             
+            // [추가된 안전장치] 데이터 로드 전 호출 시 초기 데이터 할당
+            if (!window.meetingData) window.meetingData = getInitialMeetingData();
+
             // 탭이 모임통장일 때 현황판 업데이트
             if(window.activeTabIndex === 2) window.renderMeetingStatus();
             
@@ -819,7 +839,7 @@
             const events = {}; const keyPrefix = `${year}-${String(month).padStart(2, '0')}`;
             const holidays = window.getHolidays(year, month); Object.keys(holidays).forEach(k => { events[k] = (events[k] || []).concat(holidays[k]); });
             events[`${keyPrefix}-06`] = (events[`${keyPrefix}-06`]||[]).concat([{ type: 'dues', title: '회비 납부일 💰', time: '15,000원' }]);
-            const birthdays = { '01-02': '전시기 생일 🎂', '03-22': '지노 생일 🎂', '04-01': '오스틴 생일 🎂', '06-05': '홍박사 생일 🎂', '06-12': '류짱 생일 🎂', '10-15': '성원제 생일 🎂' }; Object.entries(birthdays).forEach(([d, t]) => { const [m, day] = d.split('-'); if (parseInt(m) === month) { const k = `${keyPrefix}-${day}`; events[k] = (events[k] || []).concat([{ type: 'bday', title: t, time: '하루 종일' }]); } });
+            const birthdays = { '01-02': '전시기 생일 🎂', '03-22': '이진누 생일 🎂', '04-01': '오스틴 생일 🎂', '06-05': '홍박사 생일 🎂', '06-12': '류짱 생일 🎂', '10-15': '성원제 생일 🎂' }; Object.entries(birthdays).forEach(([d, t]) => { const [m, day] = d.split('-'); if (parseInt(m) === month) { const k = `${keyPrefix}-${day}`; events[k] = (events[k] || []).concat([{ type: 'bday', title: t, time: '하루 종일' }]); } });
             if(month===6) { const l = new Date(year, month, 0).getDate(); const a = year - 2024; for(let i=1; i<=l; i++) { const k = `${keyPrefix}-${String(i).padStart(2,'0')}`; events[k] = (events[k]||[]).concat([{type:'anniv', title:`엔조이 ${a}주년 🎉`, time:'하루종일'}]); } }
             if (year === 2025 && month === 12) { events[`${keyPrefix}-12`] = (events[`${keyPrefix}-12`]||[]).concat([{type:'school', title:'우송대(전시기) 종강', time:'일정'}]); events[`${keyPrefix}-20`] = (events[`${keyPrefix}-20`]||[]).concat([{type:'school', title:'안동대(성원제) 종강', time:'일정'}]); }
             if (year === 2025 && month === 2) { ['05', '06', '07'].forEach(day => { const k = `${keyPrefix}-${day}`; events[k] = (events[k]||[]).concat([{type:'meet', title:'경북칠곡, 대구 여행 🚅', time:'정기모임'}]); }); }
@@ -982,9 +1002,9 @@
                 totalBalance: 448999,
                 exemptions: { '류짱': 1, '성원제': 1, '전시기': 1 },
                 records: {
-                    10: [ { name: '오스틴', status: 'unpaid', amount: 0, penalty: '미납부로 인한 부과금 10,000원 발생' }, { name: '홍박사', status: 'paid', amount: 15000 }, { name: '류짱', status: 'paid', amount: 15000 }, { name: '전시기', status: 'paid', amount: 15000, isLeader: true }, { name: '지노', status: 'paid', amount: 15000 }, { name: '성원제', status: 'paid', amount: 15000 } ],
-                    11: [ { name: '홍박사', status: 'paid', amount: 15000 }, { name: '류짱', status: 'paid', amount: 16000 }, { name: '오스틴', status: 'paid', amount: 15000 }, { name: '전시기', status: 'paid', amount: 15000, isLeader: true }, { name: '지노', status: 'paid', amount: 15000 }, { name: '성원제', status: 'paid', amount: 15000 } ],
-                    12: [ { name: '홍박사', status: 'paid', amount: 15000 }, { name: '류짱', status: 'unpaid', amount: 0 }, { name: '오스틴', status: 'unpaid', amount: 0 }, { name: '전시기', status: 'unpaid', amount: 0, isLeader: true }, { name: '지노', status: 'unpaid', amount: 0 }, { name: '성원제', status: 'unpaid', amount: 0 } ]
+                    10: [ { name: '오스틴', status: 'unpaid', amount: 0, penalty: '미납부로 인한 부과금 10,000원 발생' }, { name: '홍박사', status: 'paid', amount: 15000 }, { name: '류짱', status: 'paid', amount: 15000 }, { name: '전시기', status: 'paid', amount: 15000, isLeader: true }, { name: '이진누', status: 'paid', amount: 15000 }, { name: '성원제', status: 'paid', amount: 15000 } ],
+                    11: [ { name: '홍박사', status: 'paid', amount: 15000 }, { name: '류짱', status: 'paid', amount: 16000 }, { name: '오스틴', status: 'paid', amount: 15000 }, { name: '전시기', status: 'paid', amount: 15000, isLeader: true }, { name: '이진누', status: 'paid', amount: 15000 }, { name: '성원제', status: 'paid', amount: 15000 } ],
+                    12: [ { name: '홍박사', status: 'paid', amount: 15000 }, { name: '류짱', status: 'unpaid', amount: 0 }, { name: '오스틴', status: 'unpaid', amount: 0 }, { name: '전시기', status: 'unpaid', amount: 0, isLeader: true }, { name: '이진누', status: 'unpaid', amount: 0 }, { name: '성원제', status: 'unpaid', amount: 0 } ]
                 }
             };
         }
