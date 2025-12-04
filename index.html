@@ -381,7 +381,7 @@
         </div>
     </div>
 
-    <!-- 🌐 내부 브라우저 (앱 내 웹뷰 느낌 - 헤더 제거 및 전체화면) -->
+    <!-- 🌐 내부 브라우저 (앱 내 웹뷰 느낌 - 전체화면, 닫기 버튼 제거됨) -->
     <div id="browser-screen" class="hidden fixed inset-0 z-[100] flex-col bg-white">
         <!-- iframe Container (Full Screen) -->
         <div class="flex-1 relative w-full h-full bg-white">
@@ -392,12 +392,6 @@
             
             <!-- iframe -->
             <iframe id="internal-browser-frame" class="w-full h-full border-0 relative z-10 bg-transparent" allow="autoplay; encrypted-media" onload="document.getElementById('browser-loader').style.display='none'"></iframe>
-            
-            <!-- 플로팅 닫기 버튼 (하단 중앙) -->
-            <button onclick="window.haptic(); window.closeBrowser()" class="absolute bottom-8 left-1/2 -translate-x-1/2 z-50 px-5 py-2.5 bg-black/60 backdrop-blur-md text-white rounded-full flex items-center gap-2 shadow-lg active:scale-95 transition-all hover:bg-black/70 ring-1 ring-white/20">
-                <i class="fa-solid fa-xmark"></i>
-                <span class="text-xs font-bold">닫기</span>
-            </button>
         </div>
     </div>
 
@@ -568,15 +562,18 @@
             const frame = document.getElementById('internal-browser-frame');
             const loader = document.getElementById('browser-loader');
             
+            // 브라우저 히스토리 상태 추가 (뒤로가기 버튼으로 닫을 수 있게 함)
+            window.history.pushState({modal: 'browser'}, '', '');
+
             // UI 세팅
             loader.style.display = 'flex'; // 로딩 표시
             frame.src = url;
             
-            // 화면 표시 (슬라이드 애니메이션 효과를 위해 클래스 조정 가능)
+            // 화면 표시
             screen.classList.remove('hidden');
             screen.classList.add('flex');
             
-            // 하단 탭 숨기기 (몰입감을 위해)
+            // 하단 탭 숨기기
             document.getElementById('bottom-nav').classList.add('hidden');
         };
 
@@ -588,11 +585,19 @@
             screen.classList.add('hidden');
             screen.classList.remove('flex');
             
-            // iframe 초기화 (소리 재생 중단 등을 위해)
+            // iframe 초기화
             frame.src = '';
             
             // 하단 탭 다시 보이기
             document.getElementById('bottom-nav').classList.remove('hidden');
+        };
+
+        // 브라우저 뒤로가기 이벤트 감지 (앱 내 모달 닫기)
+        window.onpopstate = function(event) {
+            const screen = document.getElementById('browser-screen');
+            if (screen && !screen.classList.contains('hidden')) {
+                window.closeBrowser();
+            }
         };
 
         window.setGreeting = function() {
@@ -682,7 +687,7 @@
         window.openEditScheduleModal = (dateStr, index) => { if (!dateStr) { window.openAddScheduleModal(); return; } document.getElementById('sch-modal-title').innerText = '일정 수정'; document.getElementById('sch-delete-btn').classList.remove('hidden'); document.getElementById('sch-save-btn').innerText = '수정하기'; document.getElementById('sch-edit-date-key').value = dateStr; document.getElementById('sch-edit-index').value = index; const list = window.dynamicEvents[dateStr]; if(list && list[index]) { const event = list[index]; document.getElementById('add-sch-category').value = event.type; document.getElementById('add-sch-date').value = dateStr; document.getElementById('add-sch-time').value = event.time; document.getElementById('add-sch-title').value = event.title; } document.getElementById('schedule-modal').classList.remove('hidden'); document.getElementById('schedule-modal').classList.add('flex'); };
         window.checkStock = () => { window.location.href = "stock.html"; };
         
-        // 링크 연결 방식 변경 (iframe 사용 - 타이틀 인자 제거)
+        // 링크 연결 방식 변경 (iframe 사용)
         window.goToMusic = () => window.openBrowser("https://won429.github.io/enjoy/");
         window.playGame = () => window.location.href = "game.html";
         window.goToTravel = () => window.openBrowser("https://won429.github.io/enjoy_trip/");
