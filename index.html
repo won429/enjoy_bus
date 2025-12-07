@@ -226,6 +226,9 @@
 </head>
 <body>
 
+    <!-- 유튜브 API 로드 (가장 먼저 실행) -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+
     <!-- 모바일 프레임 컨테이너 -->
     <div id="mobile-frame">
         
@@ -277,11 +280,11 @@
                         <p class="text-sm text-gray-300 line-clamp-2 mb-4">우리가 함께했던 그 뜨거웠던 여름날의 기록. 어디서도 듣지 못한 그들의 진솔한 대화.</p>
                         
                         <div class="flex gap-3">
-                            <!-- 재생 버튼: 클릭 시 바로 비디오 재생 (이벤트 전파 방지) -->
+                            <!-- 재생 버튼 -->
                             <button onclick="event.stopPropagation(); playVideo('story')" class="flex-1 bg-white text-black font-bold py-3 rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-transform">
                                 <i class="fa-solid fa-play"></i> 재생
                             </button>
-                            <!-- 더보기 버튼: 클릭 시 상세 모달 (이벤트 전파 방지, 텍스트 및 아이콘 변경) -->
+                            <!-- 더보기 버튼 -->
                             <button onclick="event.stopPropagation(); openDetail('story')" class="flex-1 bg-white/20 backdrop-blur-md text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-transform">
                                 <i class="fa-solid fa-circle-info"></i> 더보기
                             </button>
@@ -296,7 +299,6 @@
                 <div class="flex overflow-x-auto gap-4 px-5 pb-4 scrollbar-hide snap-x">
                     <!-- 1위 -->
                     <div class="relative flex-shrink-0 w-32 snap-start" onclick="openDetail('story')">
-                        <!-- 숫자 디자인: 흰색 테두리 제거 후 그림자 적용 -->
                         <span class="absolute left-2 top-0 text-[50px] font-black text-[#3182F6] z-10 italic leading-none" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">1</span>
                         <div class="poster-card w-full aspect-[2/3] bg-gray-200 rounded-xl overflow-hidden shadow-md">
                             <img src="poster_story.jpg" class="w-full h-full object-cover">
@@ -419,7 +421,7 @@
             </div>
         </div>
 
-        <!-- 상세 모달 (버튼 동적 처리를 위해 id="modal-action-btn" 추가) -->
+        <!-- 상세 모달 -->
         <div id="detail-modal" class="hidden flex-col justify-end z-[60]">
             <div class="bg-white rounded-t-[32px] w-full h-auto max-h-[90%] overflow-y-auto pb-safe scale-in relative shadow-2xl">
                 <div class="sticky top-0 right-0 z-20 flex justify-end p-4 pointer-events-none">
@@ -462,16 +464,16 @@
             </div>
         </div>
 
-        <!-- 비디오 플레이어 오버레이 (유튜브 Iframe 적용 - 시크릿 모드 해제: 순정 Embed 사용) -->
+        <!-- 비디오 플레이어 오버레이 (YouTube API 사용) -->
         <div id="video-overlay" class="hidden flex-col z-[70] bg-black">
             <!-- 닫기 버튼 -->
             <button onclick="closeVideo()" class="absolute top-safe top-4 left-4 text-white text-2xl drop-shadow-md z-50">
                 <i class="fa-solid fa-chevron-down"></i>
             </button>
             
-            <!-- 유튜브 컨테이너 -->
-            <div id="video-container" class="w-full h-full flex items-center justify-center bg-black overflow-hidden relative">
-                <!-- 여기에 Iframe이 동적으로 들어갑니다 -->
+            <!-- 유튜브 컨테이너 (플레이어가 들어갈 자리) -->
+            <div class="w-full h-full flex items-center justify-center bg-black overflow-hidden relative">
+                 <div id="video-placeholder" class="w-full h-full"></div>
             </div>
         </div>
 
@@ -498,7 +500,7 @@
                 tags: ['브이로그'], 
                 desc: '전역의 해방감을 안고 대전으로 모인 엔조이 멤버들! 대전에서의 유쾌한 회동부터 푸른 제주도로 떠난 낭만적인 여정까지. 다시 뭉친 그들의 뜨거운 우정과 잊지 못할 추억을 담은 감성 브이로그.',
                 members: ['전시기', '성원제', '오스틴', '류짱', '이진누', '홍박사'],
-                videoId: '여기에_유튜브_ID_입력' // 예: 'dQw4w9WgXcQ'
+                videoId: '여기에_유튜브_ID_입력' 
             },
             'nzzoki': { 
                 title: '엔쪽이', 
@@ -551,21 +553,17 @@
             // 모달 기본 정보 업데이트
             document.getElementById('modal-img').src = data.img;
             document.getElementById('modal-title').innerText = data.title;
-            
-            // [추가] 설명 텍스트 업데이트
             document.getElementById('modal-desc').innerText = data.desc || '준비 중인 콘텐츠입니다.';
 
             // 태그 동적 렌더링
             const tagContainer = document.getElementById('modal-tags');
             tagContainer.innerHTML = ''; 
             
-            // 2024 태그 (고정)
             const yearTag = document.createElement('span');
             yearTag.className = 'text-[10px] font-bold text-blue-500 bg-blue-50 px-2 py-1 rounded';
             yearTag.innerText = '2024';
             tagContainer.appendChild(yearTag);
 
-            // 데이터 기반 태그 (브이로그, 예능 등)
             if (data.tags) {
                 data.tags.forEach(tag => {
                     const tagEl = document.createElement('span');
@@ -575,7 +573,6 @@
                 });
             }
 
-            // HD 태그 (고정)
             const hdTag = document.createElement('span');
             hdTag.className = 'text-[10px] font-bold text-gray-500 bg-gray-100 px-2 py-1 rounded';
             hdTag.innerText = 'HD';
@@ -633,7 +630,14 @@
             modal.classList.remove('flex');
         }
 
-        // [핵심] 유튜브 영상 재생 함수 (시크릿 모드 해제: 정직한 퍼가기 방식)
+        // [핵심] 유튜브 Player API 연동 (자동재생 & 4K 요청)
+        var ytPlayer = null;
+
+        // API 준비 완료 시 호출됨 (전역)
+        function onYouTubeIframeAPIReady() {
+            // Player API Ready
+        }
+
         function playVideo(key) {
             haptic();
             
@@ -648,33 +652,65 @@
             }
 
             const overlay = document.getElementById('video-overlay');
-            const container = document.getElementById('video-container');
-            
-            // Iframe 생성: Scale 제거, 100% 꽉 차게
-            container.innerHTML = `
-                <div class="w-full h-full flex items-center justify-center bg-black">
-                    <iframe 
-                        style="width: 100%; height: 100%; max-height: 100vh;"
-                        src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&playsinline=1&controls=1&fs=1" 
-                        frameborder="0" 
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                        allowfullscreen>
-                    </iframe>
-                </div>
-            `;
-
             overlay.classList.remove('hidden');
             overlay.classList.add('flex');
+            
+            // 기존 플레이어 제거 (중복 방지)
+            if (ytPlayer) {
+                ytPlayer.destroy();
+                ytPlayer = null;
+            }
+
+            // 플레이어 홀더 재생성 (destroy 후 div가 사라질 수 있음)
+            const container = document.getElementById('video-placeholder');
+            if (!container) {
+                 const wrapper = document.getElementById('video-container');
+                 wrapper.innerHTML = '<div id="video-placeholder" class="w-full h-full"></div>';
+            }
+
+            // 새 플레이어 생성
+            if (window.YT && window.YT.Player) {
+                ytPlayer = new YT.Player('video-placeholder', {
+                    height: '100%',
+                    width: '100%',
+                    videoId: videoId,
+                    playerVars: {
+                        'autoplay': 1,      // 자동 재생
+                        'rel': 0,           // 추천 영상 방지
+                        'modestbranding': 1,// 로고 최소화
+                        'playsinline': 1,   // 인라인 재생
+                        'controls': 1,      // 컨트롤 표시
+                        'fs': 1             // 전체화면 허용
+                    },
+                    events: {
+                        'onReady': onPlayerReady
+                    }
+                });
+            }
+        }
+
+        function onPlayerReady(event) {
+            // 1. 즉시 재생
+            event.target.playVideo();
+            // 2. 4K 화질 요청 (가능한 경우 적용됨)
+            event.target.setPlaybackQuality('hd2160');
         }
 
         function closeVideo() {
             const overlay = document.getElementById('video-overlay');
-            const container = document.getElementById('video-container');
-            
             overlay.classList.add('hidden');
             overlay.classList.remove('flex');
             
-            container.innerHTML = '';
+            // 플레이어 종료 (소리 끄기)
+            if (ytPlayer) {
+                ytPlayer.stopVideo();
+                ytPlayer.destroy();
+                ytPlayer = null;
+            }
+            
+            // 홀더 재생성 (다음 재생을 위해)
+            const wrapper = document.getElementById('video-container');
+            wrapper.innerHTML = '<div id="video-placeholder" class="w-full h-full"></div>';
         }
 
         /* --- 검색 기능 스크립트 --- */
