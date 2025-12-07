@@ -111,6 +111,7 @@
             height: 56px;
             justify-content: center;
             align-items: center;
+            gap: 0;
         }
 
         .nav-item {
@@ -269,17 +270,20 @@
                     <div class="absolute bottom-0 left-0 w-full p-6 text-white z-10">
                         <div class="flex gap-2 mb-2">
                             <span class="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">HOT</span>
-                            <span class="bg-white/20 backdrop-blur-md text-white text-[10px] font-bold px-1.5 py-0.5 rounded">다큐멘터리</span>
+                            <!-- 장르 변경 -->
+                            <span class="bg-white/20 backdrop-blur-md text-white text-[10px] font-bold px-1.5 py-0.5 rounded">브이로그</span>
                         </div>
                         <h2 class="text-3xl font-bold mb-2 leading-tight">그날,<br>엔조이 이야기</h2>
                         <p class="text-sm text-gray-300 line-clamp-2 mb-4">우리가 함께했던 그 뜨거웠던 여름날의 기록. 어디서도 듣지 못한 그들의 진솔한 대화.</p>
                         
                         <div class="flex gap-3">
-                            <button class="flex-1 bg-white text-black font-bold py-3 rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-transform">
+                            <!-- 재생 버튼: 클릭 시 바로 비디오 재생 (이벤트 전파 방지) -->
+                            <button onclick="event.stopPropagation(); playVideo('story')" class="flex-1 bg-white text-black font-bold py-3 rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-transform">
                                 <i class="fa-solid fa-play"></i> 재생
                             </button>
-                            <button class="flex-1 bg-white/20 backdrop-blur-md text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-transform">
-                                <i class="fa-solid fa-plus"></i> 찜하기
+                            <!-- 더보기 버튼: 클릭 시 상세 모달 (이벤트 전파 방지, 텍스트 및 아이콘 변경) -->
+                            <button onclick="event.stopPropagation(); openDetail('story')" class="flex-1 bg-white/20 backdrop-blur-md text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-transform">
+                                <i class="fa-solid fa-circle-info"></i> 더보기
                             </button>
                         </div>
                     </div>
@@ -292,6 +296,7 @@
                 <div class="flex overflow-x-auto gap-4 px-5 pb-4 scrollbar-hide snap-x">
                     <!-- 1위 -->
                     <div class="relative flex-shrink-0 w-32 snap-start" onclick="openDetail('story')">
+                        <!-- 숫자 디자인: 흰색 테두리 제거 후 그림자 적용 -->
                         <span class="absolute left-2 top-0 text-[50px] font-black text-[#3182F6] z-10 italic leading-none" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">1</span>
                         <div class="poster-card w-full aspect-[2/3] bg-gray-200 rounded-xl overflow-hidden shadow-md">
                             <img src="poster_story.jpg" class="w-full h-full object-cover">
@@ -354,38 +359,12 @@
                 </div>
             </div>
 
-            <!-- 4. 신규 콘텐츠 -->
+            <!-- 4. 신규 콘텐츠 (비워둠) -->
             <div class="px-5 mb-6 fade-in-up delay-300">
                 <h3 class="text-lg font-bold text-main mb-3">새로 올라왔어요 ✨</h3>
-                <div class="flex flex-col gap-3">
-                    <div class="toss-card p-4 flex gap-4 items-center !bg-white/60" onclick="openDetail('new1')">
-                        <div class="w-24 aspect-video bg-gray-200 rounded-lg overflow-hidden flex-shrink-0 relative">
-                            <img src="thumb_winter.jpg" class="w-full h-full object-cover">
-                            <span class="absolute top-1 left-1 bg-red-500 text-white text-[8px] font-bold px-1 rounded">NEW</span>
-                        </div>
-                        <div>
-                            <h4 class="text-base font-bold text-main">겨울 산행의 추억</h4>
-                            <p class="text-xs text-sub mt-1">다큐멘터리 · 2024</p>
-                            <p class="text-xs text-blue-500 mt-2 font-bold">매주 금요일 공개</p>
-                        </div>
-                        <button class="ml-auto w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-400">
-                            <i class="fa-solid fa-play text-xs pl-0.5"></i>
-                        </button>
-                    </div>
-                    <div class="toss-card p-4 flex gap-4 items-center !bg-white/60" onclick="openDetail('new2')">
-                        <div class="w-24 aspect-video bg-gray-200 rounded-lg overflow-hidden flex-shrink-0 relative">
-                            <img src="thumb_meeting.jpg" class="w-full h-full object-cover">
-                            <span class="absolute top-1 left-1 bg-red-500 text-white text-[8px] font-bold px-1 rounded">NEW</span>
-                        </div>
-                        <div>
-                            <h4 class="text-base font-bold text-main">미팅룸의 비밀</h4>
-                            <p class="text-xs text-sub mt-1">스릴러 · 시즌 1</p>
-                            <p class="text-xs text-blue-500 mt-2 font-bold">인기 급상승</p>
-                        </div>
-                        <button class="ml-auto w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-400">
-                            <i class="fa-solid fa-play text-xs pl-0.5"></i>
-                        </button>
-                    </div>
+                <div class="flex flex-col gap-3 items-center justify-center py-10 bg-white/40 rounded-2xl border border-white/40 backdrop-blur-sm">
+                    <i class="fa-solid fa-cloud-moon text-3xl text-gray-300 mb-2"></i>
+                    <p class="text-xs text-gray-400 font-medium">아직 새로운 콘텐츠가 없어요</p>
                 </div>
             </div>
 
@@ -440,7 +419,7 @@
             </div>
         </div>
 
-        <!-- 상세 모달 -->
+        <!-- 상세 모달 (버튼 동적 처리를 위해 id="modal-action-btn" 추가) -->
         <div id="detail-modal" class="hidden flex-col justify-end z-[60]">
             <div class="bg-white rounded-t-[32px] w-full h-auto max-h-[90%] overflow-y-auto pb-safe scale-in relative shadow-2xl">
                 <div class="sticky top-0 right-0 z-20 flex justify-end p-4 pointer-events-none">
@@ -450,32 +429,32 @@
                 </div>
                 <div class="-mt-16 relative">
                     <div class="w-full aspect-video bg-gray-800 relative">
+                        <!-- 상세 모달 이미지 -->
                         <img id="modal-img" src="" class="w-full h-full object-cover opacity-90">
                         <div class="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent"></div>
                         <div class="absolute inset-0 flex items-center justify-center z-10">
-                            <button onclick="playVideo()" class="w-16 h-16 rounded-full bg-white/30 backdrop-blur-md border border-white/50 flex items-center justify-center text-white text-2xl shadow-lg active:scale-95 transition-transform hover:bg-white/40">
+                            <!-- 모달 내부 재생 버튼 -->
+                            <button id="modal-play-btn" class="w-16 h-16 rounded-full bg-white/30 backdrop-blur-md border border-white/50 flex items-center justify-center text-white text-2xl shadow-lg active:scale-95 transition-transform hover:bg-white/40">
                                 <i class="fa-solid fa-play pl-1"></i>
                             </button>
                         </div>
                     </div>
                     <div class="px-6 pt-2 pb-10">
-                        <div class="flex gap-2 mb-3">
-                            <span class="text-[10px] font-bold text-blue-500 bg-blue-50 px-2 py-1 rounded">2024</span>
-                            <span class="text-[10px] font-bold text-gray-500 bg-gray-100 px-2 py-1 rounded">ENJOY</span>
-                            <span class="text-[10px] font-bold text-gray-500 bg-gray-100 px-2 py-1 rounded">HD</span>
+                        <div class="flex gap-2 mb-3" id="modal-tags">
+                            <!-- [수정] 태그 동적 렌더링 영역 -->
                         </div>
                         <h2 id="modal-title" class="text-2xl font-bold text-main mb-2">제목</h2>
-                        <p class="text-sm text-sub leading-relaxed mb-6">
-                            엔조이 멤버들이 펼치는 예측불허 스토리. 평범한 일상이 영화가 되는 순간을 담았습니다. 지금 바로 확인하세요.
+                        <!-- [수정] 설명 동적 렌더링 -->
+                        <p id="modal-desc" class="text-sm text-sub leading-relaxed mb-6 break-keep">
+                            <!-- JS로 내용 채움 -->
                         </p>
                         <h3 class="text-sm font-bold text-main mb-3">출연진</h3>
-                        <div class="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
-                            <div class="flex flex-col items-center gap-1 w-14 flex-shrink-0"><div class="w-12 h-12 rounded-full bg-gray-200 overflow-hidden"><img src="jeon.jpg" class="w-full h-full object-cover"></div><span class="text-[10px] text-sub truncate w-full text-center">전시기</span></div>
-                            <div class="flex flex-col items-center gap-1 w-14 flex-shrink-0"><div class="w-12 h-12 rounded-full bg-gray-200 overflow-hidden"><img src="austin.jpg" class="w-full h-full object-cover"></div><span class="text-[10px] text-sub truncate w-full text-center">오스틴</span></div>
-                            <div class="flex flex-col items-center gap-1 w-14 flex-shrink-0"><div class="w-12 h-12 rounded-full bg-gray-200 overflow-hidden"><img src="ryu.jpg" class="w-full h-full object-cover"></div><span class="text-[10px] text-sub truncate w-full text-center">류짱</span></div>
-                            <div class="flex flex-col items-center gap-1 w-14 flex-shrink-0"><div class="w-12 h-12 rounded-full bg-gray-200 overflow-hidden"><img src="hong.jpg" class="w-full h-full object-cover"></div><span class="text-[10px] text-sub truncate w-full text-center">홍박사</span></div>
+                        <!-- 출연진 목록 (동적 렌더링) -->
+                        <div id="modal-cast-list" class="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+                            <!-- JS로 내용 채움 -->
                         </div>
-                        <button class="w-full bg-blue-500 text-white font-bold py-4 rounded-2xl mt-8 shadow-lg shadow-blue-200 active:scale-95 transition-transform" onclick="playVideo()">
+                        <!-- 하단 액션 버튼 -->
+                        <button id="modal-action-btn" class="w-full bg-blue-500 text-white font-bold py-4 rounded-2xl mt-8 shadow-lg shadow-blue-200 active:scale-95 transition-transform">
                             1화 재생하기
                         </button>
                     </div>
@@ -483,19 +462,16 @@
             </div>
         </div>
 
-        <!-- 비디오 플레이어 오버레이 -->
+        <!-- 비디오 플레이어 오버레이 (유튜브 Iframe 적용 - 시크릿 모드 해제: 순정 Embed 사용) -->
         <div id="video-overlay" class="hidden flex-col z-[70] bg-black">
-            <div id="video-loader" class="absolute inset-0 flex items-center justify-center text-blue-500 z-10"><i class="fa-solid fa-circle-notch fa-spin text-3xl"></i></div>
-            <div class="relative w-full h-full flex items-center justify-center">
-                <div class="w-full aspect-video bg-gray-900 relative group">
-                    <div class="absolute inset-0 flex items-center justify-center"><i class="fa-solid fa-play text-white/50 text-4xl"></i></div>
-                    <div class="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
-                        <div class="w-full bg-gray-600 h-1 rounded-full mb-3 overflow-hidden"><div class="bg-blue-500 h-full w-[20%]"></div></div>
-                        <div class="flex justify-between text-white text-xs"><span>04:12</span><span>45:00</span></div>
-                        <div class="flex justify-center gap-8 text-white text-xl mt-2 items-center"><i class="fa-solid fa-backward-10"></i><i class="fa-solid fa-pause text-3xl"></i><i class="fa-solid fa-forward-10"></i></div>
-                    </div>
-                </div>
-                <button onclick="closeVideo()" class="absolute top-safe top-4 left-4 text-white text-2xl drop-shadow-md z-20"><i class="fa-solid fa-chevron-down"></i></button>
+            <!-- 닫기 버튼 -->
+            <button onclick="closeVideo()" class="absolute top-safe top-4 left-4 text-white text-2xl drop-shadow-md z-50">
+                <i class="fa-solid fa-chevron-down"></i>
+            </button>
+            
+            <!-- 유튜브 컨테이너 -->
+            <div id="video-container" class="w-full h-full flex items-center justify-center bg-black overflow-hidden relative">
+                <!-- 여기에 Iframe이 동적으로 들어갑니다 -->
             </div>
         </div>
 
@@ -504,17 +480,67 @@
     <script>
         function haptic() { if(navigator.vibrate) navigator.vibrate(10); }
 
-        // 로컬 경로로 데이터 업데이트
+        // 멤버 이미지 매핑 (이름 -> 파일명)
+        const memberImages = {
+            '전시기': 'jeon.jpg',
+            '오스틴': 'austin.jpg',
+            '류짱': 'ryu.jpg',
+            '홍박사': 'hong.jpg',
+            '성원제': 'wonje.jpg', 
+            '이진누': 'jinnu.jpg'  
+        };
+
+        // 데이터 (videoId 추가 - 사용자가 수정해야 할 부분)
         const mockData = {
-            'hero': { title: '그날, 엔조이 이야기', img: 'banner_story.jpg' },
-            'nzzoki': { title: '엔쪽이', img: 'poster_nzzoki.jpg' },
-            'music': { title: '엔조이 인기가요', img: 'poster_music.jpg' },
-            'f1': { title: 'F1 더 엔조이', img: 'poster_f1.jpg' },
-            'business': { title: '출장엔조이', img: 'poster_business.jpg' },
-            'camp': { title: '엔조이 숙려 캠프', img: 'poster_camp.jpg' },
-            'story': { title: '그날, 엔조이 이야기', img: 'poster_story.jpg' },
-            'new1': { title: '겨울 산행의 추억', img: 'thumb_winter.jpg' },
-            'new2': { title: '미팅룸의 비밀', img: 'thumb_meeting.jpg' }
+            'story': { 
+                title: '그날, 엔조이 이야기', 
+                img: 'banner_story.jpg',
+                tags: ['브이로그'], 
+                desc: '전역의 해방감을 안고 대전으로 모인 엔조이 멤버들! 대전에서의 유쾌한 회동부터 푸른 제주도로 떠난 낭만적인 여정까지. 다시 뭉친 그들의 뜨거운 우정과 잊지 못할 추억을 담은 감성 브이로그.',
+                members: ['전시기', '성원제', '오스틴', '류짱', '이진누', '홍박사'],
+                videoId: '여기에_유튜브_ID_입력' // 예: 'dQw4w9WgXcQ'
+            },
+            'nzzoki': { 
+                title: '엔쪽이', 
+                img: 'poster_nzzoki.jpg',
+                tags: ['브이로그', '예능'], 
+                desc: '대구와 경북을 누비며 펼쳐지는 엔조이들의 대환장 여행기! \'금쪽같은 내새끼\'를 패러디한 유쾌한 컨셉으로, 대구경북의 명소 곳곳에서 벌어지는 좌충우돌 에피소드를 담았습니다. 과연 이번 여행에서 가장 말 안 듣는 \'엔쪽이\'는 누구일까요?',
+                members: ['전시기', '성원제', '오스틴', '이진누', '홍박사'],
+                videoId: '여기에_유튜브_ID_입력'
+            },
+            // [수정 완료] 유튜브 영상 ID 적용 (fVISITFv6EA)
+            'music': { 
+                title: '엔조이 인기가요', 
+                img: 'poster_music.jpg',
+                tags: ['음악', '예능', '브이로그'], 
+                desc: '엔조이 멤버들의 숨겨진 끼를 대방출하는 특별 무대! 추석을 맞아 준비한 스페셜 퍼포먼스와 비하인드 스토리까지. 흥 넘치는 그들의 무대를 지금 바로 확인하세요.',
+                members: ['전시기', '성원제', '오스틴', '류짱', '이진누', '홍박사'],
+                videoId: 'fVISITFv6EA'
+            },
+            'f1': { 
+                title: 'F1 더 엔조이', 
+                img: 'poster_f1.jpg',
+                isComingSoon: true, 
+                tags: ['스포츠', '예능'],
+                desc: '스피드에 미친 남자들의 질주 본능이 깨어난다! 카트 레이싱부터 본격적인 서킷 체험까지, 엔조이 멤버들이 펼치는 짜릿한 레이싱 대결.',
+                members: ['전시기', '성원제', '오스틴', '류짱', '이진누', '홍박사']
+            },
+            'business': { 
+                title: '출장엔조이', 
+                img: 'poster_business.jpg',
+                isComingSoon: true,
+                tags: ['리얼리티', '예능'],
+                desc: '불러만 주시면 어디든 갑니다! 엔조이 멤버들이 직접 찾아가는 대국민 소통 프로젝트. 좌충우돌 출장기.',
+                members: ['전시기', '성원제', '오스틴', '류짱', '이진누', '홍박사']
+            },
+            'camp': { 
+                title: '엔조이 숙려 캠프', 
+                img: 'poster_camp.jpg',
+                isComingSoon: true,
+                tags: ['관찰예능'],
+                desc: '잠시 멈춤이 필요한 순간, 자연 속으로 떠난 엔조이 멤버들. 진솔한 대화와 힐링이 함께하는 특별한 캠프.',
+                members: ['전시기', '성원제', '오스틴', '류짱', '이진누', '홍박사']
+            },
         };
 
         function openDetail(key) {
@@ -522,8 +548,79 @@
             const data = mockData[key];
             if(!data) return;
             
+            // 모달 기본 정보 업데이트
             document.getElementById('modal-img').src = data.img;
             document.getElementById('modal-title').innerText = data.title;
+            
+            // [추가] 설명 텍스트 업데이트
+            document.getElementById('modal-desc').innerText = data.desc || '준비 중인 콘텐츠입니다.';
+
+            // 태그 동적 렌더링
+            const tagContainer = document.getElementById('modal-tags');
+            tagContainer.innerHTML = ''; 
+            
+            // 2024 태그 (고정)
+            const yearTag = document.createElement('span');
+            yearTag.className = 'text-[10px] font-bold text-blue-500 bg-blue-50 px-2 py-1 rounded';
+            yearTag.innerText = '2024';
+            tagContainer.appendChild(yearTag);
+
+            // 데이터 기반 태그 (브이로그, 예능 등)
+            if (data.tags) {
+                data.tags.forEach(tag => {
+                    const tagEl = document.createElement('span');
+                    tagEl.className = 'text-[10px] font-bold text-gray-500 bg-gray-100 px-2 py-1 rounded';
+                    tagEl.innerText = tag;
+                    tagContainer.appendChild(tagEl);
+                });
+            }
+
+            // HD 태그 (고정)
+            const hdTag = document.createElement('span');
+            hdTag.className = 'text-[10px] font-bold text-gray-500 bg-gray-100 px-2 py-1 rounded';
+            hdTag.innerText = 'HD';
+            tagContainer.appendChild(hdTag);
+
+            // 출연진 동적 렌더링
+            const castList = document.getElementById('modal-cast-list');
+            castList.innerHTML = ''; 
+
+            if (data.members && data.members.length > 0) {
+                data.members.forEach(name => {
+                    const imgFile = memberImages[name] || 'user_me.jpg'; 
+                    const memberHtml = `
+                        <div class="flex flex-col items-center gap-1 w-14 flex-shrink-0">
+                            <div class="w-12 h-12 rounded-full bg-gray-200 overflow-hidden shadow-sm">
+                                <img src="${imgFile}" class="w-full h-full object-cover" onerror="this.src='user_me.jpg'">
+                            </div>
+                            <span class="text-[10px] text-sub truncate w-full text-center mt-1">${name}</span>
+                        </div>
+                    `;
+                    castList.innerHTML += memberHtml;
+                });
+            } else {
+                castList.innerHTML = '<span class="text-xs text-gray-400">출연진 정보 없음</span>';
+            }
+
+            // 공개 여부에 따른 버튼 처리
+            const actionBtn = document.getElementById('modal-action-btn');
+            const modalPlayBtn = document.getElementById('modal-play-btn');
+
+            if (data.isComingSoon) {
+                actionBtn.textContent = '공개 알림 받기 🔔';
+                actionBtn.className = 'w-full bg-gray-500 text-white font-bold py-4 rounded-2xl mt-8 shadow-lg active:scale-95 transition-transform hover:bg-gray-600';
+                actionBtn.onclick = () => { haptic(); alert(`'${data.title}' 알림이 설정되었습니다!`); };
+                
+                modalPlayBtn.classList.add('hidden');
+                modalPlayBtn.onclick = null;
+            } else {
+                actionBtn.textContent = '1화 재생하기';
+                actionBtn.className = 'w-full bg-blue-500 text-white font-bold py-4 rounded-2xl mt-8 shadow-lg shadow-blue-200 active:scale-95 transition-transform hover:bg-blue-600';
+                actionBtn.onclick = () => { playVideo(key); };
+                
+                modalPlayBtn.classList.remove('hidden');
+                modalPlayBtn.onclick = () => { playVideo(key); };
+            }
             
             const modal = document.getElementById('detail-modal');
             modal.classList.remove('hidden');
@@ -536,24 +633,48 @@
             modal.classList.remove('flex');
         }
 
-        function playVideo() {
+        // [핵심] 유튜브 영상 재생 함수 (시크릿 모드 해제: 정직한 퍼가기 방식)
+        function playVideo(key) {
             haptic();
-            const overlay = document.getElementById('video-overlay');
-            const loader = document.getElementById('video-loader');
             
+            let videoId = null;
+            if (key && mockData[key]) {
+                videoId = mockData[key].videoId;
+            }
+
+            if (!videoId || videoId === '여기에_유튜브_ID_입력') {
+                alert('영상을 준비 중입니다. (ID를 설정해주세요)');
+                return;
+            }
+
+            const overlay = document.getElementById('video-overlay');
+            const container = document.getElementById('video-container');
+            
+            // Iframe 생성: Scale 제거, 100% 꽉 차게
+            container.innerHTML = `
+                <div class="w-full h-full flex items-center justify-center bg-black">
+                    <iframe 
+                        style="width: 100%; height: 100%; max-height: 100vh;"
+                        src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&playsinline=1&controls=1&fs=1" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                        allowfullscreen>
+                    </iframe>
+                </div>
+            `;
+
             overlay.classList.remove('hidden');
             overlay.classList.add('flex');
-            loader.style.display = 'flex';
-
-            setTimeout(() => {
-                loader.style.display = 'none';
-            }, 1500);
         }
 
         function closeVideo() {
             const overlay = document.getElementById('video-overlay');
+            const container = document.getElementById('video-container');
+            
             overlay.classList.add('hidden');
             overlay.classList.remove('flex');
+            
+            container.innerHTML = '';
         }
 
         /* --- 검색 기능 스크립트 --- */
