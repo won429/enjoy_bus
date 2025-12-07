@@ -23,7 +23,7 @@
 
         body { 
             font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
-            background-color: #111827; /* PC 배경: 어두운 색 */
+            background-color: #111827;
             color: #191F28;
             -webkit-tap-highlight-color: transparent;
             overscroll-behavior-y: none;
@@ -38,12 +38,12 @@
         /* 모바일 프레임 컨테이너 */
         #mobile-frame {
             width: 100%;
-            max-width: 480px; /* 모바일 최대 너비 */
+            max-width: 480px; 
             height: 100%;
-            background-color: #F2F4F6; /* 앱 배경 */
+            background-color: #F2F4F6;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 0 40px rgba(0,0,0,0.5); /* 그림자 효과 */
+            box-shadow: 0 0 40px rgba(0,0,0,0.5);
         }
 
         .font-dunggeun {
@@ -51,7 +51,7 @@
             font-weight: normal !important; 
         }
 
-        /* [상단] 다이나믹 아일랜드 스타일 헤더 */
+        /* [상단] 헤더 */
         .glass-header {
             width: 100%;
             background: transparent;
@@ -59,8 +59,8 @@
             border-radius: 0px;
             box-shadow: none;
             top: 0;
-            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-            position: absolute; /* fixed -> absolute (프레임 내부 고정) */
+            transition: all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: absolute;
             z-index: 50;
         }
 
@@ -78,37 +78,39 @@
             padding: 6px 16px !important;
         }
 
-        /* [하단] 네비게이션 바 스타일 */
+        /* [하단] 네비게이션 바 */
         .glass-nav {
-            position: absolute; /* fixed -> absolute */
-            bottom: 24px;       /* 하단 여백 조금 더 줌 */
+            position: absolute;
+            bottom: 24px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(255, 255, 255, 0.8);
+            margin-left: 0px; 
+            background: rgba(255, 255, 255, 0.6);
             backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.4);
             border-radius: 100px;
             padding: 6px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
             display: flex;
             align-items: center;
             gap: 4px;
-            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
             z-index: 40;
             width: auto;
+            min-width: 56px; 
         }
 
-        /* 하단 네비게이션 스크롤 상태 (우측 하단 알약) */
+        /* 하단 네비게이션 스크롤 상태 */
         .glass-nav.scrolled {
-            left: auto !important; 
-            right: 20px;           
-            transform: translateX(0);
-            width: 56px;           
-            height: 56px;
-            padding: 0;
-            justify-content: center;
-            background: rgba(0, 0, 0, 0.8); 
+            margin-left: calc(50% - 48px); 
+            background: rgba(75, 85, 99, 0.9);
             border: none;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            padding: 0;
+            width: 56px;
+            height: 56px;
+            justify-content: center;
+            align-items: center;
         }
 
         .nav-item {
@@ -123,13 +125,44 @@
             overflow: hidden;
         }
 
-        .glass-nav.scrolled .nav-item { padding: 0; width: 0; opacity: 0; margin: 0; }
-        .glass-nav.scrolled .nav-item.active { width: auto; opacity: 1; padding: 0; color: white !important; }
+        .glass-nav.scrolled .nav-item { 
+            padding: 0; 
+            width: 0; 
+            opacity: 0; 
+            margin: 0; 
+            flex: 0 0 auto;
+        }
+        
+        .glass-nav.scrolled .nav-item.active { 
+            width: 100%;
+            height: 100%;
+            opacity: 1; 
+            padding: 0; 
+            margin: 0;
+            color: white !important; 
+            background: transparent !important; 
+            box-shadow: none !important;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+        }
         .glass-nav.scrolled .nav-item.active span { display: none; }
-        .glass-nav.scrolled .nav-item.active i { font-size: 1.2rem; }
+        
+        .glass-nav.scrolled .nav-item.active i { 
+            font-size: 1.4rem; 
+            line-height: 1;
+            display: block;
+            margin-top: 1px; 
+        }
 
-        .nav-item.active { background: #191F28; color: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .nav-item:not(.active) { color: #8B95A1; }
+        .nav-item.active { 
+            background: #4B5563; 
+            color: white; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+        }
+        .nav-item:not(.active) { color: #6B7684; }
         .nav-item:not(.active):hover { background: rgba(0,0,0,0.05); color: #191F28; }
 
         .toss-card {
@@ -161,7 +194,9 @@
         .text-blue { color: #3182F6; }
 
         .fade-in-up { animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; transform: translateY(20px); }
+        .fade-in { animation: fadeIn 0.3s ease-out forwards; }
         @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         
         .scale-in { animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes scaleIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
@@ -172,11 +207,19 @@
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* 모달 오버레이 조정 */
-        #detail-modal, #video-overlay {
-            position: absolute; /* absolute로 변경하여 프레임 안에 갇히게 함 */
+        /* 모달 위치 고정 */
+        #detail-modal, #video-overlay, #search-modal {
+            position: absolute; 
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
+        }
+        
+        /* 이미지 로드 실패 시 배경색 처리 */
+        img {
+            background-color: #e5e7eb;
+            object-fit: cover;
         }
     </style>
 </head>
@@ -192,20 +235,21 @@
                     <i class="fa-solid fa-chevron-left text-base text-main"></i>
                 </button>
                 
-                <!-- 로고 애니메이션 영역 -->
                 <h1 class="text-lg text-main flex items-center font-dunggeun tracking-tight leading-none pt-0.5 whitespace-nowrap overflow-hidden">
-                    <span id="logo-fade" class="inline-block transition-all duration-500 ease-[cubic-bezier(0.33,1,0.68,1)] overflow-hidden" style="max-width: 130px; opacity: 1;">
+                    <span id="logo-fade" class="inline-block transition-all duration-[1200ms] ease-[cubic-bezier(0.33,1,0.68,1)] overflow-hidden" style="max-width: 130px; opacity: 1;">
                         enjoy studio <span class="text-blue-300 font-dunggeun mr-1">|</span>
                     </span>
                     <span class="text-blue-500 font-dunggeun">enbc</span>
                 </h1>
             </div>
             <div class="flex gap-2 flex-shrink-0">
-                <button class="w-8 h-8 rounded-full bg-white/50 flex items-center justify-center text-main shadow-sm hover:bg-white transition-colors">
+                <!-- 검색 버튼 -->
+                <button onclick="openSearch()" class="w-8 h-8 rounded-full bg-white/50 flex items-center justify-center text-main shadow-sm hover:bg-white transition-colors">
                     <i class="fa-solid fa-magnifying-glass text-sm"></i>
                 </button>
                 <button class="w-8 h-8 rounded-full bg-gray-200 overflow-hidden border border-white shadow-sm">
-                    <div class="w-full h-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center text-[10px] font-bold text-blue-500">ME</div>
+                    <!-- 유저 프로필 이미지 (파일명만) -->
+                    <img src="user_me.jpg" class="w-full h-full object-cover" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiNlNWU3ZWIiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1zaXplPSIxMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iIGZpbGw9IiM5Y2EzeWYiPk1FPC90ZXh0Pjwvc3ZnPg=='">
                 </button>
             </div>
         </header>
@@ -213,21 +257,22 @@
         <!-- 메인 컨텐츠 -->
         <main id="content-scroll" class="h-full overflow-y-auto scrollbar-hide pb-24 pt-[54px] relative">
             
-            <!-- 1. Hero Banner -->
+            <!-- 1. Hero Banner: 그날, 엔조이 이야기 -->
             <div class="px-5 mb-6 fade-in-up mt-2">
-                <div class="relative w-full aspect-[4/5] rounded-[32px] overflow-hidden shadow-xl cursor-pointer group" onclick="openDetail('hero')">
+                <div class="relative w-full aspect-[4/5] rounded-[32px] overflow-hidden shadow-xl cursor-pointer group" onclick="openDetail('story')">
                     <div class="absolute inset-0 bg-gray-800">
-                        <img src="https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700" alt="Hero Poster">
+                        <!-- 배너 이미지 (파일명만) -->
+                        <img src="banner_story.jpg" class="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700" alt="Hero Poster">
                     </div>
                     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
                     
                     <div class="absolute bottom-0 left-0 w-full p-6 text-white z-10">
                         <div class="flex gap-2 mb-2">
-                            <span class="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">ORIGINAL</span>
-                            <span class="bg-white/20 backdrop-blur-md text-white text-[10px] font-bold px-1.5 py-0.5 rounded">시즌 1</span>
+                            <span class="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">HOT</span>
+                            <span class="bg-white/20 backdrop-blur-md text-white text-[10px] font-bold px-1.5 py-0.5 rounded">다큐멘터리</span>
                         </div>
-                        <h2 class="text-3xl font-bold mb-2 leading-tight">엔조이:<br>새로운 시작</h2>
-                        <p class="text-sm text-gray-300 line-clamp-2 mb-4">전시기, 오스틴, 류짱이 떠나는 좌충우돌 여행기. 그들의 운명은?</p>
+                        <h2 class="text-3xl font-bold mb-2 leading-tight">그날,<br>엔조이 이야기</h2>
+                        <p class="text-sm text-gray-300 line-clamp-2 mb-4">우리가 함께했던 그 뜨거웠던 여름날의 기록. 어디서도 듣지 못한 그들의 진솔한 대화.</p>
                         
                         <div class="flex gap-3">
                             <button class="flex-1 bg-white text-black font-bold py-3 rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-transform">
@@ -241,86 +286,81 @@
                 </div>
             </div>
 
-            <!-- 2. 시청 중인 콘텐츠 -->
+            <!-- 2. 엔조이 Top 10 (순위) -->
             <div class="mb-8 fade-in-up delay-100">
-                <h3 class="text-lg font-bold text-main px-5 mb-3">시청 중인 콘텐츠 <i class="fa-solid fa-chevron-right text-xs text-gray-400 ml-1"></i></h3>
+                <h3 class="text-lg font-bold text-main px-5 mb-3">엔조이 Top 10 🔥</h3>
                 <div class="flex overflow-x-auto gap-4 px-5 pb-4 scrollbar-hide snap-x">
-                    <div class="poster-card w-40 snap-start bg-gray-900" onclick="openDetail('content1')">
-                        <div class="relative aspect-video">
-                            <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=500&auto=format&fit=crop" class="w-full h-full object-cover opacity-80">
-                            <div class="absolute inset-0 flex items-center justify-center bg-black/20">
-                                <div class="w-8 h-8 rounded-full bg-white/30 backdrop-blur-sm flex items-center justify-center text-white border border-white/50"><i class="fa-solid fa-play text-xs"></i></div>
-                            </div>
-                            <div class="absolute bottom-0 left-0 w-full h-1 bg-gray-600">
-                                <div class="h-full bg-blue-500 w-[70%]"></div>
-                            </div>
+                    <!-- 1위 -->
+                    <div class="relative flex-shrink-0 w-32 snap-start" onclick="openDetail('story')">
+                        <span class="absolute left-2 top-0 text-[50px] font-black text-[#3182F6] z-10 italic leading-none" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">1</span>
+                        <div class="poster-card w-full aspect-[2/3] bg-gray-200 rounded-xl overflow-hidden shadow-md">
+                            <img src="poster_story.jpg" class="w-full h-full object-cover">
                         </div>
-                        <div class="p-3 bg-white">
-                            <h4 class="text-sm font-bold text-main truncate">홍박사의 요리교실</h4>
-                            <p class="text-[10px] text-sub">S1:E3 · 24분 남음</p>
-                        </div>
+                        <p class="text-xs font-bold text-main mt-2 truncate">그날, 엔조이 이야기</p>
                     </div>
-                    <div class="poster-card w-40 snap-start bg-gray-900" onclick="openDetail('content2')">
-                        <div class="relative aspect-video">
-                            <img src="https://images.unsplash.com/photo-1511875762315-c773eb98eec0?q=80&w=500&auto=format&fit=crop" class="w-full h-full object-cover opacity-80">
-                            <div class="absolute bottom-0 left-0 w-full h-1 bg-gray-600">
-                                <div class="h-full bg-blue-500 w-[30%]"></div>
-                            </div>
+                    <!-- 2위 -->
+                    <div class="relative flex-shrink-0 w-32 snap-start" onclick="openDetail('nzzoki')">
+                        <span class="absolute left-2 top-0 text-[50px] font-black text-[#3182F6] z-10 italic leading-none" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">2</span>
+                        <div class="poster-card w-full aspect-[2/3] bg-gray-200 rounded-xl overflow-hidden shadow-md">
+                            <img src="poster_nzzoki.jpg" class="w-full h-full object-cover">
                         </div>
-                        <div class="p-3 bg-white">
-                            <h4 class="text-sm font-bold text-main truncate">코딩의 신 이진누</h4>
-                            <p class="text-[10px] text-sub">S2:E1 · 45분 남음</p>
+                        <p class="text-xs font-bold text-main mt-2 truncate">엔쪽이</p>
+                    </div>
+                    <!-- 3위 -->
+                     <div class="relative flex-shrink-0 w-32 snap-start" onclick="openDetail('music')">
+                        <span class="absolute left-2 top-0 text-[50px] font-black text-[#3182F6] z-10 italic leading-none" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">3</span>
+                        <div class="poster-card w-full aspect-[2/3] bg-gray-200 rounded-xl overflow-hidden shadow-md">
+                            <img src="poster_music.jpg" class="w-full h-full object-cover">
                         </div>
+                        <p class="text-xs font-bold text-main mt-2 truncate">엔조이 인기가요</p>
                     </div>
                 </div>
             </div>
 
-            <!-- 3. Top 10 -->
-            <div class="mb-8 fade-in-up delay-200">
-                <h3 class="text-lg font-bold text-main px-5 mb-3">오늘의 Top 10 🔥</h3>
-                <div class="flex overflow-x-auto gap-4 px-5 pb-4 scrollbar-hide snap-x">
-                    <div class="relative flex-shrink-0 w-32 snap-start" onclick="openDetail('top1')">
-                        <span class="absolute -left-2 -bottom-4 text-[60px] font-black text-white drop-shadow-lg z-10 italic" style="-webkit-text-stroke: 1px #ccc; text-shadow: 2px 2px 0px #eee;">1</span>
-                        <div class="poster-card w-full aspect-[2/3] bg-gray-200 rounded-xl overflow-hidden shadow-md">
-                            <img src="https://images.unsplash.com/photo-1594909122845-11baa439b7bf?q=80&w=400&auto=format&fit=crop" class="w-full h-full object-cover">
+            <!-- 3. 곧 공개될 프로그램 (Coming Soon) -->
+            <div class="px-5 mb-8 fade-in-up delay-200">
+                <h3 class="text-lg font-bold text-main mb-3 flex items-center gap-2">곧 만나요! 🍿 <span class="text-[10px] bg-red-100 text-red-500 px-2 py-0.5 rounded-full">Coming Soon</span></h3>
+                <div class="grid grid-cols-3 gap-3">
+                    <!-- F1 더 엔조이 -->
+                    <div class="flex flex-col gap-1 cursor-pointer group" onclick="openDetail('f1')">
+                        <div class="relative aspect-[3/4] rounded-xl overflow-hidden shadow-sm bg-gray-200">
+                            <img src="poster_f1.jpg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
+                                <span class="text-white text-[10px] font-bold border border-white/50 px-2 py-1 rounded-full backdrop-blur-sm text-center leading-tight">2026년<br>상반기 공개</span>
+                            </div>
                         </div>
-                        <p class="text-xs font-bold text-main mt-2 pl-6 truncate">성원제의 하루</p>
+                        <span class="text-xs font-bold text-main truncate mt-1">F1 더 엔조이</span>
                     </div>
-                    <div class="relative flex-shrink-0 w-32 snap-start" onclick="openDetail('top2')">
-                        <span class="absolute -left-2 -bottom-4 text-[60px] font-black text-white drop-shadow-lg z-10 italic" style="-webkit-text-stroke: 1px #ccc; text-shadow: 2px 2px 0px #eee;">2</span>
-                        <div class="poster-card w-full aspect-[2/3] bg-gray-200 rounded-xl overflow-hidden shadow-md">
-                            <img src="https://images.unsplash.com/photo-1605810230434-7631ac76ec81?q=80&w=400&auto=format&fit=crop" class="w-full h-full object-cover">
+                    <!-- 출장엔조이 -->
+                    <div class="flex flex-col gap-1 cursor-pointer group" onclick="openDetail('business')">
+                        <div class="relative aspect-[3/4] rounded-xl overflow-hidden shadow-sm bg-gray-200">
+                            <img src="poster_business.jpg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
+                                <span class="text-white text-[10px] font-bold border border-white/50 px-2 py-1 rounded-full backdrop-blur-sm text-center leading-tight">2026년<br>상반기 공개</span>
+                            </div>
                         </div>
-                        <p class="text-xs font-bold text-main mt-2 pl-6 truncate">사라진 회비</p>
+                        <span class="text-xs font-bold text-main truncate mt-1">출장엔조이</span>
                     </div>
-                     <div class="relative flex-shrink-0 w-32 snap-start" onclick="openDetail('top3')">
-                        <span class="absolute -left-2 -bottom-4 text-[60px] font-black text-white drop-shadow-lg z-10 italic" style="-webkit-text-stroke: 1px #ccc; text-shadow: 2px 2px 0px #eee;">3</span>
-                        <div class="poster-card w-full aspect-[2/3] bg-gray-200 rounded-xl overflow-hidden shadow-md">
-                            <img src="https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=400&auto=format&fit=crop" class="w-full h-full object-cover">
+                    <!-- 엔조이 숙려 캠프 -->
+                    <div class="flex flex-col gap-1 cursor-pointer group" onclick="openDetail('camp')">
+                        <div class="relative aspect-[3/4] rounded-xl overflow-hidden shadow-sm bg-gray-200">
+                            <img src="poster_camp.jpg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
+                                <span class="text-white text-[10px] font-bold border border-white/50 px-2 py-1 rounded-full backdrop-blur-sm text-center leading-tight">2026년<br>상반기 공개</span>
+                            </div>
                         </div>
-                        <p class="text-xs font-bold text-main mt-2 pl-6 truncate">오스틴 파워</p>
+                        <span class="text-xs font-bold text-main truncate mt-1">엔조이 숙려 캠프</span>
                     </div>
                 </div>
             </div>
 
-            <!-- 4. 장르 -->
-            <div class="px-5 mb-6 fade-in-up delay-300">
-                <div class="flex flex-wrap gap-2">
-                    <button class="px-4 py-2 bg-white rounded-full text-sm font-bold text-sub shadow-sm border border-gray-100 active:bg-blue-50 active:text-blue-500 transition-colors">액션</button>
-                    <button class="px-4 py-2 bg-white rounded-full text-sm font-bold text-sub shadow-sm border border-gray-100 active:bg-blue-50 active:text-blue-500 transition-colors">로맨스</button>
-                    <button class="px-4 py-2 bg-white rounded-full text-sm font-bold text-sub shadow-sm border border-gray-100 active:bg-blue-50 active:text-blue-500 transition-colors">다큐멘터리</button>
-                    <button class="px-4 py-2 bg-white rounded-full text-sm font-bold text-sub shadow-sm border border-gray-100 active:bg-blue-50 active:text-blue-500 transition-colors">예능</button>
-                    <button class="px-4 py-2 bg-white rounded-full text-sm font-bold text-sub shadow-sm border border-gray-100 active:bg-blue-50 active:text-blue-500 transition-colors">엔조이 오리지널</button>
-                </div>
-            </div>
-
-            <!-- 5. 신규 -->
+            <!-- 4. 신규 콘텐츠 -->
             <div class="px-5 mb-6 fade-in-up delay-300">
                 <h3 class="text-lg font-bold text-main mb-3">새로 올라왔어요 ✨</h3>
                 <div class="flex flex-col gap-3">
                     <div class="toss-card p-4 flex gap-4 items-center !bg-white/60" onclick="openDetail('new1')">
                         <div class="w-24 aspect-video bg-gray-200 rounded-lg overflow-hidden flex-shrink-0 relative">
-                            <img src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?q=80&w=300&auto=format&fit=crop" class="w-full h-full object-cover">
+                            <img src="thumb_winter.jpg" class="w-full h-full object-cover">
                             <span class="absolute top-1 left-1 bg-red-500 text-white text-[8px] font-bold px-1 rounded">NEW</span>
                         </div>
                         <div>
@@ -334,7 +374,7 @@
                     </div>
                     <div class="toss-card p-4 flex gap-4 items-center !bg-white/60" onclick="openDetail('new2')">
                         <div class="w-24 aspect-video bg-gray-200 rounded-lg overflow-hidden flex-shrink-0 relative">
-                            <img src="https://images.unsplash.com/photo-1517604931442-71053e683745?q=80&w=300&auto=format&fit=crop" class="w-full h-full object-cover">
+                            <img src="thumb_meeting.jpg" class="w-full h-full object-cover">
                             <span class="absolute top-1 left-1 bg-red-500 text-white text-[8px] font-bold px-1 rounded">NEW</span>
                         </div>
                         <div>
@@ -367,16 +407,47 @@
             </button>
         </nav>
 
+        <!-- 검색 모달 -->
+        <div id="search-modal" class="hidden flex-col z-[60] bg-white/95 backdrop-blur-md fade-in">
+            <!-- 검색 헤더 -->
+            <div class="pt-safe px-4 py-3 flex items-center gap-3">
+                <button onclick="closeSearch()" class="text-main p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors">
+                    <i class="fa-solid fa-chevron-left text-lg"></i>
+                </button>
+                <div class="flex-1 bg-gray-100 rounded-2xl px-4 py-3 flex items-center gap-2 shadow-inner">
+                    <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
+                    <input type="text" id="search-input" placeholder="보고 싶은 콘텐츠를 입력하세요" class="bg-transparent w-full text-base outline-none text-main placeholder-gray-400" oninput="performSearch(this.value)">
+                    <button onclick="document.getElementById('search-input').value=''; performSearch('')" class="text-gray-400 p-1 hover:text-gray-600">
+                        <i class="fa-solid fa-circle-xmark"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 검색 결과 영역 -->
+            <div class="flex-1 overflow-y-auto p-5 scrollbar-hide">
+                <div id="search-results" class="flex flex-col gap-4">
+                    <!-- 초기 상태: 추천 검색어 -->
+                    <div id="search-initial">
+                        <h3 class="text-sm font-bold text-main mb-3">추천 검색어</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <button onclick="fillSearch('엔조이')" class="px-4 py-2 bg-white border border-gray-100 rounded-full text-sm text-sub shadow-sm hover:bg-blue-50 hover:text-blue-500 hover:border-blue-200 transition-all">#엔조이</button>
+                            <button onclick="fillSearch('전시기')" class="px-4 py-2 bg-white border border-gray-100 rounded-full text-sm text-sub shadow-sm hover:bg-blue-50 hover:text-blue-500 hover:border-blue-200 transition-all">#전시기</button>
+                            <button onclick="fillSearch('엔쪽이')" class="px-4 py-2 bg-white border border-gray-100 rounded-full text-sm text-sub shadow-sm hover:bg-blue-50 hover:text-blue-500 hover:border-blue-200 transition-all">#엔쪽이</button>
+                            <button onclick="fillSearch('F1')" class="px-4 py-2 bg-white border border-gray-100 rounded-full text-sm text-sub shadow-sm hover:bg-blue-50 hover:text-blue-500 hover:border-blue-200 transition-all">#F1 더 엔조이</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- 상세 모달 -->
         <div id="detail-modal" class="hidden flex-col justify-end z-[60]">
             <div class="bg-white rounded-t-[32px] w-full h-auto max-h-[90%] overflow-y-auto pb-safe scale-in relative shadow-2xl">
-                
                 <div class="sticky top-0 right-0 z-20 flex justify-end p-4 pointer-events-none">
                     <button onclick="closeDetail()" class="w-8 h-8 rounded-full bg-black/10 backdrop-blur-md flex items-center justify-center text-main pointer-events-auto active:bg-black/20">
                         <i class="fa-solid fa-xmark"></i>
                     </button>
                 </div>
-
                 <div class="-mt-16 relative">
                     <div class="w-full aspect-video bg-gray-800 relative">
                         <img id="modal-img" src="" class="w-full h-full object-cover opacity-90">
@@ -387,62 +458,23 @@
                             </button>
                         </div>
                     </div>
-
                     <div class="px-6 pt-2 pb-10">
                         <div class="flex gap-2 mb-3">
                             <span class="text-[10px] font-bold text-blue-500 bg-blue-50 px-2 py-1 rounded">2024</span>
-                            <span class="text-[10px] font-bold text-gray-500 bg-gray-100 px-2 py-1 rounded">15세 이상</span>
+                            <span class="text-[10px] font-bold text-gray-500 bg-gray-100 px-2 py-1 rounded">ENJOY</span>
                             <span class="text-[10px] font-bold text-gray-500 bg-gray-100 px-2 py-1 rounded">HD</span>
                         </div>
                         <h2 id="modal-title" class="text-2xl font-bold text-main mb-2">제목</h2>
                         <p class="text-sm text-sub leading-relaxed mb-6">
                             엔조이 멤버들이 펼치는 예측불허 스토리. 평범한 일상이 영화가 되는 순간을 담았습니다. 지금 바로 확인하세요.
                         </p>
-
                         <h3 class="text-sm font-bold text-main mb-3">출연진</h3>
                         <div class="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
-                            <div class="flex flex-col items-center gap-1 w-14 flex-shrink-0">
-                                <div class="w-12 h-12 rounded-full bg-gray-200 overflow-hidden"><img src="https://ui-avatars.com/api/?name=전시기&background=random" class="w-full h-full"></div>
-                                <span class="text-[10px] text-sub truncate w-full text-center">전시기</span>
-                            </div>
-                            <div class="flex flex-col items-center gap-1 w-14 flex-shrink-0">
-                                <div class="w-12 h-12 rounded-full bg-gray-200 overflow-hidden"><img src="https://ui-avatars.com/api/?name=오스틴&background=random" class="w-full h-full"></div>
-                                <span class="text-[10px] text-sub truncate w-full text-center">오스틴</span>
-                            </div>
-                            <div class="flex flex-col items-center gap-1 w-14 flex-shrink-0">
-                                <div class="w-12 h-12 rounded-full bg-gray-200 overflow-hidden"><img src="https://ui-avatars.com/api/?name=류짱&background=random" class="w-full h-full"></div>
-                                <span class="text-[10px] text-sub truncate w-full text-center">류짱</span>
-                            </div>
-                             <div class="flex flex-col items-center gap-1 w-14 flex-shrink-0">
-                                <div class="w-12 h-12 rounded-full bg-gray-200 overflow-hidden"><img src="https://ui-avatars.com/api/?name=홍박사&background=random" class="w-full h-full"></div>
-                                <span class="text-[10px] text-sub truncate w-full text-center">홍박사</span>
-                            </div>
+                            <div class="flex flex-col items-center gap-1 w-14 flex-shrink-0"><div class="w-12 h-12 rounded-full bg-gray-200 overflow-hidden"><img src="jeon.jpg" class="w-full h-full object-cover"></div><span class="text-[10px] text-sub truncate w-full text-center">전시기</span></div>
+                            <div class="flex flex-col items-center gap-1 w-14 flex-shrink-0"><div class="w-12 h-12 rounded-full bg-gray-200 overflow-hidden"><img src="austin.jpg" class="w-full h-full object-cover"></div><span class="text-[10px] text-sub truncate w-full text-center">오스틴</span></div>
+                            <div class="flex flex-col items-center gap-1 w-14 flex-shrink-0"><div class="w-12 h-12 rounded-full bg-gray-200 overflow-hidden"><img src="ryu.jpg" class="w-full h-full object-cover"></div><span class="text-[10px] text-sub truncate w-full text-center">류짱</span></div>
+                            <div class="flex flex-col items-center gap-1 w-14 flex-shrink-0"><div class="w-12 h-12 rounded-full bg-gray-200 overflow-hidden"><img src="hong.jpg" class="w-full h-full object-cover"></div><span class="text-[10px] text-sub truncate w-full text-center">홍박사</span></div>
                         </div>
-
-                        <div class="mt-6">
-                             <h3 class="text-sm font-bold text-main mb-3">회차</h3>
-                             <div class="flex flex-col gap-3">
-                                 <div class="flex gap-4 items-center p-3 hover:bg-gray-50 rounded-xl transition-colors cursor-pointer">
-                                     <div class="w-24 aspect-video bg-gray-300 rounded overflow-hidden relative">
-                                        <div class="absolute inset-0 flex items-center justify-center text-white/80"><i class="fa-regular fa-circle-play"></i></div>
-                                     </div>
-                                     <div class="flex-1">
-                                         <h4 class="text-sm font-bold">1. 시작된 여정</h4>
-                                         <p class="text-xs text-sub mt-1">45분</p>
-                                     </div>
-                                 </div>
-                                 <div class="flex gap-4 items-center p-3 hover:bg-gray-50 rounded-xl transition-colors cursor-pointer">
-                                    <div class="w-24 aspect-video bg-gray-300 rounded overflow-hidden relative">
-                                       <div class="absolute inset-0 flex items-center justify-center text-white/80"><i class="fa-regular fa-circle-play"></i></div>
-                                    </div>
-                                    <div class="flex-1">
-                                        <h4 class="text-sm font-bold">2. 위기일발</h4>
-                                        <p class="text-xs text-sub mt-1">48분</p>
-                                    </div>
-                                </div>
-                             </div>
-                        </div>
-
                         <button class="w-full bg-blue-500 text-white font-bold py-4 rounded-2xl mt-8 shadow-lg shadow-blue-200 active:scale-95 transition-transform" onclick="playVideo()">
                             1화 재생하기
                         </button>
@@ -453,55 +485,36 @@
 
         <!-- 비디오 플레이어 오버레이 -->
         <div id="video-overlay" class="hidden flex-col z-[70] bg-black">
-            <div id="video-loader" class="absolute inset-0 flex items-center justify-center text-blue-500 z-10">
-                <i class="fa-solid fa-circle-notch fa-spin text-3xl"></i>
-            </div>
-
+            <div id="video-loader" class="absolute inset-0 flex items-center justify-center text-blue-500 z-10"><i class="fa-solid fa-circle-notch fa-spin text-3xl"></i></div>
             <div class="relative w-full h-full flex items-center justify-center">
                 <div class="w-full aspect-video bg-gray-900 relative group">
-                    <div class="absolute inset-0 flex items-center justify-center">
-                        <i class="fa-solid fa-play text-white/50 text-4xl"></i>
-                    </div>
+                    <div class="absolute inset-0 flex items-center justify-center"><i class="fa-solid fa-play text-white/50 text-4xl"></i></div>
                     <div class="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
-                        <div class="w-full bg-gray-600 h-1 rounded-full mb-3 overflow-hidden">
-                            <div class="bg-blue-500 h-full w-[20%]"></div>
-                        </div>
-                        <div class="flex justify-between text-white text-xs">
-                            <span>04:12</span>
-                            <span>45:00</span>
-                        </div>
-                        <div class="flex justify-center gap-8 text-white text-xl mt-2 items-center">
-                            <i class="fa-solid fa-backward-10"></i>
-                            <i class="fa-solid fa-pause text-3xl"></i>
-                            <i class="fa-solid fa-forward-10"></i>
-                        </div>
+                        <div class="w-full bg-gray-600 h-1 rounded-full mb-3 overflow-hidden"><div class="bg-blue-500 h-full w-[20%]"></div></div>
+                        <div class="flex justify-between text-white text-xs"><span>04:12</span><span>45:00</span></div>
+                        <div class="flex justify-center gap-8 text-white text-xl mt-2 items-center"><i class="fa-solid fa-backward-10"></i><i class="fa-solid fa-pause text-3xl"></i><i class="fa-solid fa-forward-10"></i></div>
                     </div>
                 </div>
-                
-                <button onclick="closeVideo()" class="absolute top-safe top-4 left-4 text-white text-2xl drop-shadow-md z-20">
-                    <i class="fa-solid fa-chevron-down"></i>
-                </button>
-                <div class="absolute top-safe top-4 right-4 flex gap-4 text-white text-xl drop-shadow-md z-20">
-                    <i class="fa-brands fa-chromecast"></i>
-                    <i class="fa-solid fa-ellipsis-vertical"></i>
-                </div>
+                <button onclick="closeVideo()" class="absolute top-safe top-4 left-4 text-white text-2xl drop-shadow-md z-20"><i class="fa-solid fa-chevron-down"></i></button>
             </div>
         </div>
 
-    </div> <!-- End of mobile-frame -->
+    </div>
 
     <script>
         function haptic() { if(navigator.vibrate) navigator.vibrate(10); }
 
+        // 로컬 경로로 데이터 업데이트
         const mockData = {
-            'hero': { title: '엔조이: 새로운 시작', img: 'https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?q=80&w=800&auto=format&fit=crop' },
-            'content1': { title: '홍박사의 요리교실', img: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=500&auto=format&fit=crop' },
-            'content2': { title: '코딩의 신 이진누', img: 'https://images.unsplash.com/photo-1511875762315-c773eb98eec0?q=80&w=500&auto=format&fit=crop' },
-            'top1': { title: '성원제의 하루', img: 'https://images.unsplash.com/photo-1594909122845-11baa439b7bf?q=80&w=400&auto=format&fit=crop' },
-            'top2': { title: '사라진 회비', img: 'https://images.unsplash.com/photo-1605810230434-7631ac76ec81?q=80&w=400&auto=format&fit=crop' },
-            'top3': { title: '오스틴 파워', img: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=400&auto=format&fit=crop' },
-            'new1': { title: '겨울 산행의 추억', img: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?q=80&w=300&auto=format&fit=crop' },
-            'new2': { title: '미팅룸의 비밀', img: 'https://images.unsplash.com/photo-1517604931442-71053e683745?q=80&w=300&auto=format&fit=crop' }
+            'hero': { title: '그날, 엔조이 이야기', img: 'banner_story.jpg' },
+            'nzzoki': { title: '엔쪽이', img: 'poster_nzzoki.jpg' },
+            'music': { title: '엔조이 인기가요', img: 'poster_music.jpg' },
+            'f1': { title: 'F1 더 엔조이', img: 'poster_f1.jpg' },
+            'business': { title: '출장엔조이', img: 'poster_business.jpg' },
+            'camp': { title: '엔조이 숙려 캠프', img: 'poster_camp.jpg' },
+            'story': { title: '그날, 엔조이 이야기', img: 'poster_story.jpg' },
+            'new1': { title: '겨울 산행의 추억', img: 'thumb_winter.jpg' },
+            'new2': { title: '미팅룸의 비밀', img: 'thumb_meeting.jpg' }
         };
 
         function openDetail(key) {
@@ -543,7 +556,74 @@
             overlay.classList.remove('flex');
         }
 
-        // 스크롤 시 애니메이션 처리
+        /* --- 검색 기능 스크립트 --- */
+        function openSearch() {
+            haptic();
+            const modal = document.getElementById('search-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.getElementById('search-input').focus();
+        }
+
+        function closeSearch() {
+            const modal = document.getElementById('search-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function fillSearch(text) {
+            const input = document.getElementById('search-input');
+            input.value = text;
+            performSearch(text);
+        }
+
+        function performSearch(query) {
+            const resultsContainer = document.getElementById('search-results');
+            const initialView = document.getElementById('search-initial');
+            
+            if (!query.trim()) {
+                initialView.style.display = 'block';
+                Array.from(resultsContainer.children).forEach(child => {
+                    if (child.id !== 'search-initial') child.remove();
+                });
+                return;
+            }
+
+            initialView.style.display = 'none';
+            
+            const matches = Object.keys(mockData).filter(key => 
+                mockData[key].title.toLowerCase().includes(query.toLowerCase())
+            );
+
+            Array.from(resultsContainer.children).forEach(child => {
+                if (child.id !== 'search-initial') child.remove();
+            });
+
+            if (matches.length === 0) {
+                const noResult = document.createElement('div');
+                noResult.className = 'text-center py-10 text-gray-400 text-sm';
+                noResult.innerText = `'${query}'에 대한 검색 결과가 없어요.`;
+                resultsContainer.appendChild(noResult);
+            } else {
+                matches.forEach(key => {
+                    const item = mockData[key];
+                    const el = document.createElement('div');
+                    el.className = 'flex gap-3 items-center bg-white p-3 rounded-xl shadow-sm cursor-pointer hover:bg-gray-50';
+                    el.onclick = () => { closeSearch(); openDetail(key); };
+                    el.innerHTML = `
+                        <div class="w-16 aspect-video bg-gray-200 rounded overflow-hidden flex-shrink-0">
+                            <img src="${item.img}" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h4 class="text-sm font-bold text-main truncate">${item.title}</h4>
+                            <p class="text-xs text-sub">ENJOY Original</p>
+                        </div>
+                    `;
+                    resultsContainer.appendChild(el);
+                });
+            }
+        }
+
         const contentScroll = document.getElementById('content-scroll');
         const logoFade = document.getElementById('logo-fade');
         const header = document.getElementById('main-header');
@@ -551,34 +631,24 @@
 
         contentScroll.addEventListener('scroll', () => {
             if (contentScroll.scrollTop > 20) {
-                // 스크롤 내림: 상단 로고 축소 + 헤더 알약화
                 logoFade.style.maxWidth = '0px';
                 logoFade.style.opacity = '0';
                 logoFade.style.marginRight = '0px';
                 header.classList.add('scrolled');
-                
-                // 하단 네비게이션: 우측으로 이동하며 축소 (활성 버튼만 남음)
                 bottomNav.classList.add('scrolled');
             } else {
-                // 맨 위: 원래대로 복구
                 logoFade.style.maxWidth = '130px';
                 logoFade.style.opacity = '1';
                 logoFade.style.marginRight = '';
                 header.classList.remove('scrolled');
-                
-                // 하단 네비게이션 복구
                 bottomNav.classList.remove('scrolled');
             }
         });
 
-        // 네비게이션 탭 활성화 함수
         function setActiveNav(btn) {
             haptic();
-            // 모든 버튼에서 active 제거
             const btns = document.querySelectorAll('.nav-item');
             btns.forEach(b => b.classList.remove('active'));
-            
-            // 클릭된 버튼 active 추가
             btn.classList.add('active');
         }
     </script>
