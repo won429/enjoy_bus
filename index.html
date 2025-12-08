@@ -230,8 +230,9 @@
         :root {
             --plyr-color-main: #f04452; /* 엔조이 레드 포인트 컬러 */
             --plyr-video-background: #000;
-            --plyr-menu-background: rgba(0,0,0,0.8);
+            --plyr-menu-background: rgba(20, 20, 20, 0.9);
             --plyr-menu-color: #fff;
+            --plyr-menu-arrow-color: #fff;
         }
         
         .plyr--video {
@@ -241,12 +242,16 @@
         
         /* 컨트롤 바 투명도 및 스타일 조정 */
         .plyr__controls {
-            background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0.7)) !important;
+            background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0.8)) !important;
             padding-bottom: 20px !important;
             padding-top: 40px !important;
         }
-
-        /* 회전 코드 제거됨 */
+        
+        /* 설정 메뉴 스타일 개선 */
+        .plyr__menu__container {
+            background: rgba(20, 20, 20, 0.95) !important;
+            border-radius: 8px !important;
+        }
     </style>
 </head>
 <body>
@@ -528,7 +533,6 @@
                 members: ['전시기', '성원제', '오스틴', '이진누', '홍박사'],
                 videoId: '여기에_유튜브_ID_입력'
             },
-            // [수정 완료] 유튜브 영상 ID 적용 (fVISITFv6EA)
             'music': { 
                 title: '엔조이 인기가요', 
                 img: 'poster_music.jpg',
@@ -568,7 +572,6 @@
             const data = mockData[key];
             if(!data) return;
             
-            // 모달 기본 정보 업데이트
             document.getElementById('modal-img').src = data.img;
             document.getElementById('modal-title').innerText = data.title;
             document.getElementById('modal-desc').innerText = data.desc || '준비 중인 콘텐츠입니다.';
@@ -677,8 +680,18 @@
             // Plyr 초기화
             player = new Plyr('#player', {
                 autoplay: true,
-                muted: true, // [필수] 모바일 자동재생을 위한 음소거
-                controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'],
+                muted: true, // 모바일 자동재생 필수
+                controls: [
+                    'play-large', 
+                    'play', 
+                    'progress', 
+                    'current-time', 
+                    'mute', 
+                    'volume', 
+                    'settings', 
+                    'fullscreen'
+                ],
+                settings: ['quality', 'speed'], // 화질, 속도 메뉴 추가
                 youtube: {
                     noCookie: true,
                     rel: 0,
@@ -691,8 +704,8 @@
 
             // 준비되면 재생
             player.on('ready', event => {
-                event.detail.plyr.muted = true; // 안전장치: 다시 한번 음소거
-                event.detail.plyr.play();       // 재생 시작
+                event.detail.plyr.muted = true; 
+                event.detail.plyr.play();       
             });
         }
 
