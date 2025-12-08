@@ -677,21 +677,14 @@
             overlay.classList.remove('hidden');
             overlay.classList.add('flex');
 
-            // Plyr 초기화
+            // Plyr 초기화 (모바일 전체화면 및 화질 메뉴 최적화)
             player = new Plyr('#player', {
                 autoplay: true,
-                muted: true, // 모바일 자동재생 필수
+                muted: true, // [필수] 모바일 자동재생
                 controls: [
-                    'play-large', 
-                    'play', 
-                    'progress', 
-                    'current-time', 
-                    'mute', 
-                    'volume', 
-                    'settings', 
-                    'fullscreen'
+                    'play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'pip', 'airplay', 'fullscreen'
                 ],
-                settings: ['quality', 'speed'], // 화질, 속도 메뉴 추가
+                settings: ['quality', 'speed', 'loop'], // 설정 메뉴
                 youtube: {
                     noCookie: true,
                     rel: 0,
@@ -699,10 +692,14 @@
                     iv_load_policy: 3,
                     modestbranding: 1,
                     playsinline: 1
+                },
+                fullscreen: { 
+                    enabled: true, 
+                    fallback: true, 
+                    iosNative: true // 아이폰 네이티브 전체화면
                 }
             });
 
-            // 준비되면 재생
             player.on('ready', event => {
                 event.detail.plyr.muted = true; 
                 event.detail.plyr.play();       
