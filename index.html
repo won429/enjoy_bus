@@ -246,20 +246,7 @@
             padding-top: 40px !important;
         }
 
-        /* [핵심] 회전된 비디오 컨테이너 (가로모드 강제) */
-        .force-landscape-container {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 100vh !important; /* 높이를 너비로 */
-            height: 100vw !important; /* 너비를 높이로 */
-            transform: translate(-50%, -50%) rotate(90deg);
-            z-index: 100;
-            background: black;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+        /* 회전 코드 제거됨 */
     </style>
 </head>
 <body>
@@ -303,7 +290,7 @@
             <div class="px-5 mb-6 fade-in-up mt-2">
                 <div class="relative w-full aspect-[4/5] rounded-[32px] overflow-hidden shadow-xl cursor-pointer group" onclick="openDetail('story')">
                     <div class="absolute inset-0 bg-gray-800">
-                        <!-- 배너 이미지 -->
+                        <!-- 배너 이미지 (파일명만) -->
                         <img src="banner_story.jpg" class="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700" alt="Hero Poster">
                     </div>
                     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
@@ -311,7 +298,7 @@
                     <div class="absolute bottom-0 left-0 w-full p-6 text-white z-10">
                         <div class="flex gap-2 mb-2">
                             <span class="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">HOT</span>
-                            <!-- 장르 -->
+                            <!-- 장르 변경 -->
                             <span class="bg-white/20 backdrop-blur-md text-white text-[10px] font-bold px-1.5 py-0.5 rounded">브이로그</span>
                         </div>
                         <h2 class="text-3xl font-bold mb-2 leading-tight">그날,<br>엔조이 이야기</h2>
@@ -495,7 +482,7 @@
 
         <!-- [Plyr] 비디오 플레이어 오버레이 -->
         <div id="video-overlay" class="hidden fixed inset-0 z-[70] bg-black overflow-hidden">
-            <!-- 회전 래퍼: 가로 모드 강제 적용 -->
+            <!-- 회전 래퍼 제거됨: 원래대로 세로 유지 -->
             <div id="video-content-wrapper" class="w-full h-full relative flex items-center justify-center">
                 
                 <!-- 닫기 버튼 -->
@@ -541,6 +528,7 @@
                 members: ['전시기', '성원제', '오스틴', '이진누', '홍박사'],
                 videoId: '여기에_유튜브_ID_입력'
             },
+            // [수정 완료] 유튜브 영상 ID 적용 (fVISITFv6EA)
             'music': { 
                 title: '엔조이 인기가요', 
                 img: 'poster_music.jpg',
@@ -580,6 +568,7 @@
             const data = mockData[key];
             if(!data) return;
             
+            // 모달 기본 정보 업데이트
             document.getElementById('modal-img').src = data.img;
             document.getElementById('modal-title').innerText = data.title;
             document.getElementById('modal-desc').innerText = data.desc || '준비 중인 콘텐츠입니다.';
@@ -674,10 +663,8 @@
 
             const overlay = document.getElementById('video-overlay');
             const wrapper = document.getElementById('video-container');
-            const contentWrapper = document.getElementById('video-content-wrapper');
 
-            contentWrapper.classList.add('force-landscape-container');
-
+            // 기존 플레이어 정리
             if (player) {
                 player.destroy();
                 player = null;
@@ -687,6 +674,7 @@
             overlay.classList.remove('hidden');
             overlay.classList.add('flex');
 
+            // Plyr 초기화
             player = new Plyr('#player', {
                 autoplay: true,
                 muted: true, // [필수] 모바일 자동재생을 위한 음소거
@@ -696,10 +684,12 @@
                     rel: 0,
                     showinfo: 0,
                     iv_load_policy: 3,
-                    modestbranding: 1
+                    modestbranding: 1,
+                    playsinline: 1
                 }
             });
 
+            // 준비되면 재생
             player.on('ready', event => {
                 event.detail.plyr.muted = true; // 안전장치: 다시 한번 음소거
                 event.detail.plyr.play();       // 재생 시작
@@ -709,13 +699,10 @@
         function closeVideo() {
             const overlay = document.getElementById('video-overlay');
             const wrapper = document.getElementById('video-container');
-            const contentWrapper = document.getElementById('video-content-wrapper');
             
             overlay.classList.add('hidden');
             overlay.classList.remove('flex');
             
-            contentWrapper.classList.remove('force-landscape-container');
-
             if (player) {
                 player.stop();
                 player.destroy();
