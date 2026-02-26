@@ -506,17 +506,18 @@
                     return false; 
                 }
                 
-                const dayCd = currentDayType === 'weekday' ? '8' : (currentDayType === 'saturday' ? '9' : '7');
+                // 🚨 [핵심 수정] 전국 표준이 아닌 부산교통공사 전용 요일 코드 적용 (1:평일, 2:토요일, 3:휴일)
+                const dayCd = currentDayType === 'weekday' ? '1' : (currentDayType === 'saturday' ? '2' : '3');
                 
                 let safeKey = BUSAN_API_KEY;
                 try { if (safeKey.includes('%')) safeKey = decodeURIComponent(safeKey); } catch(e) {}
                 
-                const targetUrl = `https://apis.data.go.kr/6260000/BusanTblDs/getTblDs?serviceKey=${encodeURIComponent(safeKey)}&pageNo=1&numOfRows=5000&lineNo=1&dayCd=${dayCd}`; 
+                // 🚨 [핵심 수정] 캐시 무력화 (날짜/시간 폭탄 추가하여 억지로 예전 0건 화면을 보여주는 현상 파괴)
+                // numOfRows도 부산 1호선 전체 시간표를 모두 담기 위해 넉넉히 9999로 변경했습니다.
+                const targetUrl = `https://apis.data.go.kr/6260000/BusanTblDs/getTblDs?serviceKey=${encodeURIComponent(safeKey)}&pageNo=1&numOfRows=9999&lineNo=1&dayCd=${dayCd}&_=${Date.now()}`; 
                 
                 let xmlText = null;
                 
-                // 🚨 로딩 지연 원인(직접 HTTPS 통신 대기) 완벽 제거!
-                // 무조건 차단되는 직접 호출을 건너뛰고, 가장 빠르고 튼튼한 우회 프록시 3중망을 동시 다발적으로 투입하여 즉시 뚫습니다.
                 const proxies = [
                     'https://corsproxy.io/?' + encodeURIComponent(targetUrl),
                     'https://api.allorigins.win/get?url=' + encodeURIComponent(targetUrl),
@@ -533,7 +534,7 @@
                             } else {
                                 xmlText = await response.text();
                             }
-                            if (xmlText && (xmlText.includes('<item') || xmlText.includes('<header>'))) break; // 하나라도 성공 시 즉시 루프 탈출
+                            if (xmlText && (xmlText.includes('<item') || xmlText.includes('<header>'))) break; 
                         }
                     } catch (e) { console.warn("Proxy fallback:", proxy); }
                 }
@@ -568,7 +569,6 @@
                     const trainsMapUp = {};
                     const trainsMapDown = {};
                     
-                    // 🚨 데이터 처리 속도 2배 향상! 상행/하행을 한 번에 싹 긁어와서 동시에 분류합니다.
                     for (let i = 0; i < items.length; i++) {
                         const item = items[i];
                         const getVal = (tag) => item.getElementsByTagName(tag)[0]?.textContent || '';
@@ -924,7 +924,6 @@
 
             currentDayType = getDayType(new Date());
             
-            // 🚨 핵심 로딩 스피드업: 화면부터 즉시 띄워서 사용자가 하얀 화면을 보며 기다리는 딜레이를 완벽 제거!
             const now = new Date(); let h = now.getHours(); if(h<4) h+=24;
             currentSec = h*3600 + now.getMinutes()*60 + now.getSeconds();
             window.switchTab('home');
@@ -935,7 +934,6 @@
                 window.render();
             }, 1000);
 
-            // API 데이터는 화면이 뜬 상태에서 백그라운드로 아주 조용하고 빠르게 긁어옵니다.
             await loadTimetable();
             window.render();
         };
