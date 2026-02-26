@@ -3,819 +3,875 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Enjoy Studio | ENBC</title>
+    <title>부산권 지하철 현황 실시간 트래커</title>
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- 기본 폰트: Pretendard -->
+    <!-- 폰트 및 아이콘 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" type="text/css"/>
-    
-    <!-- 아이콘 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- [핵심] Plyr 비디오 플레이어 CSS (넷플릭스 스타일 스킨) -->
-    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
-
     <style>
-        /* 학교안심 둥근미소 B (Bold) 전용 폰트 파일 직접 로드 */
-        @font-face {
-            font-family: 'HakgyoansimDunggeunmisoB';
-            src: url('https://cdn.jsdelivr.net/gh/fonts-archive/HakgyoansimDunggeunmiso/HakgyoansimDunggeunmiso-B.woff2') format('woff2');
-            font-weight: 700;
-            font-style: normal;
-        }
-
         body { 
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
-            background-color: #111827;
-            color: #191F28;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "sans-serif";
             -webkit-tap-highlight-color: transparent;
             overscroll-behavior-y: none;
             touch-action: pan-y;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100dvh;
-            margin: 0;
-        }
-
-        /* 모바일 프레임 컨테이너 */
-        #mobile-frame {
-            width: 100%;
-            max-width: 480px; 
-            height: 100%;
-            background-color: #F2F4F6;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 0 40px rgba(0,0,0,0.5);
-        }
-
-        .font-dunggeun {
-            font-family: 'HakgyoansimDunggeunmisoB', sans-serif !important;
-            font-weight: normal !important; 
-        }
-
-        /* [상단] 헤더 */
-        .glass-header {
-            width: 100%;
-            background: transparent;
-            border: 1px solid transparent;
-            border-radius: 0px;
-            box-shadow: none;
-            top: 0;
-            transition: all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-            position: absolute;
-            z-index: 50;
-        }
-
-        .glass-header.scrolled {
-            width: 260px !important;
-            top: 12px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px) saturate(180%);
-            -webkit-backdrop-filter: blur(12px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            border-radius: 100px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            padding: 6px 16px !important;
-        }
-
-        /* [하단] 네비게이션 바 */
-        .glass-nav {
-            position: absolute;
-            bottom: 24px;
-            left: 50%;
-            transform: translateX(-50%);
-            margin-left: 0px; 
-            background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            border-radius: 100px;
-            padding: 6px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            transition: all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-            z-index: 40;
-            width: auto;
-            min-width: 56px; 
-        }
-
-        /* 하단 네비게이션 스크롤 상태 */
-        .glass-nav.scrolled {
-            margin-left: calc(50% - 48px); 
-            background: rgba(75, 85, 99, 0.9);
-            border: none;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-            padding: 0;
-            width: 56px;
-            height: 56px;
-            justify-content: center;
-            align-items: center;
-            gap: 0;
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2px;
-            padding: 10px 24px;
-            border-radius: 100px;
-            transition: all 0.3s ease;
-            white-space: nowrap;
-            overflow: hidden;
-        }
-
-        .glass-nav.scrolled .nav-item { 
-            padding: 0; 
-            width: 0; 
-            opacity: 0; 
-            margin: 0; 
-            flex: 0 0 auto;
+            background-color: #ffffff;
         }
         
-        .glass-nav.scrolled .nav-item.active { 
-            width: 100%;
-            height: 100%;
-            opacity: 1; 
-            padding: 0; 
-            margin: 0;
-            color: white !important; 
-            background: transparent !important; 
-            box-shadow: none !important;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: center;
-            gap: 0;
-        }
-        .glass-nav.scrolled .nav-item.active span { display: none; }
-        
-        .glass-nav.scrolled .nav-item.active i { 
-            font-size: 1.4rem; 
-            line-height: 1;
-            display: block;
-            margin-top: 1px; 
-        }
-
-        .nav-item.active { 
-            background: #4B5563; 
-            color: white; 
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
-        }
-        .nav-item:not(.active) { color: #6B7684; }
-        .nav-item:not(.active):hover { background: rgba(0,0,0,0.05); color: #191F28; }
-
         .toss-card {
-            background: rgba(255, 255, 255, 0.65);
-            backdrop-filter: blur(12px) saturate(180%);
-            -webkit-backdrop-filter: blur(12px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(0, 0, 0, 0.05);
             border-radius: 24px;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04); 
-            transition: transform 0.1s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.1s;
-            cursor: pointer;
-            overflow: hidden;
-            position: relative;
-        }
-        .toss-card:active { transform: scale(0.96); box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02); filter: brightness(0.95); }
-
-        .poster-card {
-            position: relative;
-            border-radius: 16px;
-            overflow: hidden;
-            flex-shrink: 0;
-            transition: transform 0.2s;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        .poster-card:active { transform: scale(0.95); }
-
-        .text-main { color: #191F28; }
-        .text-sub { color: #6B7684; }
-        .text-blue { color: #3182F6; }
-
-        .fade-in-up { animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; transform: translateY(20px); }
-        .fade-in { animation: fadeIn 0.3s ease-out forwards; }
-        @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        
-        .scale-in { animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        @keyframes scaleIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-
-        .pt-safe { padding-top: max(10px, env(safe-area-inset-top)); }
-        .pb-safe { padding-bottom: max(20px, env(safe-area-inset-bottom)); }
-
-        .scrollbar-hide::-webkit-scrollbar { display: none; }
-        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-
-        /* 모달 위치 고정 */
-        #detail-modal, #video-overlay, #search-modal {
-            position: absolute; 
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1); 
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s;
         }
         
-        /* 이미지 로드 실패 시 배경색 처리 */
-        img {
-            background-color: #e5e7eb;
-            object-fit: cover;
+        .list-card {
+            background: #f9fafb;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            border-radius: 20px;
+            transition: transform 0.1s;
+        }
+        .list-card:active {
+            transform: scale(0.97);
+            background: #f3f4f6;
         }
 
-        /* [핵심] Plyr 커스텀 CSS (넷플릭스 스타일) */
-        :root {
-            --plyr-color-main: #f04452; /* 엔조이 레드 포인트 컬러 */
-            --plyr-video-background: #000;
-            --plyr-menu-background: rgba(20, 20, 20, 0.9);
-            --plyr-menu-color: #fff;
-            --plyr-menu-arrow-color: #fff;
-        }
+        #nav-indicator { will-change: transform, width; }
+        .nav-transition { transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), width 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); }
+
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        .plyr--video {
-            height: 100%;
-            width: 100%;
-        }
+        .text-main { color: #111827; }
+        .text-sub { color: #6B7280; }
+        .pt-safe { padding-top: max(20px, env(safe-area-inset-top)); }
         
-        /* 컨트롤 바 투명도 및 스타일 조정 */
-        .plyr__controls {
-            background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0.8)) !important;
-            padding-bottom: 20px !important;
-            padding-top: 40px !important;
+        @keyframes ping { 75%, 100% { transform: scale(2); opacity: 0; } }
+        .animate-ping { animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite; }
+        @keyframes pulse { 50% { opacity: .5; } }
+        .animate-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        @keyframes bounce { 
+            0%, 100% { transform: translateY(-25%) translateX(-50%); animation-timing-function: cubic-bezier(0.8,0,1,1); } 
+            50% { transform: none translateX(-50%); animation-timing-function: cubic-bezier(0,0,0.2,1); } 
         }
-        
-        /* 설정 메뉴 스타일 개선 */
-        .plyr__menu__container {
-            background: rgba(20, 20, 20, 0.95) !important;
-            border-radius: 8px !important;
+        .animate-bounce { animation: bounce 1s infinite; }
+        @keyframes slide-in-from-bottom { 0% { transform: translateY(100%); } 100% { transform: translateY(0); } }
+        .animate-in { animation: slide-in-from-bottom 0.3s ease-out forwards; }
+
+        .station-plate-base {
+            height: 34px; background-color: #F06A00; border-radius: 9999px; position: relative;
+            display: flex; align-items: center; padding: 0 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); transition: background-color 0.3s;
+        }
+        .station-plate-pill {
+            background-color: white; height: 52px; padding: 0 16px; border-radius: 9999px; border: 3px solid #F06A00;
+            display: flex; align-items: center; gap: 8px; position: absolute; left: 50%; transform: translateX(-50%);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: border-color 0.3s;
+        }
+        .metro-logo-circle {
+            width: 26px; height: 26px; background-color: #F06A00; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; color: white; font-size: 13px; font-weight: 900;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); transition: background-color 0.3s;
         }
     </style>
 </head>
-<body>
+<body class="w-full h-[100dvh] flex justify-center items-center overflow-hidden">
 
-    <!-- [핵심] Plyr 비디오 플레이어 JS -->
-    <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
-
-    <!-- 모바일 프레임 컨테이너 -->
-    <div id="mobile-frame">
+    <div id="app" class="w-full h-full max-w-[430px] bg-white relative flex flex-col overflow-hidden sm:border-x border-black/5 sm:shadow-2xl">
         
-        <!-- 헤더 -->
-        <header id="main-header" class="pt-safe px-4 py-3 flex justify-between items-center glass-header">
-            <div class="flex items-center gap-2">
-                <button onclick="location.href='index.html'" class="w-8 h-8 rounded-full hover:bg-black/5 flex items-center justify-center transition-colors -ml-1 flex-shrink-0">
-                    <i class="fa-solid fa-chevron-left text-base text-main"></i>
-                </button>
-                
-                <h1 class="text-lg text-main flex items-center font-dunggeun tracking-tight leading-none pt-0.5 whitespace-nowrap overflow-hidden">
-                    <span id="logo-fade" class="inline-block transition-all duration-[1200ms] ease-[cubic-bezier(0.33,1,0.68,1)] overflow-hidden" style="max-width: 130px; opacity: 1;">
-                        enjoy studio <span class="text-blue-300 font-dunggeun mr-1">|</span>
-                    </span>
-                    <span class="text-blue-500 font-dunggeun">enbc</span>
-                </h1>
-            </div>
-            <div class="flex gap-2 flex-shrink-0">
-                <!-- 검색 버튼 -->
-                <button onclick="openSearch()" class="w-8 h-8 rounded-full bg-white/50 flex items-center justify-center text-main shadow-sm hover:bg-white transition-colors">
-                    <i class="fa-solid fa-magnifying-glass text-sm"></i>
-                </button>
-                <button class="w-8 h-8 rounded-full bg-gray-200 overflow-hidden border border-white shadow-sm">
-                    <!-- 유저 프로필 이미지 -->
-                    <img src="user_me.jpg" class="w-full h-full object-cover" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiNlNWU3ZWIiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1zaXplPSIxMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iIGZpbGw9IiM5Y2EzeWYiPk1FPC90ZXh0Pjwvc3ZnPg=='">
-                </button>
-            </div>
-        </header>
-
-        <!-- 메인 컨텐츠 -->
-        <main id="content-scroll" class="h-full overflow-y-auto scrollbar-hide pb-24 pt-[54px] relative">
-            
-            <!-- 1. Hero Banner: 그날, 엔조이 이야기 -->
-            <div class="px-5 mb-6 fade-in-up mt-2">
-                <div class="relative w-full aspect-[4/5] rounded-[32px] overflow-hidden shadow-xl cursor-pointer group" onclick="openDetail('story')">
-                    <div class="absolute inset-0 bg-gray-800">
-                        <!-- 배너 이미지 (파일명만) -->
-                        <img src="banner_story.jpg" class="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700" alt="Hero Poster">
-                    </div>
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-                    
-                    <div class="absolute bottom-0 left-0 w-full p-6 text-white z-10">
-                        <div class="flex gap-2 mb-2">
-                            <span class="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">HOT</span>
-                            <!-- 장르 변경 -->
-                            <span class="bg-white/20 backdrop-blur-md text-white text-[10px] font-bold px-1.5 py-0.5 rounded">브이로그</span>
-                        </div>
-                        <h2 class="text-3xl font-bold mb-2 leading-tight">그날,<br>엔조이 이야기</h2>
-                        <p class="text-sm text-gray-300 line-clamp-2 mb-4">우리가 함께했던 그 뜨거웠던 여름날의 기록. 어디서도 듣지 못한 그들의 진솔한 대화.</p>
-                        
-                        <div class="flex gap-3">
-                            <!-- 재생 버튼 (메인은 영상 없음) -->
-                            <button onclick="event.stopPropagation(); playVideo('story')" class="flex-1 bg-white text-black font-bold py-3 rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-transform">
-                                <i class="fa-solid fa-play"></i> 재생
-                            </button>
-                            <!-- 더보기 버튼 -->
-                            <button onclick="event.stopPropagation(); openDetail('story')" class="flex-1 bg-white/20 backdrop-blur-md text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-transform">
-                                <i class="fa-solid fa-circle-info"></i> 더보기
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 2. 엔조이 Top 10 (순위) -->
-            <div class="mb-8 fade-in-up delay-100">
-                <h3 class="text-lg font-bold text-main px-5 mb-3">엔조이 Top 10 🔥</h3>
-                <div class="flex overflow-x-auto gap-4 px-5 pb-4 scrollbar-hide snap-x">
-                    <!-- 1위 -->
-                    <div class="relative flex-shrink-0 w-32 snap-start" onclick="openDetail('story')">
-                        <span class="absolute left-2 top-0 text-[50px] font-black text-[#3182F6] z-10 italic leading-none" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">1</span>
-                        <div class="poster-card w-full aspect-[2/3] bg-gray-200 rounded-xl overflow-hidden shadow-md">
-                            <img src="poster_story.jpg" class="w-full h-full object-cover">
-                        </div>
-                        <p class="text-xs font-bold text-main mt-2 truncate">그날, 엔조이 이야기</p>
-                    </div>
-                    <!-- 2위 -->
-                    <div class="relative flex-shrink-0 w-32 snap-start" onclick="openDetail('nzzoki')">
-                        <span class="absolute left-2 top-0 text-[50px] font-black text-[#3182F6] z-10 italic leading-none" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">2</span>
-                        <div class="poster-card w-full aspect-[2/3] bg-gray-200 rounded-xl overflow-hidden shadow-md">
-                            <img src="poster_nzzoki.jpg" class="w-full h-full object-cover">
-                        </div>
-                        <p class="text-xs font-bold text-main mt-2 truncate">엔쪽이</p>
-                    </div>
-                    <!-- 3위 -->
-                     <div class="relative flex-shrink-0 w-32 snap-start" onclick="openDetail('music')">
-                        <span class="absolute left-2 top-0 text-[50px] font-black text-[#3182F6] z-10 italic leading-none" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">3</span>
-                        <div class="poster-card w-full aspect-[2/3] bg-gray-200 rounded-xl overflow-hidden shadow-md">
-                            <img src="poster_music.jpg" class="w-full h-full object-cover">
-                        </div>
-                        <p class="text-xs font-bold text-main mt-2 truncate">엔조이 인기가요</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 3. 곧 공개될 프로그램 (Coming Soon) -->
-            <div class="px-5 mb-8 fade-in-up delay-200">
-                <h3 class="text-lg font-bold text-main mb-3 flex items-center gap-2">곧 만나요! 🍿 <span class="text-[10px] bg-red-100 text-red-500 px-2 py-0.5 rounded-full">Coming Soon</span></h3>
-                <div class="grid grid-cols-3 gap-3">
-                    <!-- F1 더 엔조이 -->
-                    <div class="flex flex-col gap-1 cursor-pointer group" onclick="openDetail('f1')">
-                        <div class="relative aspect-[3/4] rounded-xl overflow-hidden shadow-sm bg-gray-200">
-                            <img src="poster_f1.jpg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                            <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
-                                <span class="text-white text-[10px] font-bold border border-white/50 px-2 py-1 rounded-full backdrop-blur-sm text-center leading-tight">2026년<br>상반기 공개</span>
-                            </div>
-                        </div>
-                        <span class="text-xs font-bold text-main truncate mt-1">F1 더 엔조이</span>
-                    </div>
-                    <!-- 출장엔조이 -->
-                    <div class="flex flex-col gap-1 cursor-pointer group" onclick="openDetail('business')">
-                        <div class="relative aspect-[3/4] rounded-xl overflow-hidden shadow-sm bg-gray-200">
-                            <img src="poster_business.jpg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                            <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
-                                <span class="text-white text-[10px] font-bold border border-white/50 px-2 py-1 rounded-full backdrop-blur-sm text-center leading-tight">2026년<br>상반기 공개</span>
-                            </div>
-                        </div>
-                        <span class="text-xs font-bold text-main truncate mt-1">출장엔조이</span>
-                    </div>
-                    <!-- 엔조이 숙려 캠프 -->
-                    <div class="flex flex-col gap-1 cursor-pointer group" onclick="openDetail('camp')">
-                        <div class="relative aspect-[3/4] rounded-xl overflow-hidden shadow-sm bg-gray-200">
-                            <img src="poster_camp.jpg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                            <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
-                                <span class="text-white text-[10px] font-bold border border-white/50 px-2 py-1 rounded-full backdrop-blur-sm text-center leading-tight">2026년<br>상반기 공개</span>
-                            </div>
-                        </div>
-                        <span class="text-xs font-bold text-main truncate mt-1">엔조이 숙려 캠프</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 4. 신규 콘텐츠 (비워둠) -->
-            <div class="px-5 mb-6 fade-in-up delay-300">
-                <h3 class="text-lg font-bold text-main mb-3">새로 올라왔어요 ✨</h3>
-                <div class="flex flex-col gap-3 items-center justify-center py-10 bg-white/40 rounded-2xl border border-white/40 backdrop-blur-sm">
-                    <i class="fa-solid fa-cloud-moon text-3xl text-gray-300 mb-2"></i>
-                    <p class="text-xs text-gray-400 font-medium">아직 새로운 콘텐츠가 없어요</p>
-                </div>
-            </div>
-
-        </main>
-
-        <!-- 하단 네비게이션 -->
-        <nav id="bottom-nav" class="glass-nav">
-            <button class="nav-item active" onclick="setActiveNav(this)">
-                <i class="fa-solid fa-house text-sm"></i>
-                <span class="text-[10px] font-bold">홈</span>
-            </button>
-            <button class="nav-item" onclick="setActiveNav(this)">
-                <i class="fa-solid fa-compass text-sm"></i>
-                <span class="text-[10px] font-medium">탐색</span>
-            </button>
-            <button class="nav-item" onclick="setActiveNav(this)">
-                <i class="fa-solid fa-layer-group text-sm"></i>
-                <span class="text-[10px] font-medium">보관함</span>
-            </button>
-        </nav>
-
-        <!-- 검색 모달 -->
-        <div id="search-modal" class="hidden flex-col z-[60] bg-white/95 backdrop-blur-md fade-in">
-            <!-- 검색 헤더 -->
-            <div class="pt-safe px-4 py-3 flex items-center gap-3">
-                <button onclick="closeSearch()" class="text-main p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors">
-                    <i class="fa-solid fa-chevron-left text-lg"></i>
-                </button>
-                <div class="flex-1 bg-gray-100 rounded-2xl px-4 py-3 flex items-center gap-2 shadow-inner">
-                    <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
-                    <input type="text" id="search-input" placeholder="보고 싶은 콘텐츠를 입력하세요" class="bg-transparent w-full text-base outline-none text-main placeholder-gray-400" oninput="performSearch(this.value)">
-                    <button onclick="document.getElementById('search-input').value=''; performSearch('')" class="text-gray-400 p-1 hover:text-gray-600">
-                        <i class="fa-solid fa-circle-xmark"></i>
+        <!-- 1. 홈 화면 -->
+        <main id="home-screen" class="hidden absolute inset-0 z-[25] bg-white flex-col overflow-y-auto hide-scrollbar pb-24">
+            <header class="flex-none pt-safe bg-white/90 backdrop-blur-md z-40 sticky top-0">
+                <div class="px-5 pb-1 flex justify-between items-center">
+                    <h2 class="text-[18px] font-extrabold text-[#111827] tracking-tight">부산권 지하철역</h2>
+                    <button id="favorite-toggle-btn" onclick="toggleFavorite()" class="w-8 h-8 flex items-center justify-center bg-gray-100 rounded-full text-gray-400 hover:text-yellow-400 transition-colors">
+                        <i id="favorite-icon" class="fa-regular fa-star text-[14px]"></i>
                     </button>
                 </div>
-            </div>
-            
-            <!-- 검색 결과 영역 -->
-            <div class="flex-1 overflow-y-auto p-5 scrollbar-hide">
-                <div id="search-results" class="flex flex-col gap-4">
-                    <!-- 초기 상태: 추천 검색어 -->
-                    <div id="search-initial">
-                        <h3 class="text-sm font-bold text-main mb-3">추천 검색어</h3>
-                        <div class="flex flex-wrap gap-2">
-                            <button onclick="fillSearch('엔조이')" class="px-4 py-2 bg-white border border-gray-100 rounded-full text-sm text-sub shadow-sm hover:bg-blue-50 hover:text-blue-500 hover:border-blue-200 transition-all">#엔조이</button>
-                            <button onclick="fillSearch('전시기')" class="px-4 py-2 bg-white border border-gray-100 rounded-full text-sm text-sub shadow-sm hover:bg-blue-50 hover:text-blue-500 hover:border-blue-200 transition-all">#전시기</button>
-                            <button onclick="fillSearch('엔쪽이')" class="px-4 py-2 bg-white border border-gray-100 rounded-full text-sm text-sub shadow-sm hover:bg-blue-50 hover:text-blue-500 hover:border-blue-200 transition-all">#엔쪽이</button>
-                            <button onclick="fillSearch('F1')" class="px-4 py-2 bg-white border border-gray-100 rounded-full text-sm text-sub shadow-sm hover:bg-blue-50 hover:text-blue-500 hover:border-blue-200 transition-all">#F1 더 엔조이</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+            </header>
 
-        <!-- 상세 모달 -->
-        <div id="detail-modal" class="hidden flex-col justify-end z-[60]">
-            <div class="bg-white rounded-t-[32px] w-full h-auto max-h-[90%] overflow-y-auto pb-safe scale-in relative shadow-2xl">
-                <div class="sticky top-0 right-0 z-20 flex justify-end p-4 pointer-events-none">
-                    <button onclick="closeDetail()" class="w-8 h-8 rounded-full bg-black/10 backdrop-blur-md flex items-center justify-center text-main pointer-events-auto active:bg-black/20">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                </div>
-                <div class="-mt-16 relative">
-                    <div class="w-full aspect-video bg-gray-800 relative">
-                        <!-- 상세 모달 이미지 -->
-                        <img id="modal-img" src="" class="w-full h-full object-cover opacity-90">
-                        <div class="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent"></div>
-                        <div class="absolute inset-0 flex items-center justify-center z-10">
-                            <!-- 모달 내부 재생 버튼 -->
-                            <button id="modal-play-btn" class="w-16 h-16 rounded-full bg-white/30 backdrop-blur-md border border-white/50 flex items-center justify-center text-white text-2xl shadow-lg active:scale-95 transition-transform hover:bg-white/40">
-                                <i class="fa-solid fa-play pl-1"></i>
-                            </button>
+            <div class="px-5 pt-3 space-y-6">
+                <div>
+                    <!-- 지역 선택 탭 -->
+                    <div class="flex gap-1.5 overflow-x-auto hide-scrollbar mb-2 pb-1">
+                        <button onclick="showPreparingPopup('수도권')" class="px-3 py-1 rounded-full text-[11px] font-bold bg-gray-100 text-gray-400 shrink-0 border border-black/5 cursor-pointer hover:bg-gray-200 transition-all">수도권</button>
+                        <button id="btn-region-busan" onclick="switchRegion('busan')" class="px-3 py-1 rounded-full text-[11px] font-bold bg-[#F06A00] text-white shadow-[0_2px_8px_rgba(240,106,0,0.3)] shrink-0 border border-[#F06A00] transition-all">부산권</button>
+                        <button onclick="showPreparingPopup('대구권')" class="px-3 py-1 rounded-full text-[11px] font-bold bg-gray-100 text-gray-400 shrink-0 border border-black/5 cursor-pointer hover:bg-gray-200 transition-all">대구권</button>
+                        <button onclick="showPreparingPopup('대전')" class="px-3 py-1 rounded-full text-[11px] font-bold bg-gray-100 text-gray-400 shrink-0 border border-black/5 cursor-pointer hover:bg-gray-200 transition-all">대전</button>
+                        <button onclick="showPreparingPopup('광주')" class="px-3 py-1 rounded-full text-[11px] font-bold bg-gray-100 text-gray-400 shrink-0 border border-black/5 cursor-pointer hover:bg-gray-200 transition-all">광주</button>
+                    </div>
+
+                    <!-- 노선 선택 탭 -->
+                    <div id="line-tabs-busan" class="flex gap-1.5 overflow-x-auto hide-scrollbar mb-4 pb-1">
+                        <button id="btn-line-busan1" onclick="switchLine('busan_line1')" class="px-3 py-1 rounded-full text-[11px] font-bold bg-[#F06A00] text-white shadow-[0_2px_8px_rgba(240,106,0,0.3)] shrink-0 border border-[#F06A00] transition-all">1호선</button>
+                        <button onclick="showPreparingPopup('2호선')" class="px-3 py-1 rounded-full text-[11px] font-bold bg-gray-100 text-gray-400 shrink-0 border border-black/5 cursor-pointer hover:bg-gray-200 transition-all">2호선</button>
+                        <button onclick="showPreparingPopup('3호선')" class="px-3 py-1 rounded-full text-[11px] font-bold bg-gray-100 text-gray-400 shrink-0 border border-black/5 cursor-pointer hover:bg-gray-200 transition-all">3호선</button>
+                    </div>
+
+                    <!-- 코레일 스타일 역명판 -->
+                    <div onclick="openStationSelector()" class="relative w-full flex items-center justify-center cursor-pointer active:scale-95 transition-transform">
+                        <div class="station-plate-base w-full">
+                            <div class="flex-1 text-left pl-2">
+                                <div id="home-prev-station-container" class="opacity-0 transition-opacity">
+                                    <span id="home-prev-station" class="text-white text-[15px] font-bold tracking-tight"></span>
+                                </div>
+                            </div>
+                            <div class="flex-1 text-right pr-2">
+                                <div id="home-next-station-container" class="opacity-100 transition-opacity">
+                                    <span id="home-next-station" class="text-white text-[15px] font-bold tracking-tight">사곡 &gt;</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="station-plate-pill">
+                            <div class="metro-logo-circle">1</div>
+                            <span id="home-station-name" class="text-lg font-black text-black whitespace-nowrap">다대포해수욕장</span>
                         </div>
                     </div>
-                    <div class="px-6 pt-2 pb-10">
-                        <div class="flex gap-2 mb-3" id="modal-tags"></div>
-                        <h2 id="modal-title" class="text-2xl font-bold text-main mb-2">제목</h2>
-                        <p id="modal-desc" class="text-sm text-sub leading-relaxed mb-6 break-keep"></p>
-                        <h3 class="text-sm font-bold text-main mb-3">출연진</h3>
-                        <div id="modal-cast-list" class="flex gap-3 overflow-x-auto pb-2 scrollbar-hide"></div>
-                        <button id="modal-action-btn" class="w-full bg-blue-500 text-white font-bold py-4 rounded-2xl mt-8 shadow-lg shadow-blue-200 active:scale-95 transition-transform">
-                            1화 재생하기
+                </div>
+
+                <!-- 도착 정보 섹션 -->
+                <div class="flex flex-col gap-3.5">
+                    <div class="flex justify-between items-end mb-1 px-1">
+                        <h3 class="text-lg font-bold text-[#111827] tracking-tight">도착 정보</h3>
+                        <div class="flex items-center gap-2">
+                            <span id="data-status-home" class="hidden text-[10px] font-bold text-red-400 bg-red-500/10 px-2 py-1 rounded-md border border-red-500/20 animate-pulse">임의 데이터 사용중</span>
+                            <span id="home-current-time" class="text-xs font-bold text-gray-500 bg-black/5 px-2 py-1 rounded-md">오후 5:35</span>
+                            <button onclick="renderHomeArrivalInfo()" class="w-6 h-6 flex items-center justify-center text-gray-500 hover:text-black transition-colors"><i class="fa-solid fa-rotate-right"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <div class="list-card p-3.5 flex flex-col min-h-[110px] relative overflow-hidden text-center">
+                            <span id="home-up-dir-label" class="text-[12px] font-bold text-gray-500 mb-2.5">상행 방면</span>
+                            <div id="home-up-info" class="flex-1 flex flex-col justify-center items-center gap-1.5"></div>
+                        </div>
+                        <div class="list-card p-3.5 flex flex-col min-h-[110px] relative overflow-hidden text-center">
+                            <span id="home-down-dir-label" class="text-[12px] font-bold text-gray-500 mb-2.5">하행 방면</span>
+                            <div id="home-down-info" class="flex-1 flex flex-col justify-center gap-1.5"></div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2.5 mt-2">
+                        <button onclick="openHomeTimetable()" class="bg-gray-100 hover:bg-gray-200 border border-black/5 rounded-[16px] py-3 flex items-center justify-center gap-1.5 active:scale-[0.98] transition-all">
+                            <i id="btn-icon-1" class="fa-regular fa-clock text-[#F06A00] text-[15px]"></i>
+                            <span class="text-[12px] font-bold text-[#111827]">전체 시간표 <i class="fa-solid fa-chevron-down text-[8px] ml-0.5 text-gray-400"></i></span>
+                        </button>
+                        <button onclick="openHomeTimetable()" class="bg-gray-100 hover:bg-gray-200 border border-black/5 rounded-[16px] py-3 flex items-center justify-center gap-1.5 active:scale-[0.98] transition-all">
+                            <i id="btn-icon-2" class="fa-solid fa-train-tram text-[#F06A00] text-[15px]"></i>
+                            <span class="text-[12px] font-bold text-[#111827]">첫차·막차 <i class="fa-solid fa-chevron-down text-[8px] ml-0.5 text-gray-400"></i></span>
                         </button>
                     </div>
                 </div>
             </div>
-        </div>
+        </main>
 
-        <!-- [Plyr] 비디오 플레이어 오버레이 -->
-        <div id="video-overlay" class="hidden fixed inset-0 z-[70] bg-black overflow-hidden">
-            <!-- 회전 래퍼 제거됨: 원래대로 세로 유지 -->
-            <div id="video-content-wrapper" class="w-full h-full relative flex items-center justify-center">
-                
-                <!-- 닫기 버튼 -->
-                <button onclick="closeVideo()" class="absolute top-6 left-6 text-white text-3xl drop-shadow-md z-[80] p-2 hover:bg-white/20 rounded-full transition-colors">
-                    <i class="fa-solid fa-chevron-down"></i>
-                </button>
-                
-                <!-- 유튜브 컨테이너 -->
-                <div id="video-container" class="w-full h-full bg-black relative">
-                     <div id="video-placeholder"></div>
+        <!-- 2. 상단 헤더 & 트래커 UI -->
+        <header id="main-header" class="hidden absolute top-0 left-0 w-full z-20 bg-white/90 backdrop-blur-md flex flex-col pt-safe pb-1.5 shadow-sm text-[#111827] transition-all">
+            <div class="px-4 pt-2 flex justify-between items-center mb-2">
+                <div class="flex items-center gap-2">
+                    <h1 id="line-header-title" class="text-[17px] font-extrabold tracking-tight text-[#111827] drop-shadow-sm">부산 1호선 현황</h1>
+                    <select id="direction-toggle" class="bg-gray-100 text-gray-700 text-[11px] font-bold px-2 py-1 rounded-md outline-none cursor-pointer border border-black/5 shadow-sm transition-all focus:ring-2 focus:ring-[#F06A00]/50 appearance-none pr-5 relative" style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2210%22%20height%3D%2210%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%236B7280%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 4px center;">
+                        <option value="up" class="text-gray-900">상행 (다대포 방면)</option>
+                        <option value="down" class="text-gray-900">하행 (노포 방면)</option>
+                    </select>
                 </div>
+                <div class="flex flex-col items-end gap-1 shrink-0">
+                    <div class="flex items-center gap-1.5 bg-black/5 px-2.5 py-1.5 rounded-full border border-black/5">
+                        <i class="fa-regular fa-clock text-[10px] text-gray-500"></i>
+                        <span id="day-type-display" class="text-[10px] text-gray-600 font-bold">평일</span>
+                        <span class="text-gray-400 text-[10px] leading-none">·</span>
+                        <span id="data-status-display" class="text-[10px] text-[#F06A00] font-bold">실시간</span>
+                        <span id="clock-display" class="text-[10px] text-gray-600 font-mono tracking-tighter ml-0.5">00:00:00</span>
+                    </div>
+                    <div class="flex items-center gap-1.5 text-[10px] font-medium text-gray-500 mr-1">
+                        <span>상행 <b id="count-up" class="font-extrabold text-[#F06A00]">0</b></span>
+                        <span class="text-gray-400 text-[8px] leading-none">|</span>
+                        <span>하행 <b id="count-down" class="font-extrabold text-[#FF8B33]">0</b></span>
+                    </div>
+                </div>
+            </div>
+            <div id="train-list" class="flex gap-2 overflow-x-auto px-4 pb-1 hide-scrollbar"></div>
+        </header>
+
+        <!-- 3. 트래커 맵 스크롤 뷰 -->
+        <main id="scroll-container" class="hidden flex-1 w-full h-full overflow-y-auto overflow-x-hidden bg-white scroll-smooth relative pt-[80px] pb-32">
+            <div id="svg-wrapper" class="relative w-full h-[1500px]">
+                <div id="line-view" class="absolute top-0 left-0 w-full transition-opacity duration-500 opacity-0 z-0 pointer-events-none">
+                    <svg id="line-svg" viewBox="0 0 400 1300" class="w-full h-[1300px]">
+                        <g id="svg-down-top">
+                            <rect x="94" y="24" width="52" height="24" rx="12" fill="#FFFFFF" stroke="#FF8B33" stroke-width="2" class="transition-colors duration-300" />
+                            <text x="120" y="40.5" text-anchor="middle" fill="#FF8B33" class="text-[13px] font-extrabold tracking-widest transition-colors duration-300">하행</text>
+                        </g>
+                        <g id="svg-up-top">
+                            <rect x="254" y="24" width="52" height="24" rx="12" fill="#FFFFFF" stroke="#F06A00" stroke-width="2" class="transition-colors duration-300" />
+                            <text x="280" y="40.5" text-anchor="middle" fill="#F06A00" class="text-[13px] font-extrabold tracking-widest transition-colors duration-300">상행</text>
+                        </g>
+
+                        <path id="line-path-down-bg" d="M 120 60 L 120 1200" fill="none" stroke="#FF8B33" stroke-width="6" stroke-linecap="round" opacity="0.3" class="transition-colors duration-300" />
+                        <path id="line-path-up-bg" d="M 280 60 L 280 1200" fill="none" stroke="#F06A00" stroke-width="6" stroke-linecap="round" opacity="0.3" class="transition-colors duration-300" />
+                        <path id="line-path-down" d="M 120 60 L 120 1200" fill="none" stroke="transparent" stroke-width="8" />
+                        <path id="line-path-up" d="M 280 60 L 280 1200" fill="none" stroke="transparent" stroke-width="8" />
+                        
+                        <g id="svg-down-bottom" transform="translate(0,0)" class="transition-transform duration-300">
+                            <rect x="94" y="1219" width="52" height="24" rx="12" fill="#FFFFFF" stroke="#FF8B33" stroke-width="2" class="transition-colors duration-300" />
+                            <text x="120" y="1235.5" text-anchor="middle" fill="#FF8B33" class="text-[13px] font-extrabold tracking-widest transition-colors duration-300">하행</text>
+                        </g>
+                        <g id="svg-up-bottom" transform="translate(0,0)" class="transition-transform duration-300">
+                            <rect x="254" y="1219" width="52" height="24" rx="12" fill="#FFFFFF" stroke="#F06A00" stroke-width="2" class="transition-colors duration-300" />
+                            <text x="280" y="1235.5" text-anchor="middle" fill="#F06A00" class="text-[13px] font-extrabold tracking-widest transition-colors duration-300">상행</text>
+                        </g>
+
+                        <g id="line-stations"></g>
+                        <g id="line-trains-down"></g>
+                        <g id="line-trains-up"></g>
+                    </svg>
+                </div>
+            </div>
+        </main>
+
+        <button id="auto-scroll-btn" class="hidden absolute bottom-[200px] left-1/2 -translate-x-1/2 bg-white border border-black/10 px-3.5 py-1.5 rounded-full shadow-xl text-[11px] font-bold text-gray-700 flex items-center gap-1.5 z-40 transition-transform active:scale-95">
+            <i class="fa-solid fa-location-crosshairs text-[#F06A00] text-[13px]" id="scroll-cross-icon"></i> 선택한 열차 따라가기
+        </button>
+
+        <div id="floating-panel" class="hidden absolute bottom-[100px] left-0 right-0 px-4 z-[90] min-h-[72px] transition-all duration-300"></div>
+
+        <!-- 4. 하단 네비게이션 -->
+        <nav id="bottom-nav" class="absolute bottom-6 left-1/2 -translate-x-1/2 z-[100] w-[75%] max-w-[240px] px-1.5 touch-pan-x select-none">
+            <div class="flex items-center justify-between bg-white/90 backdrop-blur-[12px] backdrop-saturate-[180%] shadow-[0_8px_32px_0_rgba(0,0,0,0.1)] border border-black/10 rounded-full p-1 gap-0.5 relative transition-all duration-300">
+                <div id="nav-indicator" class="absolute top-1 bottom-1 bg-white shadow-sm rounded-full border border-black/5 z-0 nav-transition" style="left: 4px; width: 66px;"></div>
+                
+                <button id="tab-back" onclick="window.location.href='https://won429.github.io/enjoysite/'" class="relative py-1.5 flex-1 rounded-full group z-10 active:scale-95 transition-transform">
+                    <div class="flex flex-col items-center gap-[2px] pointer-events-none">
+                        <i class="fa-solid fa-arrow-left text-[15px] text-gray-400 group-hover:text-black transition-colors"></i>
+                        <span class="text-[10px] font-medium text-gray-400 group-hover:text-black whitespace-nowrap transition-colors">뒤로가기</span>
+                    </div>
+                </button>
+                <button id="tab-home" class="relative py-1.5 flex-1 rounded-full group z-10 active:scale-95 transition-transform">
+                    <div class="flex flex-col items-center gap-[2px] pointer-events-none">
+                        <i class="fa-solid fa-house text-[15px] text-black drop-shadow-sm group-hover:text-black transition-colors"></i>
+                        <span class="text-[10px] text-black font-bold group-hover:text-black whitespace-nowrap transition-colors">홈</span>
+                    </div>
+                </button>
+                <button id="tab-line" class="relative py-1.5 flex-1 rounded-full group z-10 active:scale-95 transition-transform">
+                    <div class="flex flex-col items-center gap-[2px] pointer-events-none">
+                        <i class="fa-solid fa-route text-[15px] text-gray-400 transition-colors"></i>
+                        <span class="text-[10px] font-medium text-gray-400 whitespace-nowrap transition-colors">노선</span>
+                    </div>
+                </button>
+            </div>
+        </nav>
+
+        <!-- 모달들 -->
+        <div id="timetable-modal" class="hidden absolute inset-0 z-[150] flex flex-col justify-end bg-black/40 backdrop-blur-sm transition-opacity">
+            <div class="bg-white w-full h-[75%] rounded-t-[32px] shadow-[0_-20px_40px_rgba(0,0,0,0.1)] flex flex-col animate-in border-t border-black/5">
+                <div class="flex flex-col items-center pt-4 pb-2 border-b border-black/5 shrink-0 relative">
+                    <div class="w-10 h-1 bg-gray-200 rounded-full mb-3"></div>
+                    <h2 id="modal-title" class="text-[18px] font-extrabold text-[#111827] tracking-tight">역 시간표</h2>
+                    <div id="modal-subtitle" class="mt-1 flex w-full justify-center"></div>
+                    <button id="close-modal-btn" class="absolute right-5 top-4 w-7 h-7 flex items-center justify-center bg-gray-100 rounded-full text-gray-500 hover:text-black transition-colors">
+                        <i class="fa-solid fa-xmark text-[12px]"></i>
+                    </button>
+                </div>
+                <div id="modal-content" class="flex-1 overflow-y-auto px-4 py-2 pb-10 hide-scrollbar"></div>
             </div>
         </div>
 
+        <div id="station-selector-modal" class="hidden absolute inset-0 z-[150] flex flex-col justify-end bg-black/40 backdrop-blur-sm transition-opacity">
+            <div class="bg-white w-full h-[60%] rounded-t-[32px] shadow-[0_-20px_40px_rgba(0,0,0,0.1)] flex flex-col animate-in border-t border-black/5">
+                <div class="flex flex-col items-center pt-4 pb-3 border-b border-black/5 shrink-0 relative">
+                    <div class="w-10 h-1 bg-gray-200 rounded-full mb-3"></div>
+                    <h2 class="text-[18px] font-extrabold text-[#111827] tracking-tight">역 선택</h2>
+                    <button onclick="closeStationSelector()" class="absolute right-5 top-4 w-7 h-7 flex items-center justify-center bg-gray-100 rounded-full text-gray-500 hover:text-black transition-colors">
+                        <i class="fa-solid fa-xmark text-[12px]"></i>
+                    </button>
+                </div>
+                <div class="flex-1 overflow-y-auto px-4 py-3 pb-10 space-y-1.5 hide-scrollbar" id="selector-list-container"></div>
+            </div>
+        </div>
+
+        <!-- 준비중 팝업 -->
+        <div id="preparing-modal" class="hidden absolute inset-0 z-[200] flex items-center justify-center bg-black/40 backdrop-blur-sm transition-opacity opacity-0">
+            <div class="bg-white w-[75%] max-w-[280px] rounded-[24px] shadow-2xl flex flex-col items-center p-6 text-center transform scale-95 transition-transform duration-300">
+                <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3">
+                    <i class="fa-solid fa-person-digging text-[20px] text-[#F06A00]" id="preparing-icon"></i>
+                </div>
+                <h3 class="text-[17px] font-extrabold text-[#111827] mb-1.5 tracking-tight">서비스 준비 중</h3>
+                <p id="preparing-text" class="text-[13px] font-medium text-gray-500 mb-5 leading-relaxed">해당 지역 또는 노선은<br>현재 준비 중입니다.</p>
+                <button onclick="closePreparingPopup()" id="preparing-btn" class="w-full py-3 bg-[#F06A00] text-white rounded-[14px] font-bold text-[14px] shadow-sm active:scale-[0.98] transition-all">확인</button>
+            </div>
+        </div>
     </div>
 
     <script>
-        function haptic() { if(navigator.vibrate) navigator.vibrate(10); }
+        // ============================================================================
+        // 🔴 [필독] 공공데이터포털 API 키 입력 공간 🔴
+        // 아래 '여기에_공공데이터포털_API_키를_입력하세요' 텍스트를 지우고
+        // 발급받으신 실제 API 키(일반 인증키 - Encoding)를 따옴표 안에 넣어주세요!
+        // ============================================================================
+        const BUSAN_API_KEY = '61a63f368537b5e5660bb073ed3d610de59c4982ec365edafebcfd749b87bc93'; 
+        
+        let favoriteStation = localStorage.getItem('subway_fav_station_busan') || null;
 
-        const memberImages = {
-            '전시기': 'jeon.jpg',
-            '오스틴': 'austin.jpg',
-            '류짱': 'ryu.jpg',
-            '홍박사': 'hong.jpg',
-            '성원제': 'wonje.jpg', 
-            '이진누': 'jinnu.jpg'  
+        let currentRegion = 'busan';
+        let currentLineId = 'busan_line1';
+        let THEME_COLOR = "#F06A00";
+        let DOWN_COLOR = "#FF8B33";
+        const STOP_DURATION = 25; 
+
+        // 부산 1호선 40개 역 목록 세팅
+        const STATIONS_ALL = {
+            'busan_line1': {
+                "다대포해수욕장": { progress: 0.0000 },
+                "다대포항": { progress: 0.0256 },
+                "낫개": { progress: 0.0513 },
+                "신장림": { progress: 0.0769 },
+                "장림": { progress: 0.1026 },
+                "동매": { progress: 0.1282 },
+                "신평": { progress: 0.1538 },
+                "하단": { progress: 0.1795 },
+                "당리": { progress: 0.2051 },
+                "사하": { progress: 0.2308 },
+                "괴정": { progress: 0.2564 },
+                "대티": { progress: 0.2821 },
+                "서대신": { progress: 0.3077 },
+                "동대신": { progress: 0.3333 },
+                "토성": { progress: 0.3590 },
+                "자갈치": { progress: 0.3846 },
+                "남포": { progress: 0.4103 },
+                "중앙": { progress: 0.4359 },
+                "부산역": { progress: 0.4615, ktx: true },
+                "초량": { progress: 0.4872 },
+                "부산진": { progress: 0.5128 },
+                "좌천": { progress: 0.5385 },
+                "범일": { progress: 0.5641 },
+                "범내골": { progress: 0.5897 },
+                "서면": { progress: 0.6154 },
+                "부전": { progress: 0.6410, ktx: true },
+                "양정": { progress: 0.6667 },
+                "시청": { progress: 0.6923 },
+                "연산": { progress: 0.7179 },
+                "교대": { progress: 0.7436 },
+                "동래": { progress: 0.7692 },
+                "명륜": { progress: 0.7949 },
+                "온천장": { progress: 0.8205 },
+                "부산대": { progress: 0.8462 },
+                "장전": { progress: 0.8718 },
+                "구서": { progress: 0.8974 },
+                "두실": { progress: 0.9231 },
+                "남산": { progress: 0.9487 },
+                "범어사": { progress: 0.9744 },
+                "노포": { progress: 1.0000 }
+            }
         };
 
-        const mockData = {
-            'story': { 
-                title: '그날, 엔조이 이야기', 
-                img: 'banner_story.jpg',
-                tags: ['브이로그'], 
-                desc: '전역의 해방감을 안고 대전으로 모인 엔조이 멤버들! 대전에서의 유쾌한 회동부터 푸른 제주도로 떠난 낭만적인 여정까지. 다시 뭉친 그들의 뜨거운 우정과 잊지 못할 추억을 담은 감성 브이로그.',
-                members: ['전시기', '성원제', '오스틴', '류짱', '이진누', '홍박사'],
-                videoId: null
-            },
-            'nzzoki': { 
-                title: '엔쪽이', 
-                img: 'poster_nzzoki.jpg',
-                tags: ['브이로그', '예능'], 
-                desc: '대구와 경북을 누비며 펼쳐지는 엔조이들의 대환장 여행기! \'금쪽같은 내새끼\'를 패러디한 유쾌한 컨셉으로, 대구경북의 명소 곳곳에서 벌어지는 좌충우돌 에피소드를 담았습니다. 과연 이번 여행에서 가장 말 안 듣는 \'엔쪽이\'는 누구일까요?',
-                members: ['전시기', '성원제', '오스틴', '이진누', '홍박사'],
-                videoId: '여기에_유튜브_ID_입력'
-            },
-            'music': { 
-                title: '엔조이 인기가요', 
-                img: 'poster_music.jpg',
-                tags: ['음악', '예능', '브이로그'], 
-                desc: '엔조이 멤버들의 숨겨진 끼를 대방출하는 특별 무대! 추석을 맞아 준비한 스페셜 퍼포먼스와 비하인드 스토리까지. 흥 넘치는 그들의 무대를 지금 바로 확인하세요.',
-                members: ['전시기', '성원제', '오스틴', '류짱', '이진누', '홍박사'],
-                videoId: 'fVISITFv6EA'
-            },
-            'f1': { 
-                title: 'F1 더 엔조이', 
-                img: 'poster_f1.jpg',
-                isComingSoon: true, 
-                tags: ['스포츠', '예능'],
-                desc: '스피드에 미친 남자들의 질주 본능이 깨어난다! 카트 레이싱부터 본격적인 서킷 체험까지, 엔조이 멤버들이 펼치는 짜릿한 레이싱 대결.',
-                members: ['전시기', '성원제', '오스틴', '류짱', '이진누', '홍박사']
-            },
-            'business': { 
-                title: '출장엔조이', 
-                img: 'poster_business.jpg',
-                isComingSoon: true,
-                tags: ['리얼리티', '예능'],
-                desc: '불러만 주시면 어디든 갑니다! 엔조이 멤버들이 직접 찾아가는 대국민 소통 프로젝트. 좌충우돌 출장기.',
-                members: ['전시기', '성원제', '오스틴', '류짱', '이진누', '홍박사']
-            },
-            'camp': { 
-                title: '엔조이 숙려 캠프', 
-                img: 'poster_camp.jpg',
-                isComingSoon: true,
-                tags: ['관찰예능'],
-                desc: '잠시 멈춤이 필요한 순간, 자연 속으로 떠난 엔조이 멤버들. 진솔한 대화와 힐링이 함께하는 특별한 캠프.',
-                members: ['전시기', '성원제', '오스틴', '류짱', '이진누', '홍박사']
-            },
+        let STATIONS = STATIONS_ALL[currentLineId];
+
+        const KOR_HOLIDAYS = [
+            "2025-01-01", "2025-01-28", "2025-01-29", "2025-01-30", "2025-03-03",
+            "2025-05-05", "2025-05-06", "2025-06-06", "2025-08-15", "2025-10-03",
+            "2025-10-06", "2025-10-07", "2025-10-09", "2025-12-25",
+            "2026-01-01", "2026-02-16", "2026-02-17", "2026-02-18", "2026-03-01", 
+            "2026-05-05", "2026-05-24", "2026-06-06", "2026-08-15", "2026-09-24", 
+            "2026-09-25", "2026-09-26", "2026-10-03", "2026-10-09", "2026-12-25"
+        ];
+
+        let homeSelectedStation = '다대포해수욕장';
+        let activeTab = 'home';
+        let isAutoScroll = false;
+        let selectedTrainId = null;
+        let selectedStation = null;
+        let currentSec = 0;
+        let currentDirection = 'up'; 
+        let currentDayType = 'weekday'; 
+        let stationDetailDirection = 'up'; 
+        let parsedTrainsUp = [];
+        let parsedTrainsDown = [];
+        let parsedTrains = [];
+
+        const dom = {
+            mainHeader: document.getElementById('main-header'),
+            homeScreen: document.getElementById('home-screen'),
+            clock: document.getElementById('clock-display'),
+            dayTypeDisplay: document.getElementById('day-type-display'),
+            directionToggle: document.getElementById('direction-toggle'),
+            trainList: document.getElementById('train-list'),
+            scrollContainer: document.getElementById('scroll-container'),
+            lineView: document.getElementById('line-view'),
+            linePathDown: document.getElementById('line-path-down'),
+            linePathUp: document.getElementById('line-path-up'),
+            lineStations: document.getElementById('line-stations'),
+            lineTrainsDown: document.getElementById('line-trains-down'),
+            lineTrainsUp: document.getElementById('line-trains-up'),
+            autoScrollBtn: document.getElementById('auto-scroll-btn'),
+            floatingPanel: document.getElementById('floating-panel'),
+            tabHome: document.getElementById('tab-home'),
+            tabLine: document.getElementById('tab-line'),
+            navIndicator: document.getElementById('nav-indicator'),
+            timetableModal: document.getElementById('timetable-modal'),
+            modalTitle: document.getElementById('modal-title'),
+            modalSubtitle: document.getElementById('modal-subtitle'),
+            modalContent: document.getElementById('modal-content'),
+            closeModalBtn: document.getElementById('close-modal-btn'),
+            homeStationName: document.getElementById('home-station-name'),
+            homePrevStation: document.getElementById('home-prev-station'),
+            homePrevStationContainer: document.getElementById('home-prev-station-container'),
+            homeNextStation: document.getElementById('home-next-station'),
+            homeNextStationContainer: document.getElementById('home-next-station-container'),
+            homeCurrentTime: document.getElementById('home-current-time'),
+            homeUpInfo: document.getElementById('home-up-info'),
+            homeDownInfo: document.getElementById('home-down-info'),
+            stationSelectorModal: document.getElementById('station-selector-modal'),
+            selectorListContainer: document.getElementById('selector-list-container'),
+            favoriteIcon: document.getElementById('favorite-icon'),
+            svgWrapper: document.getElementById('svg-wrapper'),
+            countUp: document.getElementById('count-up'),
+            countDown: document.getElementById('count-down'),
+            lineHeaderTitle: document.getElementById('line-header-title')
         };
 
-        function openDetail(key) {
-            haptic();
-            const data = mockData[key];
-            if(!data) return;
-            
-            document.getElementById('modal-img').src = data.img;
-            document.getElementById('modal-title').innerText = data.title;
-            document.getElementById('modal-desc').innerText = data.desc || '준비 중인 콘텐츠입니다.';
+        const getDayType = (dateObj) => {
+            const day = dateObj.getDay();
+            const yyyy = dateObj.getFullYear();
+            const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const dd = String(dateObj.getDate()).padStart(2, '0');
+            const ymd = `${yyyy}-${mm}-${dd}`;
+            if (KOR_HOLIDAYS.includes(ymd)) return 'holiday';
+            if (day === 0) return 'holiday';
+            if (day === 6) return 'saturday';
+            return 'weekday';
+        };
 
-            const tagContainer = document.getElementById('modal-tags');
-            tagContainer.innerHTML = ''; 
-            
-            const yearTag = document.createElement('span');
-            yearTag.className = 'text-[10px] font-bold text-blue-500 bg-blue-50 px-2 py-1 rounded';
-            yearTag.innerText = '2024';
-            tagContainer.appendChild(yearTag);
+        const timeToSeconds = (timeStr) => {
+            if (!timeStr) return 0;
+            let parts = timeStr.split(':').map(Number);
+            let h = parts[0] || 0, m = parts[1] || 0, s = parts[2] || 0;
+            if (h < 4) h += 24; 
+            return h * 3600 + m * 60 + s;
+        };
 
-            if (data.tags) {
-                data.tags.forEach(tag => {
-                    const tagEl = document.createElement('span');
-                    tagEl.className = 'text-[10px] font-bold text-gray-500 bg-gray-100 px-2 py-1 rounded';
-                    tagEl.innerText = tag;
-                    tagContainer.appendChild(tagEl);
+        const secondsToTime = (totalSeconds) => {
+            const h = Math.floor(totalSeconds / 3600) % 24; 
+            const m = Math.floor((totalSeconds % 3600) / 60);
+            const s = Math.floor(totalSeconds % 60);
+            return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        };
+
+        const formatAmPm = (sec) => {
+            let h = Math.floor(sec / 3600) % 24;
+            let m = Math.floor((sec % 3600) / 60);
+            const ampm = h >= 12 ? '오후' : '오전';
+            h = h % 12 || 12;
+            return `${ampm} ${h}:${m.toString().padStart(2, '0')}`;
+        };
+
+        function createMockData(direction) {
+            const now = new Date();
+            let h = now.getHours(); if (h < 4) h += 24;
+            const baseSec = h * 3600 + now.getMinutes() * 60 + now.getSeconds();
+            const trainList = [];
+            const stationNames = Object.keys(STATIONS);
+            const orderedStations = direction === 'up' ? [...stationNames].reverse() : stationNames;
+            for (let i = -5; i <= 5; i++) {
+                const train = { id: `MOCK${direction === 'up' ? 'U' : 'D'}${i + 5}`, schedule: [] };
+                const startSec = baseSec + (i * 1800) - 2000; 
+                orderedStations.forEach((st) => {
+                    const firstProg = STATIONS[orderedStations[0]].progress;
+                    const myProg = STATIONS[st].progress;
+                    const progDiff = Math.abs(myProg - firstProg);
+                    const stSec = startSec + Math.floor(progDiff * 3600); 
+                    train.schedule.push({ name: st, time: secondsToTime(stSec), sec: stSec, progress: myProg });
                 });
+                train.schedule.sort((a,b) => a.sec - b.sec);
+                trainList.push(train);
             }
-
-            const hdTag = document.createElement('span');
-            hdTag.className = 'text-[10px] font-bold text-gray-500 bg-gray-100 px-2 py-1 rounded';
-            hdTag.innerText = 'HD';
-            tagContainer.appendChild(hdTag);
-
-            const castList = document.getElementById('modal-cast-list');
-            castList.innerHTML = ''; 
-
-            if (data.members && data.members.length > 0) {
-                data.members.forEach(name => {
-                    const imgFile = memberImages[name] || 'user_me.jpg'; 
-                    const memberHtml = `
-                        <div class="flex flex-col items-center gap-1 w-14 flex-shrink-0">
-                            <div class="w-12 h-12 rounded-full bg-gray-200 overflow-hidden shadow-sm">
-                                <img src="${imgFile}" class="w-full h-full object-cover" onerror="this.src='user_me.jpg'">
-                            </div>
-                            <span class="text-[10px] text-sub truncate w-full text-center mt-1">${name}</span>
-                        </div>
-                    `;
-                    castList.innerHTML += memberHtml;
-                });
-            } else {
-                castList.innerHTML = '<span class="text-xs text-gray-400">출연진 정보 없음</span>';
-            }
-
-            const actionBtn = document.getElementById('modal-action-btn');
-            const modalPlayBtn = document.getElementById('modal-play-btn');
-
-            if (data.isComingSoon) {
-                actionBtn.textContent = '공개 알림 받기 🔔';
-                actionBtn.className = 'w-full bg-gray-500 text-white font-bold py-4 rounded-2xl mt-8 shadow-lg active:scale-95 transition-transform hover:bg-gray-600';
-                actionBtn.onclick = () => { haptic(); alert(`'${data.title}' 알림이 설정되었습니다!`); };
-                
-                modalPlayBtn.classList.add('hidden');
-                modalPlayBtn.onclick = null;
-            } else {
-                actionBtn.textContent = '1화 재생하기';
-                actionBtn.className = 'w-full bg-blue-500 text-white font-bold py-4 rounded-2xl mt-8 shadow-lg shadow-blue-200 active:scale-95 transition-transform hover:bg-blue-600';
-                actionBtn.onclick = () => { playVideo(key); };
-                
-                modalPlayBtn.classList.remove('hidden');
-                modalPlayBtn.onclick = () => { playVideo(key); };
-            }
-            
-            const modal = document.getElementById('detail-modal');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
+            return trainList;
         }
 
-        function closeDetail() {
-            const modal = document.getElementById('detail-modal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        }
+        // 부산 API 전용 파싱 로직 (XML)
+        const loadTimetable = async () => {
+            const statusDisplay = document.getElementById('data-status-display');
+            const statusHome = document.getElementById('data-status-home');
 
-        // [핵심] Plyr Video Player Logic
-        var player = null;
+            // 실제 API 연결 시 사용할 코드 구조 (API 키 입력 전까지는 mock 데이터 사용)
+            const parseXml = async (direction) => {
+                if (BUSAN_API_KEY === '여기에_공공데이터포털_API_키를_입력하세요' || !BUSAN_API_KEY) {
+                    return []; // API 키가 없으면 빈 배열 반환하여 Mock 데이터 유도
+                }
+                
+                // TODO: 실제 공공데이터 포털 API Endpoint와 파라미터로 수정해야 합니다.
+                // 주의: 공공 API는 브라우저에서 직접 호출 시 CORS 에러가 발생할 수 있습니다.
+                const url = `http://apis.data.go.kr/6260000/BusanTblDs/getTblDs?serviceKey=${BUSAN_API_KEY}&pageNo=1&numOfRows=1000`; 
+                
+                try {
+                    const response = await fetch(url);
+                    if (!response.ok) return [];
+                    const xmlText = await response.text();
+                    
+                    const parser = new DOMParser();
+                    const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+                    const items = xmlDoc.getElementsByTagName("item");
+                    
+                    // TODO: items를 순회하며 노선 전체 스케줄 구조(trains)로 변환하는 로직 필요
+                    // 현재는 변환 로직이 비어있으므로 Mock 데이터로 넘어갑니다.
+                    return []; 
+                } catch (e) {
+                    console.error("API Fetch Error:", e);
+                    return [];
+                }
+            };
 
-        function playVideo(key) {
-            haptic();
+            try {
+                // 부산 공공데이터 API 연동을 위한 함수 호출
+                parsedTrainsUp = await parseXml('up');
+                parsedTrainsDown = await parseXml('down');
+                
+                let isMockUsed = false;
+                if (parsedTrainsUp.length === 0) { parsedTrainsUp = createMockData('up'); isMockUsed = true; }
+                if (parsedTrainsDown.length === 0) { parsedTrainsDown = createMockData('down'); isMockUsed = true; }
+                
+                parsedTrains = currentDirection === 'up' ? parsedTrainsUp : parsedTrainsDown;
+                
+                if (isMockUsed) {
+                    if (statusDisplay) { statusDisplay.innerHTML = `<span class="text-red-400 font-extrabold animate-pulse">임의 데이터 사용중</span>`; }
+                    if (statusHome) statusHome.classList.remove('hidden');
+                } else {
+                    if (statusDisplay) { statusDisplay.textContent = '실시간 API'; }
+                    if (statusHome) statusHome.classList.add('hidden');
+                }
+            } catch (e) { }
+        };
+
+        window.switchRegion = async (region, isInit = false) => {
+            // 부산 전용 페이지이므로 지역 변경을 막음
+            return;
+        };
+
+        window.switchLine = async (lineId, isInit = false) => {
+            // 부산 1호선 단일 노선
+            return;
+        };
+
+        window.toggleFavorite = () => {
+            const newFav = (favoriteStation === homeSelectedStation) ? null : homeSelectedStation;
+            favoriteStation = newFav;
+            if (newFav) {
+                localStorage.setItem('subway_fav_station_busan', newFav);
+            } else {
+                localStorage.removeItem('subway_fav_station_busan');
+            }
+            window.updateHomeUI();
+        };
+
+        window.updateHomeUI = () => {
+            const stationNames = Object.keys(STATIONS);
+            const idx = stationNames.indexOf(homeSelectedStation);
+            const prevStation = idx > 0 ? stationNames[idx - 1] : null;
+            const nextStation = idx < stationNames.length - 1 ? stationNames[idx + 1] : null;
+            dom.homeStationName.textContent = homeSelectedStation;
+            if (prevStation) { dom.homePrevStation.textContent = `< ${prevStation}`; dom.homePrevStationContainer.classList.replace('opacity-0', 'opacity-100'); } 
+            else { dom.homePrevStationContainer.classList.replace('opacity-100', 'opacity-0'); }
+            if (nextStation) { dom.homeNextStation.textContent = `${nextStation} >`; dom.homeNextStationContainer.classList.replace('opacity-0', 'opacity-100'); } 
+            else { dom.homeNextStationContainer.classList.replace('opacity-100', 'opacity-0'); }
             
-            let videoId = null;
-            if (key && mockData[key]) {
-                videoId = mockData[key].videoId;
+            if (favoriteStation === homeSelectedStation) {
+                dom.favoriteIcon.className = "fa-solid fa-star text-yellow-400";
+            } else {
+                dom.favoriteIcon.className = "fa-regular fa-star";
             }
+        };
 
-            if (!videoId || videoId === '여기에_유튜브_ID_입력') {
-                alert('영상을 준비 중입니다. (ID를 설정해주세요)');
-                return;
+        window.renderHomeArrivalInfo = () => {
+            if (activeTab !== 'home') return;
+            dom.homeCurrentTime.textContent = formatAmPm(currentSec);
+            const getUpc = (list) => {
+                if (!list || !list.length) return [];
+                let upc = [];
+                list.forEach(t => {
+                    const stop = t.schedule.find(s => s.name === homeSelectedStation);
+                    if (stop && stop.sec >= currentSec) upc.push({ id: t.id, sec: stop.sec, dest: t.schedule[t.schedule.length-1].name });
+                });
+                return upc.sort((a,b) => a.sec-b.sec).slice(0, 2);
+            };
+            const upTrains = getUpc(parsedTrainsUp);
+            const downTrains = getUpc(parsedTrainsDown);
+            const renderL = (trains) => {
+                if (!trains || trains.length === 0) return `<span class="text-gray-400 text-[12px] font-bold my-auto">운행 종료</span>`;
+                return trains.map(t => {
+                    const diff = t.sec - currentSec;
+                    const timeText = diff <= 0 ? '곧 도착' : (diff < 60 ? diff + '초' : Math.ceil(diff/60) + '분');
+                    return `<div class="flex justify-between items-center w-full bg-white px-3 py-2 rounded-xl border border-black/5 shadow-sm"><span class="text-[12px] font-bold text-[#111827]">${t.dest}</span><span class="text-[13px] font-extrabold" style="color:${THEME_COLOR}">${timeText}</span></div>`;
+                }).join('');
+            };
+            
+            const stationNames = Object.keys(STATIONS);
+            const isFirst = homeSelectedStation === stationNames[0];
+            const isLast = homeSelectedStation === stationNames[stationNames.length - 1];
+
+            dom.homeUpInfo.innerHTML = isFirst ? `<span class="text-gray-400 text-[12px] font-bold my-auto">종점</span>` : renderL(upTrains);
+            dom.homeDownInfo.innerHTML = isLast ? `<span class="text-gray-400 text-[12px] font-bold my-auto">종점</span>` : renderL(downTrains);
+        };
+
+        window.openStationSelector = () => {
+            dom.stationSelectorModal.classList.remove('hidden');
+            dom.selectorListContainer.innerHTML = Object.keys(STATIONS).map(name => `
+                <div onclick="selectHomeStation('${name}')" class="flex justify-between items-center px-4 py-3 rounded-[14px] ${name === homeSelectedStation ? '' : 'bg-gray-50 border border-black/5 hover:bg-gray-100'} cursor-pointer active:scale-[0.98] transition-all" style="${name === homeSelectedStation ? `background-color: ${THEME_COLOR}22; border-color: ${THEME_COLOR}55;` : ''}">
+                    <span class="text-[14px] font-bold ${name === homeSelectedStation ? '' : 'text-gray-700'}" style="${name === homeSelectedStation ? `color: ${THEME_COLOR};` : ''}">${name}역</span>
+                    ${name === homeSelectedStation ? `<i class="fa-solid fa-check text-[14px] drop-shadow-sm" style="color: ${THEME_COLOR};"></i>` : ''}
+                </div>`).join('');
+        };
+
+        window.closeStationSelector = () => dom.stationSelectorModal.classList.add('hidden');
+        window.selectHomeStation = (name) => { homeSelectedStation = name; window.updateHomeUI(); window.renderHomeArrivalInfo(); window.closeStationSelector(); };
+        window.openHomeTimetable = () => { window.handleStationClick(homeSelectedStation); window.openModal(); };
+
+        window.switchTab = (tabId) => {
+            activeTab = tabId;
+            selectedStation = null; selectedTrainId = null;
+            dom.timetableModal.classList.add('hidden'); dom.stationSelectorModal.classList.add('hidden'); dom.floatingPanel.classList.add('hidden');
+            if (tabId === 'home') {
+                dom.homeScreen.classList.remove('hidden'); dom.homeScreen.classList.add('flex');
+                dom.scrollContainer.classList.add('hidden'); dom.mainHeader.classList.add('hidden');
+                dom.autoScrollBtn.classList.add('hidden'); window.updateHomeUI(); window.renderHomeArrivalInfo();
+            } else {
+                dom.homeScreen.classList.add('hidden'); dom.scrollContainer.classList.remove('hidden');
+                dom.mainHeader.classList.remove('hidden'); dom.mainHeader.classList.add('flex');
+                dom.directionToggle.classList.toggle('hidden', tabId === 'line');
+                dom.trainList.classList.toggle('hidden', tabId === 'line'); 
+                dom.lineView.style.opacity = tabId === 'line' ? '1' : '0';
+                dom.lineView.classList.toggle('pointer-events-none', tabId !== 'line');
+                isAutoScroll = false; 
             }
+            window.render(); updateTabUI('tab-' + tabId);
+        };
 
-            const overlay = document.getElementById('video-overlay');
-            const wrapper = document.getElementById('video-container');
-
-            // 기존 플레이어 정리
-            if (player) {
-                player.destroy();
-                player = null;
+        function updateTabUI(activeTabId) {
+            const tabs = ['tab-back', 'tab-home', 'tab-line'];
+            const activeIndex = tabs.indexOf(activeTabId);
+            const navButtons = document.querySelectorAll('#bottom-nav button');
+            if (navButtons[activeIndex]) {
+                const targetBtn = navButtons[activeIndex];
+                dom.navIndicator.style.width = `${targetBtn.offsetWidth}px`;
+                dom.navIndicator.style.transform = `translateX(${targetBtn.offsetLeft - 4}px)`;
             }
-            wrapper.innerHTML = `<div id="player" data-plyr-provider="youtube" data-plyr-embed-id="${videoId}"></div>`;
-
-            overlay.classList.remove('hidden');
-            overlay.classList.add('flex');
-
-            // Plyr 초기화 (모바일 전체화면 및 화질 메뉴 최적화)
-            player = new Plyr('#player', {
-                autoplay: true,
-                muted: true, // [필수] 모바일 자동재생
-                controls: [
-                    'play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'pip', 'airplay', 'fullscreen'
-                ],
-                settings: ['quality', 'speed', 'loop'], // 설정 메뉴
-                youtube: {
-                    noCookie: true,
-                    rel: 0,
-                    showinfo: 0,
-                    iv_load_policy: 3,
-                    modestbranding: 1,
-                    playsinline: 1
-                },
-                fullscreen: { 
-                    enabled: true, 
-                    fallback: true, 
-                    iosNative: true // 아이폰 네이티브 전체화면
+            tabs.forEach(id => {
+                const el = document.getElementById(id); if (!el) return;
+                const icon = el.querySelector('i'); const span = el.querySelector('span');
+                
+                let iconClass = 'fa-solid text-[15px] ';
+                if (id === 'tab-back') iconClass += 'fa-arrow-left ';
+                if (id === 'tab-home') iconClass += 'fa-house ';
+                if (id === 'tab-line') iconClass += 'fa-route ';
+                
+                if (id === activeTabId) {
+                    icon.className = iconClass + 'text-black drop-shadow-sm';
+                    span.className = 'text-[10px] text-black font-bold whitespace-nowrap transition-colors';
+                } else {
+                    icon.className = iconClass + 'text-gray-400 transition-colors';
+                    span.className = 'text-[10px] text-gray-400 font-medium whitespace-nowrap transition-colors';
                 }
             });
+        }
 
-            player.on('ready', event => {
-                event.detail.plyr.muted = true; 
-                event.detail.plyr.play();       
+        window.handleStationClick = (n) => { selectedStation = n; if(n) stationDetailDirection = currentDirection; window.render(); };
+        window.handleTrainClick = (id) => { selectedTrainId = id; isAutoScroll = true; selectedStation = null; window.render(); };
+        window.setStationDetailDirection = (d) => { stationDetailDirection = d; window.render(); };
+        
+        window.openModal = () => {
+            if (!selectedStation) return;
+            dom.modalTitle.textContent = `${selectedStation}역 시간표`;
+            const getStationTimes = (trains) => {
+                return trains.map(t => {
+                    const stop = t.schedule.find(s => s.name === selectedStation);
+                    if (stop) return { id: t.id, time: stop.time, sec: stop.sec, dest: t.schedule[t.schedule.length-1].name };
+                    return null;
+                }).filter(t => t).sort((a,b) => a.sec - b.sec);
+            };
+            const upTimes = getStationTimes(parsedTrainsUp);
+            const downTimes = getStationTimes(parsedTrainsDown);
+            const isDownDefault = stationDetailDirection === 'down';
+            
+            const stationNames = Object.keys(STATIONS);
+            const upLabel = `상행 (${stationNames[0]} 방면)`;
+            const downLabel = `하행 (${stationNames[stationNames.length - 1]} 방면)`;
+
+            const renderList = (times, id, isHidden) => {
+                const isDown = id === 'tt-down';
+                const curColor = isDown ? DOWN_COLOR : THEME_COLOR;
+                let listHtml = `<div id="${id}" class="space-y-1.5 mt-2 ${isHidden ? 'hidden' : ''}">`;
+                if(times.length === 0) listHtml += `<div class="text-center text-gray-400 py-10 font-medium text-[12px]">운행 정보가 없습니다.</div>`;
+                times.forEach(t => {
+                    const isPast = t.sec < currentSec;
+                    listHtml += `<div class="bg-gray-50 hover:bg-gray-100 transition-colors rounded-[14px] py-2.5 px-3.5 flex justify-between items-center ${isPast ? 'opacity-40' : 'future-time'}"><div class="flex items-center gap-3"><span class="text-[14px] font-bold ${isPast ? 'text-gray-400' : 'text-[#111827] tracking-tight'}">${t.time.slice(0,5)}</span><span class="text-[11px] font-medium ${isPast ? 'text-gray-400' : 'text-gray-600'}">${t.dest}행</span></div><span class="text-[10px] font-bold ${isPast ? 'text-gray-400 bg-gray-100 border-black/5' : 'text-white shadow-sm'}" style="${!isPast ? `background-color: ${curColor}; border-color: ${curColor};` : ''} padding: 2px 8px; border-radius: 4px; border-width: 1px;">${t.id}</span></div>`;
+                });
+                listHtml += `</div>`; return listHtml;
+            };
+
+            dom.modalSubtitle.innerHTML = `<div class="flex bg-gray-100 rounded-full p-0.5 border border-black/5 w-fit mx-auto mt-1 mb-1"><button onclick="document.getElementById('tt-up').classList.remove('hidden'); document.getElementById('tt-down').classList.add('hidden'); this.className='px-4 py-1.5 rounded-full text-[11px] font-bold text-white shadow-sm transition-all'; this.style.backgroundColor='${THEME_COLOR}'; this.nextElementSibling.className='px-4 py-1.5 rounded-full text-[11px] font-bold text-gray-500 hover:text-black transition-all'; this.nextElementSibling.style.backgroundColor='transparent';" class="px-4 py-1.5 rounded-full text-[11px] font-bold transition-all ${isDownDefault ? 'text-gray-500 hover:text-black' : 'text-white shadow-sm'}" style="${!isDownDefault ? `background-color: ${THEME_COLOR};` : ''}">${upLabel}</button><button onclick="document.getElementById('tt-down').classList.remove('hidden'); document.getElementById('tt-up').classList.add('hidden'); this.className='px-4 py-1.5 rounded-full text-[11px] font-bold text-white shadow-sm transition-all'; this.style.backgroundColor='${DOWN_COLOR}'; this.previousElementSibling.className='px-4 py-1.5 rounded-full text-[11px] font-bold text-gray-500 hover:text-black transition-all'; this.previousElementSibling.style.backgroundColor='transparent';" class="px-4 py-1.5 rounded-full text-[11px] font-bold transition-all ${isDownDefault ? 'text-white shadow-sm' : 'text-gray-500 hover:text-black'}" style="${isDownDefault ? `background-color: ${DOWN_COLOR};` : ''}">${downLabel}</button></div>`;
+            
+            let html = renderList(upTimes, 'tt-up', isDownDefault); html += renderList(downTimes, 'tt-down', !isDownDefault);
+            dom.modalContent.innerHTML = html; dom.timetableModal.classList.remove('hidden');
+            setTimeout(() => {
+                const activeTabId = isDownDefault ? 'tt-down' : 'tt-up';
+                const activeTab = document.getElementById(activeTabId);
+                if (activeTab) { const firstFuture = activeTab.querySelector('.future-time'); if (firstFuture) firstFuture.scrollIntoView({ behavior: 'auto', block: 'center' }); }
+            }, 320);
+        };
+
+        window.render = () => {
+            dom.clock.textContent = secondsToTime(currentSec);
+            if (activeTab === 'home') window.renderHomeArrivalInfo();
+            const getActiveTrains = (list, dir) => list ? list.map(t => {
+                const start = t.schedule[0].sec, end = t.schedule[t.schedule.length-1].sec;
+                if (currentSec < start || currentSec > end + STOP_DURATION) return null;
+                let idx = 0; while(idx < t.schedule.length && currentSec >= t.schedule[idx].sec) idx++; idx--;
+                const curr = t.schedule[idx], next = t.schedule[idx+1] || curr;
+                let prog = curr.progress, isStop = (currentSec - curr.sec <= STOP_DURATION), rem = next.sec - currentSec;
+                if (!isStop && idx < t.schedule.length-1) {
+                    const segDur = Math.max(1, next.sec - (curr.sec + STOP_DURATION));
+                    prog = curr.progress + (next.progress - curr.progress) * Math.min(1, Math.max(0, (currentSec - (curr.sec + STOP_DURATION)) / segDur));
+                }
+                return { ...t, curr, next, overallProgress: prog, timeRemaining: rem, isStopped: isStop, direction: dir, stopRemaining: isStop ? STOP_DURATION - (currentSec - curr.sec) : 0 };
+            }).filter(t => t) : [];
+            let activeTrainsUp = getActiveTrains(parsedTrainsUp, 'up');
+            let activeTrainsDown = getActiveTrains(parsedTrainsDown, 'down');
+            
+            if (dom.countUp) { dom.countUp.textContent = activeTrainsUp.length; dom.countUp.style.color = THEME_COLOR; }
+            if (dom.countDown) { dom.countDown.textContent = activeTrainsDown.length; dom.countDown.style.color = DOWN_COLOR; }
+            
+            let activeT = activeTab === 'line' ? [...activeTrainsUp, ...activeTrainsDown] : (currentDirection === 'up' ? activeTrainsUp : activeTrainsDown);
+            
+            // 부산은 40개 역이므로 길이를 충분히 늘려줌
+            const lineLen = 3800;
+            const renderedT = activeT.map(t => {
+                const ref = t.direction === 'up' ? dom.linePathUp : dom.linePathDown;
+                let p = {x: 0, y: 0}, angle = 0;
+                if (ref) {
+                    const currentLen = lineLen * (t.overallProgress || 0); p = ref.getPointAtLength(currentLen);
+                    const np = ref.getPointAtLength(Math.max(0, Math.min(lineLen, currentLen + (t.direction === 'up' ? -1 : 1))));
+                    angle = (Math.abs(np.x - p.x) > 0.001 || Math.abs(np.y - p.y) > 0.001) ? Math.atan2(np.y - p.y, np.x - p.x) * 180 / Math.PI : (t.direction === 'up' ? -90 : 90);
+                }
+                return { ...t, point: p, angle };
             });
-        }
-
-        function closeVideo() {
-            const overlay = document.getElementById('video-overlay');
-            const wrapper = document.getElementById('video-container');
+            const selectedData = renderedT.find(t => t.id === selectedTrainId);
+            let btnHtml = activeT.length === 0 ? `<span class="text-xs text-gray-400 font-medium py-1">운행 종료</span>` : '';
+            activeT.forEach(t => {
+                const isSel = t.id === selectedTrainId; const tColor = t.direction === 'down' ? DOWN_COLOR : THEME_COLOR;
+                let selClass = isSel ? 'text-white shadow-md border' : 'bg-gray-100 text-gray-600 border border-black/5 hover:bg-gray-200';
+                btnHtml += `<button onclick="handleTrainClick('${t.id}')" class="flex-shrink-0 px-4 py-1.5 rounded-full text-[11px] font-bold whitespace-nowrap transition-all ${selClass}" style="${isSel ? `background-color: ${tColor}; border-color: ${tColor};` : ''}"><span style="color: ${isSel ? '#FFFFFF' : tColor};" class="mr-1">●</span>${t.id}${t.isWaiting ? ' (대기)' : ''}</button>`;
+            });
+            dom.trainList.innerHTML = btnHtml;
             
-            overlay.classList.add('hidden');
-            overlay.classList.remove('flex');
-            
-            if (player) {
-                player.stop();
-                player.destroy();
-                player = null;
+            if (activeTab === 'line') {
+                const updateLayer = (layer, trains, isLine) => {
+                    const currentIds = trains.map(t => t.id); Array.from(layer.children).forEach(c => { if (!currentIds.includes(c.dataset.id)) c.remove(); });
+                    trains.forEach(t => {
+                        let g = layer.querySelector(`g[data-id="${t.id}"]`); const isSelected = t.id === selectedTrainId;
+                        if (!g) { g = document.createElementNS("http://www.w3.org/2000/svg", "g"); g.dataset.id = t.id; g.setAttribute("class", "cursor-pointer"); g.setAttribute("onclick", `handleTrainClick('${t.id}')`); layer.appendChild(g); }
+                        g.setAttribute("transform", `translate(${t.point.x}, ${t.point.y}) rotate(${t.angle})`);
+                        const tColor = t.direction === 'down' ? DOWN_COLOR : THEME_COLOR; const fillColor = isLine ? tColor : (isSelected ? THEME_COLOR : '#9ca3af');
+                        const isUp = t.direction === 'up'; const textWidth = t.id.length * 6 + 14; const rectX = -(textWidth / 2);
+                        g.innerHTML = `${isSelected && !t.isStopped && !t.isWaiting ? `<circle r="26" fill="${fillColor}" opacity="0.2" class="animate-ping" />` : ''}<rect x="-16" y="-7" width="32" height="14" rx="3" fill="${fillColor}" stroke="${isSelected ? '#000000' : '#ffffff'}" stroke-width="${isSelected ? '2' : '1'}" /><rect x="-10" y="-4" width="6" height="8" rx="1" fill="#FFFFFF" opacity="0.9" /><rect x="-1" y="-4" width="6" height="8" rx="1" fill="#FFFFFF" opacity="0.9" /><path d="M 12 -7 L 16 -4 L 16 4 L 12 7 Z" fill="${fillColor}" /><circle cx="15" cy="-3" r="1.5" fill="${isSelected ? '#FFE600' : '#FFFFFF'}" /><circle cx="15" cy="3" r="1.5" fill="${isSelected ? '#FFE600' : '#FFFFFF'}" />${isLine ? `<g transform="rotate(${-t.angle})"><rect x="${rectX}" y="${isUp?10:-25}" width="${textWidth}" height="16" rx="8" fill="#ffffff" stroke="${tColor}" stroke-width="1.5" shadow="0 2px 4px rgba(0,0,0,0.1)" /><text x="0" y="${isUp?21:-14}" text-anchor="middle" fill="#111827" class="text-[10px] font-black tracking-wider">${t.id}</text></g>` : ''}`;
+                    });
+                };
+                updateLayer(dom.lineTrainsUp, renderedT.filter(t => t.direction === 'up'), true); updateLayer(dom.lineTrainsDown, renderedT.filter(t => t.direction === 'down'), true);
             }
-            wrapper.innerHTML = ''; 
-        }
+            let lineHTML = ''; for (const stationName in STATIONS) {
+                const s = STATIONS[stationName]; const isSel = selectedStation === stationName; const lineY = 60 + lineLen * s.progress;
+                lineHTML += `<g transform="translate(200, ${lineY})" onclick="handleStationClick('${stationName}')" class="cursor-pointer"><path d="M -80 0 L 80 0" stroke="#E5E7EB" stroke-width="2" stroke-dasharray="4" /><circle r="${isSel ? '8' : '6'}" fill="#ffffff" stroke="${isSel ? THEME_COLOR : '#9CA3AF'}" stroke-width="${isSel ? '4' : '3'}" /><text x="0" y="-12" text-anchor="middle" fill="${isSel ? THEME_COLOR : '#111827'}" class="text-[12px] font-bold">${stationName}</text>${s.ktx ? `<image href="https://upload.wikimedia.org/wikipedia/en/e/e3/KTX_logo.svg" x="-15" y="10" width="30" height="12" style="filter: drop-shadow(1px 1px 0px white) drop-shadow(-1px -1px 0px white) drop-shadow(1px -1px 0px white) drop-shadow(-1px 1px 0px white);" preserveAspectRatio="xMidYMid meet" />` : ''}</g>`;
+            }
+            dom.lineStations.innerHTML = lineHTML;
+            if (isAutoScroll && selectedData && !selectedStation && activeTab !== 'home') {
+                dom.scrollContainer.scrollTo({ top: selectedData.point.y + 120 - (dom.scrollContainer.clientHeight - 150) / 2, behavior: 'auto' });
+                dom.autoScrollBtn.classList.add('hidden');
+            } else if (selectedData && !selectedStation && activeTab !== 'home') dom.autoScrollBtn.classList.remove('hidden'); else dom.autoScrollBtn.classList.add('hidden');
+            let panelHtml = ''; if (selectedStation) {
+                dom.floatingPanel.classList.remove('hidden'); let target = stationDetailDirection === 'up' ? parsedTrainsUp : parsedTrainsDown;
+                let upcoming = target.map(t => { const s = t.schedule.find(st => st.name === selectedStation); return s && s.sec >= currentSec ? { id: t.id, sec: s.sec, time: s.time, dest: t.schedule[t.schedule.length-1].name } : null; }).filter(t => t).sort((a,b) => a.sec-b.sec).slice(0, 4);
+                panelHtml = `<div class="bg-white/95 backdrop-blur-md border border-black/5 rounded-[28px] p-4 mx-auto w-full max-w-[320px] shadow-2xl transition-all duration-300"><div class="flex justify-between items-center mb-3 px-1"><div class="flex items-center gap-3"><h3 class="text-[18px] font-extrabold text-[#111827] tracking-tight">${selectedStation}역</h3><div class="flex bg-gray-100 rounded-full p-0.5 border border-black/5"><button onclick="setStationDetailDirection('up')" class="px-3 py-1 rounded-full text-[10px] font-bold transition-all ${stationDetailDirection==='up'?'text-white shadow-sm':'text-gray-400 hover:text-black'}" style="${stationDetailDirection==='up' ? `background-color: ${THEME_COLOR};` : ''}">상행</button><button onclick="setStationDetailDirection('down')" class="px-3 py-1 rounded-full text-[10px] font-bold transition-all ${stationDetailDirection==='down'?'text-white shadow-sm':'text-gray-400 hover:text-black'}" style="${stationDetailDirection==='down' ? `background-color: ${DOWN_COLOR};` : ''}">하행</button></div></div><button onclick="handleStationClick(null)" class="text-gray-400 bg-gray-100 w-7 h-7 rounded-full flex items-center justify-center hover:text-black hover:bg-gray-200 transition-all"><i class="fa-solid fa-xmark text-[11px]"></i></button></div><div class="space-y-1.5 mb-3">${upcoming.length ? upcoming.map(u => `<div class="bg-gray-50 hover:bg-gray-100 transition-colors rounded-[14px] py-2.5 px-3.5 flex justify-between items-center shadow-sm border border-black/5"><span class="text-[#111827] font-bold text-[13px]">${u.time.slice(0,5)} <span class="text-[11px] text-gray-500 ml-1.5 font-medium">${u.dest}행</span></span><span class="font-black text-[13px]" style="${stationDetailDirection==='up'? `color: ${THEME_COLOR};` : `color: ${DOWN_COLOR};`}">${(u.sec-currentSec) < 60 ? (u.sec-currentSec) + '초 후' : Math.ceil((u.sec-currentSec)/60) + '분 후'}</span></div>`).join('') : '<div class="text-center text-gray-400 py-3 text-[12px] font-medium">운행 종료</div>'}</div><button onclick="window.openModal()" class="w-full py-2.5 bg-gray-100 hover:bg-gray-200 border border-black/5 transition-colors rounded-[14px] font-bold text-gray-700 text-[12px] flex items-center justify-center gap-1.5 shadow-sm"><i class="fa-regular fa-clock text-[11px]"></i> 시간표 보기</button></div>`;
+            } else if (selectedData) {
+                dom.floatingPanel.classList.remove('hidden'); const pColor = selectedData.direction === 'down' ? DOWN_COLOR : THEME_COLOR;
+                panelHtml = `<div class="bg-white/95 backdrop-blur-md border border-black/5 rounded-[36px] p-4 mx-auto w-full max-w-[360px] shadow-2xl min-h-[72px] flex flex-col justify-center relative overflow-hidden"><div class="absolute top-0 left-1/4 right-1/4 h-[1px] bg-gradient-to-r from-transparent via-black/10 to-transparent"></div><div class="flex justify-between items-center px-2"><div><div class="flex items-center gap-2 mb-1"><span style="background-color: ${pColor}" class="text-white text-[10px] px-2.5 py-0.5 rounded-full font-bold shadow-sm">${selectedData.id}</span><span class="text-[11px] font-semibold text-gray-500">${selectedData.isWaiting ? '대기중' : selectedData.isStopped ? '도착' : `(${selectedData.curr.name} 출발)`}</span></div><h2 class="text-[18px] font-extrabold text-[#111827] tracking-tight flex items-baseline gap-1.5">${selectedData.isStopped || selectedData.isWaiting ? selectedData.curr.name : selectedData.next.name}역<span class="text-[12px] font-medium text-gray-500">${selectedData.isWaiting ? '출발 예정' : selectedData.isStopped ? '정차중' : '도착 예정'}</span></h2></div>${!selectedData.isStopped && !selectedData.isWaiting ? `<div class="text-right flex items-baseline gap-0.5"><p class="text-[28px] font-black tracking-tighter" style="color: ${pColor}">${selectedData.timeRemaining < 60 ? selectedData.timeRemaining : Math.ceil(selectedData.timeRemaining / 60)}</p><span class="text-[11px] text-gray-500 ml-0.5 font-bold">${selectedData.timeRemaining < 60 ? '초 전' : '분 전'}</span></div>` : (selectedData.isStopped && !selectedData.isWaiting ? `<div class="text-right flex items-baseline gap-0.5"><p class="text-[28px] font-black tracking-tighter" style="color: ${pColor}">${selectedData.stopRemaining}</p><span class="text-[11px] text-gray-500 ml-0.5 font-bold">초 후 출발</span></div>` : '')}</div></div>`;
+            } else dom.floatingPanel.classList.add('hidden');
+            if(dom.floatingPanel.innerHTML !== panelHtml && activeTab !== 'home') dom.floatingPanel.innerHTML = panelHtml;
+        };
 
-        /* --- 검색 기능 스크립트 --- */
-        function openSearch() {
-            haptic();
-            const modal = document.getElementById('search-modal');
+        window.onload = async () => {
+            if (favoriteStation && STATIONS_ALL['busan_line1'][favoriteStation]) {
+                homeSelectedStation = favoriteStation;
+            }
+
+            // 노선도 SVG 길이 초기화
+            const svg = document.getElementById('line-svg');
+            const lineLen = 3800; // 40개 역
+            svg.setAttribute('viewBox', `0 0 400 ${lineLen + 160}`);
+            svg.style.height = `${lineLen + 160}px`;
+            dom.svgWrapper.style.height = `${lineLen + 160 + 80}px`;
+            
+            const pathY2 = 60 + lineLen;
+            document.getElementById('line-path-down-bg').setAttribute('d', `M 120 60 L 120 ${pathY2}`);
+            document.getElementById('line-path-up-bg').setAttribute('d', `M 280 60 L 280 ${pathY2}`);
+            dom.linePathDown.setAttribute('d', `M 120 60 L 120 ${pathY2}`);
+            dom.linePathUp.setAttribute('d', `M 280 60 L 280 ${pathY2}`);
+            
+            document.getElementById('svg-down-bottom').setAttribute('transform', `translate(0, ${lineLen - 1140})`);
+            document.getElementById('svg-up-bottom').setAttribute('transform', `translate(0, ${lineLen - 1140})`);
+
+            currentDayType = getDayType(new Date());
+            await loadTimetable();
+            setTimeout(() => {
+                window.switchTab('home');
+                setInterval(() => {
+                    const now = new Date(); let h = now.getHours(); if(h<4) h+=24;
+                    currentSec = h*3600 + now.getMinutes()*60 + now.getSeconds();
+                    window.render();
+                }, 1000);
+            }, 100);
+        };
+        
+        dom.tabHome.onclick = () => window.switchTab('home');
+        dom.tabLine.onclick = () => window.switchTab('line');
+        dom.directionToggle.addEventListener('change', async (e) => { currentDirection = e.target.value; await loadTimetable(); isAutoScroll = true; window.render(); });
+        dom.scrollContainer.addEventListener('touchstart', () => isAutoScroll = false, {passive: true});
+        dom.scrollContainer.addEventListener('wheel', () => isAutoScroll = false, {passive: true});
+        dom.autoScrollBtn.addEventListener('click', () => { isAutoScroll = true; window.render(); });
+        dom.closeModalBtn.addEventListener('click', () => { dom.timetableModal.classList.add('hidden'); });
+
+        window.showPreparingPopup = (name) => {
+            const modal = document.getElementById('preparing-modal');
+            const icon = document.getElementById('preparing-icon');
+            const btn = document.getElementById('preparing-btn');
+            const textElem = document.getElementById('preparing-text');
+            
+            if (textElem && name) {
+                textElem.innerHTML = `<b class="text-[#111827]">${name}</b> 서비스는<br>현재 준비 중입니다.`;
+            }
+            
+            if (icon && btn) {
+                icon.style.color = THEME_COLOR;
+                btn.style.backgroundColor = THEME_COLOR;
+            }
+            
             modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            document.getElementById('search-input').focus();
-        }
+            void modal.offsetWidth; 
+            modal.classList.remove('opacity-0');
+            modal.querySelector('div').classList.remove('scale-95');
+            modal.querySelector('div').classList.add('scale-100');
+        };
 
-        function closeSearch() {
-            const modal = document.getElementById('search-modal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        }
-
-        function fillSearch(text) {
-            const input = document.getElementById('search-input');
-            input.value = text;
-            performSearch(text);
-        }
-
-        function performSearch(query) {
-            const resultsContainer = document.getElementById('search-results');
-            const initialView = document.getElementById('search-initial');
-            
-            if (!query.trim()) {
-                initialView.style.display = 'block';
-                Array.from(resultsContainer.children).forEach(child => {
-                    if (child.id !== 'search-initial') child.remove();
-                });
-                return;
-            }
-
-            initialView.style.display = 'none';
-            
-            const matches = Object.keys(mockData).filter(key => 
-                mockData[key].title.toLowerCase().includes(query.toLowerCase())
-            );
-
-            Array.from(resultsContainer.children).forEach(child => {
-                if (child.id !== 'search-initial') child.remove();
-            });
-
-            if (matches.length === 0) {
-                const noResult = document.createElement('div');
-                noResult.className = 'text-center py-10 text-gray-400 text-sm';
-                noResult.innerText = `'${query}'에 대한 검색 결과가 없어요.`;
-                resultsContainer.appendChild(noResult);
-            } else {
-                matches.forEach(key => {
-                    const item = mockData[key];
-                    const el = document.createElement('div');
-                    el.className = 'flex gap-3 items-center bg-white p-3 rounded-xl shadow-sm cursor-pointer hover:bg-gray-50';
-                    el.onclick = () => { closeSearch(); openDetail(key); };
-                    el.innerHTML = `
-                        <div class="w-16 aspect-video bg-gray-200 rounded overflow-hidden flex-shrink-0">
-                            <img src="${item.img}" class="w-full h-full object-cover">
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <h4 class="text-sm font-bold text-main truncate">${item.title}</h4>
-                            <p class="text-xs text-sub">ENJOY Original</p>
-                        </div>
-                    `;
-                    resultsContainer.appendChild(el);
-                });
-            }
-        }
-
-        const contentScroll = document.getElementById('content-scroll');
-        const logoFade = document.getElementById('logo-fade');
-        const header = document.getElementById('main-header');
-        const bottomNav = document.getElementById('bottom-nav');
-
-        contentScroll.addEventListener('scroll', () => {
-            if (contentScroll.scrollTop > 20) {
-                logoFade.style.maxWidth = '0px';
-                logoFade.style.opacity = '0';
-                logoFade.style.marginRight = '0px';
-                header.classList.add('scrolled');
-                bottomNav.classList.add('scrolled');
-            } else {
-                logoFade.style.maxWidth = '130px';
-                logoFade.style.opacity = '1';
-                logoFade.style.marginRight = '';
-                header.classList.remove('scrolled');
-                bottomNav.classList.remove('scrolled');
-            }
-        });
-
-        function setActiveNav(btn) {
-            haptic();
-            const btns = document.querySelectorAll('.nav-item');
-            btns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-        }
+        window.closePreparingPopup = () => {
+            const modal = document.getElementById('preparing-modal');
+            modal.classList.add('opacity-0');
+            modal.querySelector('div').classList.remove('scale-100');
+            modal.querySelector('div').classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        };
     </script>
 </body>
 </html>
