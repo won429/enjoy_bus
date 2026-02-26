@@ -492,6 +492,8 @@
             return trainList;
         }
 
+        let globalApiError = null;
+
         // 부산 API 전용 파싱 로직 (XML)
         const loadTimetable = async () => {
             const statusDisplay = document.getElementById('data-status-display');
@@ -505,49 +507,65 @@
                 const dayCd = currentDayType === 'weekday' ? '8' : (currentDayType === 'saturday' ? '9' : '7');
                 const updownCd = direction === 'up' ? '0' : '1';
                 
-                // [핵심 해결 1] 인코딩/디코딩 키 혼용으로 인한 API 차단 방지 로직 (자동 정화)
                 let safeKey = BUSAN_API_KEY;
                 try { if (safeKey.includes('%')) safeKey = decodeURIComponent(safeKey); } catch(e) {}
                 
-                const rawUrl = `http://apis.data.go.kr/6260000/BusanTblDs/getTblDs?serviceKey=${encodeURIComponent(safeKey)}&pageNo=1&numOfRows=5000&lineNo=1&dayCd=${dayCd}`; 
-                
-                // [핵심 해결 2] 프록시 이중 지원으로 정부망 방화벽 우회 안정성 극대화
-                const proxies = [
-                    'https://api.allorigins.win/raw?url=', // 1순위: 안정적인 우회 서버
-                    'https://corsproxy.io/?'               // 2순위: 예비 서버
-                ];
+                // 🚨 핵심 패치 1: HTTP -> HTTPS 로 변경하여 브라우저 자체 차단 방지
+                const targetUrl = `https://apis.data.go.kr/6260000/BusanTblDs/getTblDs?serviceKey=${encodeURIComponent(safeKey)}&pageNo=1&numOfRows=5000&lineNo=1&dayCd=${dayCd}`; 
                 
                 let xmlText = null;
-                for (const proxy of proxies) {
+                
+                try {
+                    // 1순위: 직접 HTTPS 통신 시도
+                    const response = await fetch(targetUrl);
+                    if (response.ok) {
+                        xmlText = await response.text();
+                    } else {
+                        throw new Error("Direct fetch failed");
+                    }
+                } catch (e) {
+                    // 2순위: 가장 안정적인 우회 프록시를 통해 정부망 방화벽 돌파 시도
                     try {
-                        const response = await fetch(proxy + encodeURIComponent(rawUrl));
-                        if (response.ok) {
-                            const text = await response.text();
-                            // 정상적인 데이터가 1건이라도 들어왔는지 검사
-                            if (text.includes('<item') || text.includes('<header>')) {
-                                xmlText = text;
-                                break; // 성공 시 즉시 루프 탈출
-                            }
+                        const proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(targetUrl);
+                        const pRes = await fetch(proxyUrl);
+                        if (pRes.ok) {
+                            const json = await pRes.json();
+                            xmlText = json.contents;
                         }
-                    } catch (e) { console.warn("Proxy fallback:", proxy); }
+                    } catch (e2) {
+                        globalApiError = "정부망 방화벽에 의해 접속이 차단되었습니다.";
+                        return [];
+                    }
                 }
                 
-                if (!xmlText) return [];
+                if (!xmlText) {
+                    globalApiError = "서버 응답이 비어있습니다.";
+                    return [];
+                }
                 
                 try {
                     const parser = new DOMParser();
                     const xmlDoc = parser.parseFromString(xmlText, "text/xml");
                     
-                    // 공공데이터포털 자체 에러가 반환되었는지 체크
+                    // 🚨 핵심 패치 2: 공공데이터포털 서버가 뱉어내는 에러 코드를 낚아채서 화면에 표시!
+                    const returnAuthMsg = xmlDoc.getElementsByTagName("returnAuthMsg")[0]?.textContent;
                     const errMsg = xmlDoc.getElementsByTagName("errMsg")[0]?.textContent;
+                    const resultMsg = xmlDoc.getElementsByTagName("resultMsg")[0]?.textContent;
                     const resultCode = xmlDoc.getElementsByTagName("resultCode")[0]?.textContent;
-                    if (errMsg || (resultCode && resultCode !== '00')) {
-                        console.error("API 연동 에러 (키 미등록 혹은 차단):", errMsg || resultCode);
+                    
+                    const errorStr = returnAuthMsg || errMsg || (resultCode && resultCode !== '00' ? resultMsg : null);
+                    
+                    // 정상(NORMAL SERVICE.)이 아닌 에러 메시지가 발견되면 파싱 중단하고 에러 반환
+                    if (errorStr && errorStr !== 'NORMAL SERVICE.') {
+                        globalApiError = errorStr;
                         return [];
                     }
 
                     const items = xmlDoc.getElementsByTagName("item");
-                    if (items.length === 0) return []; 
+                    if (items.length === 0) {
+                        if (!globalApiError) globalApiError = "조회된 데이터가 0건입니다.";
+                        return []; 
+                    }
                     
                     const trainsMap = {};
                     
@@ -562,7 +580,6 @@
                         if (stationName === '부산') stationName = '부산역';
                         
                         const trainNo = getVal('trainNo') || getVal('trnNo');
-                        // 태그 이름이 변경될 경우를 대비한 3중 백업
                         let timeStr = getVal('arrivalTime') || getVal('arvlTm') || getVal('arvTm');
                         
                         if (timeStr && timeStr.length === 6 && !timeStr.includes(':')) {
@@ -595,19 +612,34 @@
             };
 
             try {
+                globalApiError = null; // 초기화
                 // 부산 공공데이터 API 연동을 위한 함수 호출
                 parsedTrainsUp = await parseXml('up');
                 parsedTrainsDown = await parseXml('down');
                 
                 let isMockUsed = false;
-                if (parsedTrainsUp.length === 0) { parsedTrainsUp = createMockData('up'); isMockUsed = true; }
-                if (parsedTrainsDown.length === 0) { parsedTrainsDown = createMockData('down'); isMockUsed = true; }
+                if (parsedTrainsUp.length === 0 || parsedTrainsDown.length === 0) { 
+                    parsedTrainsUp = createMockData('up'); 
+                    parsedTrainsDown = createMockData('down'); 
+                    isMockUsed = true; 
+                }
                 
                 parsedTrains = currentDirection === 'up' ? parsedTrainsUp : parsedTrainsDown;
                 
                 if (isMockUsed) {
-                    if (statusDisplay) { statusDisplay.innerHTML = `<span class="text-red-400 font-extrabold animate-pulse">임의 데이터 사용중</span>`; }
-                    if (statusHome) statusHome.classList.remove('hidden');
+                    if (statusDisplay) { 
+                        statusDisplay.innerHTML = `<span class="text-red-500 font-extrabold animate-pulse">API 실패</span>`; 
+                    }
+                    if (statusHome) {
+                        statusHome.classList.remove('hidden');
+                        // 디자인을 살짝 수정하여, 가짜 데이터인 이유(에러코드)를 사용자에게 보여줌
+                        statusHome.className = "text-center text-[10px] font-bold text-white bg-red-500/90 px-3 py-1.5 rounded-lg border border-red-600 shadow-sm leading-tight";
+                        if (globalApiError) {
+                            statusHome.innerHTML = `서버 거절: ${globalApiError}<br><span class="text-[9px] font-medium opacity-80">(임의 데이터 표시중)</span>`;
+                        } else {
+                            statusHome.textContent = "임의 데이터 사용중";
+                        }
+                    }
                 } else {
                     if (statusDisplay) { statusDisplay.textContent = '실시간 API'; }
                     if (statusHome) statusHome.classList.add('hidden');
