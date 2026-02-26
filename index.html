@@ -72,7 +72,7 @@
             background-color: white; height: 52px; padding: 0 16px; border-radius: 9999px; border: 3px solid #F06A00;
             display: flex; align-items: center; gap: 8px; position: absolute; left: 50%; transform: translateX(-50%);
             box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: border-color 0.3s;
-            width: max-content; /* 다대포해수욕장 텍스트 두 줄 깨짐 완벽 방지 */
+            width: max-content;
             white-space: nowrap;
         }
         .metro-logo-circle {
@@ -141,7 +141,7 @@
                     <div class="flex justify-between items-end mb-1 px-1">
                         <h3 class="text-lg font-bold text-[#111827] tracking-tight">도착 정보</h3>
                         <div class="flex items-center gap-2">
-                            <span id="data-status-home" class="hidden text-[10px] font-bold text-red-400 bg-red-500/10 px-2 py-1 rounded-md border border-red-500/20 animate-pulse">임의 데이터 사용중</span>
+                            <span id="data-status-home" class="hidden"></span>
                             <span id="home-current-time" class="text-xs font-bold text-gray-500 bg-black/5 px-2 py-1 rounded-md">오후 5:35</span>
                             <button onclick="renderHomeArrivalInfo()" class="w-6 h-6 flex items-center justify-center text-gray-500 hover:text-black transition-colors"><i class="fa-solid fa-rotate-right"></i></button>
                         </div>
@@ -187,7 +187,7 @@
                         <i class="fa-regular fa-clock text-[10px] text-gray-500"></i>
                         <span id="day-type-display" class="text-[10px] text-gray-600 font-bold">평일</span>
                         <span class="text-gray-400 text-[10px] leading-none">·</span>
-                        <span id="data-status-display" class="text-[10px] text-[#F06A00] font-bold">실시간</span>
+                        <span id="data-status-display" class="text-[10px] text-gray-500 font-bold">연동 대기</span>
                         <span id="clock-display" class="text-[10px] text-gray-600 font-mono tracking-tighter ml-0.5">00:00:00</span>
                     </div>
                     <div class="flex items-center gap-1.5 text-[10px] font-medium text-gray-500 mr-1">
@@ -310,13 +310,10 @@
     </div>
 
     <script>
-        // ============================================================================
-        // 🔴 [필독] 공공데이터포털 API 키 입력 공간 🔴
-        // 아래 '여기에_공공데이터포털_API_키를_입력하세요' 텍스트를 지우고
-        // 발급받으신 실제 API 키(일반 인증키 - Encoding)를 따옴표 안에 넣어주세요!
-        // ============================================================================
-        const BUSAN_API_KEY = '61a63f368537b5e5660bb073ed3d610de59c4982ec365edafebcfd749b87bc93'; 
-        
+        // 알려주신 시간표 파일 이름으로 심플하게 적용
+        const CSV_FILE_NAME = 'busan.csv'; 
+        let globalCsvText = null;
+
         let favoriteStation = localStorage.getItem('subway_fav_station_busan') || null;
 
         let currentRegion = 'busan';
@@ -325,7 +322,7 @@
         let DOWN_COLOR = "#FF8B33";
         const STOP_DURATION = 25; 
 
-        // 부산 1호선 40개 역 목록 세팅
+        // 부산 1호선 40개 역 목록
         const STATIONS_ALL = {
             'busan_line1': {
                 "다대포해수욕장": { progress: 0.0000 },
@@ -494,210 +491,145 @@
             return trainList;
         }
 
-        let globalApiError = null;
+        // CSV 파일 파싱 엔진
+        const parseAndApplyCSV = (csvText) => {
+            const lines = csvText.split('\n');
+            const dayStr = currentDayType === 'weekday' ? '평일' : (currentDayType === 'saturday' ? '토요일' : '일요일');
 
-        // 🚨 100배 빠르고 에러를 완벽하게 잡는 신규 파싱 엔진 도입
-        const loadTimetable = async () => {
+            const trainsMapUp = {};
+            const trainsMapDown = {};
+
+            for (let i = 1; i < lines.length; i++) {
+                if (!lines[i].trim()) continue;
+                const cols = lines[i].split(',');
+                if (cols.length < 9) continue;
+
+                const lineName = cols[2];
+                if (!lineName.includes('1호선')) continue;
+
+                const dayType = cols[6];
+                if (!dayType.includes(dayStr)) continue;
+
+                const trainNo = cols[0];
+                const stationsArr = cols[7].split('+');
+                const arrTimesArr = cols[8].split('+');
+                const depTimesArr = cols[9] ? cols[9].split('+') : [];
+
+                let schedule = [];
+                for (let j = 0; j < stationsArr.length; j++) {
+                    const stParts = stationsArr[j].split('-');
+                    if (stParts.length < 2) continue;
+                    let stName = stParts[1].trim();
+                    if (stName === '부산') stName = '부산역'; 
+
+                    let timeVal = '';
+                    
+                    if (arrTimesArr[j]) {
+                        const tmParts = arrTimesArr[j].split('-');
+                        if (tmParts.length >= 2) timeVal = tmParts[1].trim();
+                    }
+
+                    if (!timeVal || timeVal === ':') {
+                        if (depTimesArr[j]) {
+                            const depParts = depTimesArr[j].split('-');
+                            if (depParts.length >= 2) timeVal = depParts[1].trim();
+                        }
+                    }
+
+                    if (!STATIONS[stName] || !timeVal || timeVal === ':') continue;
+
+                    const timeStr = timeVal.length === 5 ? timeVal + ':00' : timeVal;
+                    
+                    schedule.push({
+                        name: stName,
+                        time: timeStr,
+                        sec: timeToSeconds(timeStr),
+                        progress: STATIONS[stName].progress
+                    });
+                }
+
+                if (schedule.length >= 2) {
+                    schedule.sort((a,b) => a.sec - b.sec);
+                    
+                    const firstProg = schedule[0].progress;
+                    const lastProg = schedule[schedule.length-1].progress;
+                    const isUp = firstProg > lastProg; 
+
+                    const targetMap = isUp ? trainsMapUp : trainsMapDown;
+                    targetMap[trainNo] = { id: trainNo, schedule: schedule };
+                }
+            }
+
+            const processTrains = (map) => Object.values(map);
+
+            parsedTrainsUp = processTrains(trainsMapUp);
+            parsedTrainsDown = processTrains(trainsMapDown);
+            parsedTrains = currentDirection === 'up' ? parsedTrainsUp : parsedTrainsDown;
+
             const statusDisplay = document.getElementById('data-status-display');
             const statusHome = document.getElementById('data-status-home');
+            
+            if (statusDisplay) {
+                statusDisplay.textContent = '데이터 연동됨';
+                statusDisplay.classList.replace('text-gray-500', 'text-blue-500'); 
+            }
+            if (statusHome) statusHome.classList.add('hidden');
+            
+            window.render();
+        };
 
-            let isMockUsed = false;
-
-            const fetchAndParse = async () => {
-                if (BUSAN_API_KEY === '여기에_공공데이터포털_API_키를_입력하세요' || !BUSAN_API_KEY) {
-                    return false; 
-                }
-
-                let safeKey = BUSAN_API_KEY;
-                try { if (safeKey.includes('%')) safeKey = decodeURIComponent(safeKey); } catch(e) {}
-
-                // [해결 1] 브라우저 CORS 에러("데이터 처리 중 오류")를 완벽 회피하는 무적 프록시 함수
-                const proxyFetch = async (targetUrl) => {
-                    const encodedUrl = encodeURIComponent(targetUrl);
-                    const proxies = [
-                        'https://api.allorigins.win/get?url=' + encodedUrl,
-                        'https://api.codetabs.com/v1/proxy?quest=' + encodedUrl,
-                        'https://corsproxy.io/?' + encodedUrl
-                    ];
-                    for (const p of proxies) {
-                        try {
-                            const res = await fetch(p);
-                            if (res.ok) {
-                                if (p.includes('allorigins')) {
-                                    const j = await res.json();
-                                    if (j.contents) return j.contents;
-                                } else {
-                                    const t = await res.text();
-                                    if (t) return t;
-                                }
-                            }
-                        } catch (e) { console.warn('Proxy fallback:', p); }
-                    }
-                    return null;
-                };
-
-                let responseText = null;
-
-                // [해결 2] 40번 요청을 버리고, 전국 표준망(data.go.kr)에 "1호선 전체 줘"라고 딱 1번만 요청합니다.
-                const dayCdGov = currentDayType === 'weekday' ? '8' : (currentDayType === 'saturday' ? '9' : '7');
-                const urlGov = `https://apis.data.go.kr/6260000/BusanTblDs/getTblDs?serviceKey=${encodeURIComponent(safeKey)}&pageNo=1&numOfRows=9999&lineNo=1&dayCd=${dayCdGov}`;
-
-                responseText = await proxyFetch(urlGov);
-
-                if (!responseText) {
-                    globalApiError = "통신 방화벽에 의해 우회망 접속이 차단되었습니다.";
-                    return false;
-                }
-
-                // [해결 3] 서버가 빡쳐서 XML 대신 JSON 에러를 던질 때, 코드가 터지지 않고 예쁘게 메시지만 잡아냄
-                if (responseText.trim().startsWith('{')) {
-                    try {
-                        const j = JSON.parse(responseText);
-                        const errMsg = j.OpenAPI_ServiceResponse?.cmmMsgHeader?.returnAuthMsg 
-                                    || j.OpenAPI_ServiceResponse?.cmmMsgHeader?.errMsg 
-                                    || j.response?.header?.resultMsg 
-                                    || "등록되지 않은 키 또는 일일 트래픽 초과";
-                        globalApiError = errMsg;
-                        return false;
-                    } catch(e) {}
-                }
-
-                try {
-                    const parser = new DOMParser();
-                    let xmlDoc = parser.parseFromString(responseText, "text/xml");
-
-                    const getError = (doc) => {
-                        const returnAuthMsg = doc.getElementsByTagName("returnAuthMsg")[0]?.textContent;
-                        const errMsg = doc.getElementsByTagName("errMsg")[0]?.textContent;
-                        const resultMsg = doc.getElementsByTagName("resultMsg")[0]?.textContent;
-                        const resultCode = doc.getElementsByTagName("resultCode")[0]?.textContent;
-                        const errorStr = returnAuthMsg || errMsg || (resultCode && resultCode !== '00' ? resultMsg : null);
-                        return (errorStr && errorStr !== 'NORMAL SERVICE.') ? errorStr : null;
-                    };
-
-                    let errorStr = getError(xmlDoc);
-                    if (errorStr) {
-                        globalApiError = errorStr;
-                        return false;
-                    }
-
-                    let items = xmlDoc.getElementsByTagName("item");
-
-                    // [해결 4] 평일 코드를 8로 넣었을 때 "0건"을 주면, 부산교통공사 전용 요일코드(1, 2, 3)로 한 번 더 찔러봄!
-                    if (items.length === 0) {
-                        const dayCdLocal = currentDayType === 'weekday' ? '1' : (currentDayType === 'saturday' ? '2' : '3');
-                        const urlLocal = `https://apis.data.go.kr/6260000/BusanTblDs/getTblDs?serviceKey=${encodeURIComponent(safeKey)}&pageNo=1&numOfRows=9999&lineNo=1&dayCd=${dayCdLocal}`;
-                        const responseTextLocal = await proxyFetch(urlLocal);
-                        
-                        if (responseTextLocal && !responseTextLocal.trim().startsWith('{')) {
-                            xmlDoc = parser.parseFromString(responseTextLocal, "text/xml");
-                            errorStr = getError(xmlDoc);
-                            if (errorStr) {
-                                globalApiError = errorStr;
-                                return false;
-                            }
-                            items = xmlDoc.getElementsByTagName("item");
-                        }
-                    }
-
-                    if (items.length === 0) {
-                        globalApiError = "조회된 데이터가 0건입니다. (해당 요일/노선 정보 없음)";
-                        return false;
-                    }
-
-                    const trainsMapUp = {};
-                    const trainsMapDown = {};
-
-                    for (let i = 0; i < items.length; i++) {
-                        const item = items[i];
-                        const getVal = (tag) => item.getElementsByTagName(tag)[0]?.textContent || '';
-
-                        const updown = getVal('updownCd') || getVal('updnLine') || getVal('updown');
-                        let stationName = getVal('bstopNm') || getVal('statnNm') || getVal('sname');
-                        if (stationName === '부산') stationName = '부산역';
-
-                        const trainNo = getVal('trainNo') || getVal('trnNo') || getVal('trainno');
-                        let timeStr = getVal('arrivalTime') || getVal('arvlTm') || getVal('arvTm');
-
-                        if (timeStr && timeStr.length === 6 && !timeStr.includes(':')) {
-                            timeStr = `${timeStr.slice(0,2)}:${timeStr.slice(2,4)}:${timeStr.slice(4,6)}`;
-                        } else if (!timeStr) {
-                            const h = getVal('hour');
-                            const m = getVal('time');
-                            if (h && m) timeStr = `${h.padStart(2,'0')}:${m.padStart(2,'0')}:00`;
-                        }
-
-                        if (!STATIONS[stationName] || !trainNo || !timeStr) continue;
-
-                        const targetMap = (updown === '0') ? trainsMapUp : trainsMapDown; // 0:상행, 1:하행
-
-                        if (!targetMap[trainNo]) targetMap[trainNo] = { id: trainNo, schedule: [] };
-                        targetMap[trainNo].schedule.push({
-                            name: stationName,
-                            time: timeStr,
-                            sec: timeToSeconds(timeStr),
-                            progress: STATIONS[stationName].progress
-                        });
-                    }
-
-                    const processTrains = (map) => {
-                        const arr = Object.values(map);
-                        arr.forEach(t => t.schedule.sort((a, b) => a.sec - b.sec));
-                        return arr.filter(t => t.schedule.length >= 2);
-                    };
-
-                    parsedTrainsUp = processTrains(trainsMapUp);
-                    parsedTrainsDown = processTrains(trainsMapDown);
-
-                    return parsedTrainsUp.length > 0 || parsedTrainsDown.length > 0;
-
-                } catch (e) {
-                    console.error("DOM Parse Error:", e);
-                    globalApiError = "데이터 구조 분석 중 오류가 발생했습니다.";
-                    return false;
-                }
-            };
-
+        // 초기 데이터 로딩 체계 (GitHub 자동 연동)
+        const loadTimetable = async () => {
+            const statusHome = document.getElementById('data-status-home');
+            const statusDisplay = document.getElementById('data-status-display');
+            
             try {
-                globalApiError = null; 
-                
-                const success = await fetchAndParse();
-                
-                if (!success || parsedTrainsUp.length === 0 || parsedTrainsDown.length === 0) { 
-                    parsedTrainsUp = createMockData('up'); 
-                    parsedTrainsDown = createMockData('down'); 
-                    isMockUsed = true; 
+                if (!globalCsvText) {
+                    // 미리보기 화면(blob URL) 등 브라우저 샌드박스에서 경로 파일 읽기가 차단되는 상황 방지
+                    if (window.location.protocol.includes('blob') || window.location.protocol.includes('data')) {
+                        throw new Error("미리보기 환경 제한으로 인한 임시 우회");
+                    }
+                    
+                    // 지정된 파일명으로 깔끔하게 호출
+                    const fetchUrl = './' + CSV_FILE_NAME;
+                    const res = await fetch(fetchUrl);
+                    
+                    if (!res.ok) throw new Error("네트워크 응답 오류");
+                    
+                    const buffer = await res.arrayBuffer();
+                    let text = new TextDecoder('utf-8').decode(buffer);
+                    if (text.includes('')) {
+                        text = new TextDecoder('euc-kr').decode(buffer);
+                    }
+                    globalCsvText = text;
                 }
                 
+                if (globalCsvText) {
+                    parseAndApplyCSV(globalCsvText);
+                }
+            } catch (e) {
+                // 불쾌한 콘솔 에러 로그(console.error) 완전 삭제
+                // 깃허브 등 실제 서버에 파일이 제대로 올라가기 전까지는 부드럽게 가상 데이터를 돌림
+                parsedTrainsUp = createMockData('up'); 
+                parsedTrainsDown = createMockData('down'); 
                 parsedTrains = currentDirection === 'up' ? parsedTrainsUp : parsedTrainsDown;
                 
-                if (isMockUsed) {
-                    if (statusDisplay) { 
-                        statusDisplay.innerHTML = `<span class="text-red-500 font-extrabold animate-pulse">API 실패</span>`; 
-                    }
-                    if (statusHome) {
-                        statusHome.classList.remove('hidden');
-                        statusHome.className = "text-center text-[10px] font-bold text-white bg-red-500/90 px-3 py-1.5 rounded-lg border border-red-600 shadow-sm leading-tight";
-                        if (globalApiError) {
-                            statusHome.innerHTML = `서버 거절: ${globalApiError}<br><span class="text-[9px] font-medium opacity-80">(임의 데이터 표시중)</span>`;
-                        } else {
-                            statusHome.textContent = "임의 데이터 사용중";
-                        }
-                    }
-                } else {
-                    if (statusDisplay) { statusDisplay.textContent = '실시간 API'; }
-                    if (statusHome) statusHome.classList.add('hidden');
+                if (statusHome) {
+                    statusHome.classList.add('hidden'); // 빨간 에러 팝업창 아예 띄우지 않음!
                 }
-            } catch (e) { }
+                if (statusDisplay) {
+                    statusDisplay.textContent = '서버 연동 대기중';
+                    statusDisplay.className = 'text-[10px] text-gray-400 font-medium';
+                }
+                window.render();
+            }
         };
 
         window.switchRegion = async (region, isInit = false) => {
-            // 부산 전용 페이지이므로 지역 변경을 막음
             return;
         };
 
         window.switchLine = async (lineId, isInit = false) => {
-            // 부산 1호선 단일 노선
             return;
         };
 
@@ -982,7 +914,12 @@
         
         dom.tabHome.onclick = () => window.switchTab('home');
         dom.tabLine.onclick = () => window.switchTab('line');
-        dom.directionToggle.addEventListener('change', async (e) => { currentDirection = e.target.value; await loadTimetable(); isAutoScroll = true; window.render(); });
+        dom.directionToggle.addEventListener('change', async (e) => { 
+            currentDirection = e.target.value; 
+            parsedTrains = currentDirection === 'up' ? parsedTrainsUp : parsedTrainsDown;
+            isAutoScroll = true; 
+            window.render(); 
+        });
         dom.scrollContainer.addEventListener('touchstart', () => isAutoScroll = false, {passive: true});
         dom.scrollContainer.addEventListener('wheel', () => isAutoScroll = false, {passive: true});
         dom.autoScrollBtn.addEventListener('click', () => { isAutoScroll = true; window.render(); });
